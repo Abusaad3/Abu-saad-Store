@@ -3,39 +3,49 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>REMEMBER STORE | SYSTEM</title>
+    <title>REMEMBER STORE | OFFICIAL SYSTEM</title>
     <style>
         * { box-sizing: border-box; cursor: default; }
         body { margin: 0; padding: 0; background: #000; color: white; font-family: 'Consolas', monospace; overflow-x: hidden; }
 
-        /* خلفية الخوارزميات (تظهر فقط في صفحة الدخول) */
+        /* Matrix Background for Login Only */
         #hacker-canvas { position: fixed; top: 0; left: 0; z-index: 1; }
 
-        /* حاوية التسجيل والدخول */
-        #auth-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 999; display: flex; justify-content: center; align-items: center; }
-        .auth-container { position: relative; z-index: 1000; background: rgba(10, 10, 10, 0.95); border: 2px solid #e61e2a; padding: 40px; border-radius: 10px; width: 380px; text-align: center; box-shadow: 0 0 30px rgba(230, 30, 42, 0.4); }
+        /* Auth Screen */
+        #auth-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 999; display: flex; justify-content: center; align-items: center; }
+        .auth-container { position: relative; z-index: 1000; background: rgba(10, 10, 10, 0.98); border: 2px solid #e61e2a; padding: 40px; border-radius: 10px; width: 380px; text-align: center; box-shadow: 0 0 30px rgba(230, 30, 42, 0.4); }
         .auth-input { width: 100%; background: #000; border: 1px solid #333; padding: 12px; margin-bottom: 5px; color: #ff0000; border-radius: 5px; text-align: center; outline: none; font-weight: bold; }
-        .auth-input:focus { border-color: #e61e2a; box-shadow: 0 0 10px #e61e2a; }
         .system-msg { font-size: 0.75rem; height: 20px; margin-bottom: 10px; opacity: 0; transition: 0.3s; font-weight: bold; text-transform: uppercase; color: #e61e2a; }
         .auth-btn { width: 100%; background: #e61e2a; color: white; border: none; padding: 12px; border-radius: 5px; font-weight: bold; cursor: pointer; text-transform: uppercase; }
 
-        /* تصميم المتجر بعد الدخول */
-        #store-content { display: none; opacity: 0; transition: 1s ease; max-width: 1100px; margin: 0 auto; padding: 50px 20px; position: relative; z-index: 10; }
-        .user-header { display: flex; justify-content: space-between; padding: 15px; background: #111; border: 1px solid #e61e2a; border-radius: 8px; margin-bottom: 40px; }
-        .store-title { font-size: 3.5rem; color: #e61e2a; text-align: center; font-weight: 900; letter-spacing: 5px; margin-bottom: 50px; }
+        /* Store Content */
+        #store-content { display: none; opacity: 0; transition: 1s ease; max-width: 1200px; margin: 0 auto; padding: 40px 20px; position: relative; z-index: 10; }
+        .user-header { display: flex; justify-content: space-between; padding: 15px; background: #0a0a0a; border: 1px solid #e61e2a; border-radius: 8px; margin-bottom: 40px; font-size: 0.9rem; }
+        .store-title { font-size: 3rem; color: #e61e2a; text-align: center; font-weight: 900; letter-spacing: 3px; margin-bottom: 50px; text-transform: uppercase; }
 
-        /* كروت المنتجات */
-        .cards-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 20px; }
-        .card { background: #0a0a0a; border: 1px solid #222; border-radius: 15px; padding: 25px; text-align: center; transition: 0.3s; }
-        .card:hover { border-color: #e61e2a; transform: translateY(-5px); box-shadow: 0 5px 20px rgba(230, 30, 42, 0.2); }
-        .price { font-size: 2.5rem; color: #e61e2a; font-weight: bold; display: block; margin-bottom: 10px; }
-        .card p { color: #888; margin-bottom: 20px; }
+        /* Pricing Cards Grid */
+        .cards-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; margin-bottom: 60px; }
+        .card { background: #050505; border: 1px solid #222; border-radius: 12px; padding: 25px; text-align: center; transition: 0.3s; position: relative; overflow: hidden; }
+        .card:hover { border-color: #e61e2a; transform: translateY(-5px); box-shadow: 0 10px 30px rgba(230, 30, 42, 0.15); }
+        .plan-name { font-size: 1.2rem; color: #fff; font-weight: bold; margin-bottom: 15px; display: block; border-bottom: 1px solid #e61e2a; padding-bottom: 10px; }
+        .price { font-size: 2.2rem; color: #e61e2a; font-weight: bold; display: block; margin-bottom: 20px; }
+        
+        .features-list { list-style: none; padding: 0; margin: 0 0 25px 0; text-align: left; font-size: 0.9rem; color: #aaa; line-height: 1.8; }
+        .features-list li::before { content: "• "; color: #e61e2a; font-weight: bold; }
 
-        /* أزرار الشراء والاستفسار */
-        .btn-group { display: flex; gap: 10px; flex-direction: column; }
-        .buy-btn { background: #e61e2a; color: white; text-decoration: none; padding: 10px; border-radius: 5px; font-weight: bold; transition: 0.3s; }
-        .buy-btn:hover { background: white; color: #e61e2a; }
-        .ask-btn { background: transparent; color: #888; border: 1px solid #333; text-decoration: none; padding: 8px; border-radius: 5px; font-size: 0.8rem; transition: 0.3s; }
+        /* Addons Section */
+        .section-header { color: #e61e2a; font-size: 1.8rem; font-weight: bold; margin-bottom: 25px; border-left: 5px solid #e61e2a; padding-left: 15px; text-transform: uppercase; }
+        .addons-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px; background: #0a0a0a; padding: 25px; border-radius: 12px; border: 1px solid #222; }
+        .addon-item { display: flex; justify-content: space-between; align-items: center; padding: 12px; border-bottom: 1px solid #1a1a1a; transition: 0.2s; }
+        .addon-item:hover { background: rgba(230, 30, 42, 0.05); }
+        .addon-info { color: #eee; font-size: 0.95rem; }
+        .addon-price { color: #e61e2a; font-weight: bold; font-size: 1.1rem; }
+
+        /* Buttons */
+        .btn-group { display: flex; flex-direction: column; gap: 10px; }
+        .buy-btn { background: #e61e2a; color: white; text-decoration: none; padding: 12px; border-radius: 5px; font-weight: bold; font-size: 0.9rem; transition: 0.3s; }
+        .buy-btn:hover { background: #fff; color: #000; }
+        .ask-btn { background: transparent; color: #666; border: 1px solid #333; text-decoration: none; padding: 10px; border-radius: 5px; font-size: 0.8rem; transition: 0.3s; }
         .ask-btn:hover { border-color: #e61e2a; color: white; }
     </style>
 </head>
@@ -49,8 +59,8 @@
             <input type="text" class="auth-input" id="login-user" placeholder="USERNAME">
             <input type="password" class="auth-input" id="login-pass" placeholder="PASSWORD">
             <div id="login-msg" class="system-msg"></div>
-            <button class="auth-btn" onclick="handleLogin()">ACCESS SYSTEM</button>
-            <p style="font-size: 0.8rem; color: #555; margin-top: 20px;">NEW ID? <span onclick="toggleAuth()" style="color:#e61e2a; cursor:pointer;">REGISTER</span></p>
+            <button class="auth-btn" onclick="handleLogin()">ACCESS TERMINAL</button>
+            <p style="font-size: 0.75rem; color: #444; margin-top: 20px;">NOT AUTHORIZED? <span onclick="toggleAuth()" style="color:#e61e2a; cursor:pointer; text-decoration:underline;">REGISTER ID</span></p>
         </div>
 
         <div class="auth-container" id="signup-box" style="display:none;">
@@ -60,53 +70,97 @@
             <input type="password" class="auth-input" id="reg-pass-confirm" placeholder="CONFIRM">
             <div id="reg-msg" class="system-msg"></div>
             <button class="auth-btn" onclick="handleSignup()">ENCRYPT & SAVE</button>
-            <p style="font-size: 0.8rem; color: #555; margin-top: 20px;">ALREADY REGISTERED? <span onclick="toggleAuth()" style="color:#e61e2a; cursor:pointer;">LOGIN</span></p>
+            <p style="font-size: 0.75rem; color: #444; margin-top: 20px;">HAVE PERMISSION? <span onclick="toggleAuth()" style="color:#e61e2a; cursor:pointer; text-decoration:underline;">BACK TO LOGIN</span></p>
         </div>
     </div>
 
     <div id="store-content">
         <div class="user-header">
-            <div>LOGGED_AS: <span id="display-name" style="color:#e61e2a;"></span></div>
-            <div onclick="logout()" style="cursor:pointer; color:#e61e2a; font-size:0.8rem;">[ LOGOUT ]</div>
+            <div>LOGGED_IN: <span id="display-name" style="color:#e61e2a; font-weight:bold;"></span></div>
+            <div onclick="logout()" style="cursor:pointer; color:#e61e2a; font-weight:bold;">[ TERMINATE SESSION ]</div>
         </div>
-        <h1 class="store-title">REMEMBER STORE</h1>
+
+        <h1 class="store-title">Remember Store</h1>
 
         <div class="cards-grid">
             <div class="card">
-                <span class="price">$14</span>
-                <p>1 Concur / 60s</p>
+                <span class="plan-name">Basic Plan</span>
+                <span class="price">$14 <small style="font-size: 12px; color: #666;">/Mo</small></span>
+                <ul class="features-list">
+                    <li>1 Concurrents</li>
+                    <li>60 Seconds Boot Time</li>
+                    <li>45 Seconds Cooldown Time</li>
+                    <li>Access To Default Methods</li>
+                </ul>
                 <div class="btn-group">
-                    <a href="https://discord.gg/YOUR_DISCORD_LINK" target="_blank" class="buy-btn">BUY NOW</a>
-                    <a href="https://discord.gg/YOUR_DISCORD_LINK" target="_blank" class="ask-btn">SUPPORT / INQUIRY</a>
+                    <a href="https://discord.gg/YOUR_LINK" target="_blank" class="buy-btn">PURCHASE</a>
+                    <a href="https://discord.gg/YOUR_LINK" target="_blank" class="ask-btn">INQUIRE</a>
                 </div>
             </div>
 
             <div class="card">
-                <span class="price">$17</span>
-                <p>1 Concur / 120s</p>
+                <span class="plan-name">Gold Plan</span>
+                <span class="price">$17 <small style="font-size: 12px; color: #666;">/Mo</small></span>
+                <ul class="features-list">
+                    <li>1 Concurrents</li>
+                    <li>120 Seconds Boot Time</li>
+                    <li>30 Seconds Cooldown Time</li>
+                    <li>Access To Default Methods</li>
+                </ul>
                 <div class="btn-group">
-                    <a href="https://discord.gg/YOUR_DISCORD_LINK" target="_blank" class="buy-btn">BUY NOW</a>
-                    <a href="https://discord.gg/YOUR_DISCORD_LINK" target="_blank" class="ask-btn">SUPPORT / INQUIRY</a>
+                    <a href="https://discord.gg/YOUR_LINK" target="_blank" class="buy-btn">PURCHASE</a>
+                    <a href="https://discord.gg/YOUR_LINK" target="_blank" class="ask-btn">INQUIRE</a>
                 </div>
             </div>
 
-            <div class="card" style="border-color:#e61e2a;">
-                <span class="price">$45+</span>
-                <p>3 Concur / 150s (VIP)</p>
+            <div class="card" style="border-width: 2px;">
+                <span class="plan-name">Diamond Plan</span>
+                <span class="price">$22 <small style="font-size: 12px; color: #666;">/Mo</small></span>
+                <ul class="features-list">
+                    <li>2 Concurrents</li>
+                    <li>120 Seconds Boot Time</li>
+                    <li>20 Seconds Cooldown Time</li>
+                    <li>Access To VIP Methods</li>
+                </ul>
                 <div class="btn-group">
-                    <a href="https://discord.gg/YOUR_DISCORD_LINK" target="_blank" class="buy-btn">BUY NOW</a>
-                    <a href="https://discord.gg/YOUR_DISCORD_LINK" target="_blank" class="ask-btn">SUPPORT / INQUIRY</a>
+                    <a href="https://discord.gg/YOUR_LINK" target="_blank" class="buy-btn">PURCHASE</a>
+                    <a href="https://discord.gg/YOUR_LINK" target="_blank" class="ask-btn">INQUIRE</a>
                 </div>
             </div>
+
+            <div class="card" style="border-color: #fff; background: rgba(230, 30, 42, 0.03);">
+                <span class="plan-name">Champion Plan</span>
+                <span class="price">$45 <small style="font-size: 12px; color: #666;">/Mo</small></span>
+                <ul class="features-list">
+                    <li>3 Concurrents</li>
+                    <li>120 Seconds Boot Time</li>
+                    <li>15 Seconds Cooldown Time</li>
+                    <li>Access To VIP Methods</li>
+                    <li>Lifetime Option: $150</li>
+                </ul>
+                <div class="btn-group">
+                    <a href="https://discord.gg/YOUR_LINK" target="_blank" class="buy-btn">PURCHASE</a>
+                    <a href="https://discord.gg/YOUR_LINK" target="_blank" class="ask-btn">INQUIRE</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="section-header">Remember Addons</div>
+        <div class="addons-container">
+            <div class="addon-item"><span class="addon-info">1+ Concurrents</span><span class="addon-price">15$</span></div>
+            <div class="addon-item"><span class="addon-info">+60 Seconds Boot Time</span><span class="addon-price">10$</span></div>
+            <div class="addon-item"><span class="addon-info">API Access</span><span class="addon-price">20$</span></div>
+            <div class="addon-item"><span class="addon-info">Access To Vip Methods</span><span class="addon-price">15$</span></div>
+            <div class="addon-item" style="border:none;"><span class="addon-info">0 Cooldown</span><span class="addon-price">10$</span></div>
         </div>
     </div>
 
     <script>
-        // خوارزميات الهاكرز (الخلفية)
+        // Matrix Rain Logic (Login Page Only)
         const canvas = document.getElementById('hacker-canvas');
         const ctx = canvas.getContext('2d');
         canvas.width = window.innerWidth; canvas.height = window.innerHeight;
-        const codes = "01REMEMBER_STORE_01_SYSTEM_VOID_ACCESS";
+        const codes = "01REMEMBER_STORE_SYSTEM_VOID_ACCESS_X88";
         const fontSize = 16;
         const columns = canvas.width / fontSize;
         const drops = Array(Math.floor(columns)).fill(1);
@@ -123,10 +177,10 @@
                 drops[i]++;
             });
         }
-        let matrixInterval = setInterval(drawMatrix, 50);
+        let mInt = setInterval(drawMatrix, 50);
 
-        // وظائف النظام
-        function showMsg(id, m, type) {
+        // System Core Functions
+        function showMsg(id, m) {
             const el = document.getElementById(id); el.innerText = m;
             el.style.opacity = "1"; setTimeout(() => el.style.opacity = "0", 3000);
         }
@@ -137,25 +191,25 @@
         }
 
         function handleSignup() {
-            const user = document.getElementById('reg-user').value.trim();
-            const pass = document.getElementById('reg-pass').value;
-            if(!user || !pass) { showMsg("reg-msg", "DATA NULL"); return; }
-            localStorage.setItem("user_" + user, pass);
-            showMsg("reg-msg", "SUCCESSFULLY REGISTERED");
+            const u = document.getElementById('reg-user').value.trim();
+            const p = document.getElementById('reg-pass').value;
+            if(!u || !p) return showMsg("reg-msg", "MISSING DATA");
+            localStorage.setItem("user_" + u, p);
+            showMsg("reg-msg", "ID SECURED");
             setTimeout(toggleAuth, 1500);
         }
 
         function handleLogin() {
-            const user = document.getElementById('login-user').value.trim();
-            const pass = document.getElementById('login-pass').value;
-            if(localStorage.getItem("user_" + user) === pass) {
-                localStorage.setItem("current_session", user);
-                enterStore(user);
+            const u = document.getElementById('login-user').value.trim();
+            const p = document.getElementById('login-pass').value;
+            if(localStorage.getItem("user_" + u) === p) {
+                localStorage.setItem("current_session", u);
+                enterStore(u);
             } else { showMsg("login-msg", "ACCESS DENIED"); }
         }
 
         function enterStore(name) {
-            clearInterval(matrixInterval); // إيقاف الخوارزميات عند الدخول للمتجر
+            clearInterval(mInt);
             document.getElementById('hacker-canvas').style.display = 'none';
             document.getElementById('display-name').innerText = name;
             document.getElementById('auth-screen').style.display = 'none';
