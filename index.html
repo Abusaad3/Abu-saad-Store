@@ -2,77 +2,48 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>REMEMBER STORE | أبو سعد</title>
+    <title>REMEMBER STORE</title>
     <style>
-        /* إعدادات الخلفية السوداء */
-        body {
-            margin: 0; padding: 0;
-            background-color: #000;
-            color: white;
-            font-family: 'Segoe UI', sans-serif;
-            overflow: hidden;
-            height: 100vh;
-            display: flex; align-items: center; justify-content: center;
+        body { margin: 0; background: #000; color: white; font-family: sans-serif; overflow-x: hidden; }
+        #matrix { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; opacity: 0.4; }
+        .ghostface { position: fixed; left: -500px; bottom: 0; width: 400px; transition: 0.6s; opacity: 0; z-index: 100; filter: drop-shadow(0 0 20px #e61e2a); }
+        .glitch .ghostface { left: -50px; opacity: 1; }
+        .container { position: relative; z-index: 10; max-width: 1100px; margin: 50px auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; padding: 20px; }
+        h1 { grid-column: 1/-1; text-align: center; color: #e61e2a; font-size: 50px; text-shadow: 0 0 20px #e61e2a; }
+        .card { background: rgba(10,10,10,0.9); border: 1px solid #222; border-radius: 10px; padding: 25px; text-align: center; transition: 0.3s; }
+        .card:hover { border-color: #e61e2a; transform: translateY(-10px); box-shadow: 0 0 20px rgba(230,30,42,0.3); }
+        .price { font-size: 35px; color: #e61e2a; font-weight: bold; display: block; margin-bottom: 15px; }
+        .list { list-style: none; padding: 0; margin: 20px 0; color: #888; text-align: right; }
+        .list li { margin-bottom: 10px; border-bottom: 1px solid #1a1a1a; padding-bottom: 5px; }
+        .list li::before { content: "• "; color: #e61e2a; }
+        .btn { display: block; background: #e61e2a; color: white; padding: 12px; text-decoration: none; border-radius: 5px; font-weight: bold; transition: 0.3s; }
+        .btn:hover { background: #ff1f2d; box-shadow: 0 0 15px #e61e2a; }
+    </style>
+</head>
+<body>
+    <canvas id="matrix"></canvas>
+    <img src="https://i.imgur.com/vHq03P1.png" class="ghostface">
+    <div class="container">
+        <h1>REMEMBER STORE</h1>
+        <div class="card"><span class="price">$10</span><ul class="list"><li>Concurrent: 1</li><li>Max Time: 60s</li></ul><a href="https://discord.gg/RMB" class="btn">Purchase</a></div>
+        <div class="card"><span class="price">$35</span><ul class="list"><li>Concurrent: 3</li><li>Max Time: 400s</li></ul><a href="https://discord.gg/RMB" class="btn">Purchase</a></div>
+        <div class="card"><span class="price">$100</span><ul class="list"><li>Concurrent: 8</li><li>Max Time: 600s</li></ul><a href="https://discord.gg/RMB" class="btn">Purchase</a></div>
+        <div class="card" style="border-color:#e61e2a"><span class="price">$200</span><ul class="list"><li>Concurrent: 20</li><li>Max Time: 2000s</li></ul><a href="https://discord.gg/RMB" class="btn">Purchase</a></div>
+    </div>
+    <script>
+        const c = document.getElementById('matrix'), ctx = c.getContext('2d');
+        c.width = window.innerWidth; c.height = window.innerHeight;
+        const s = "010101REMEMBERDDOS", f = 16, clm = c.width/f, d = Array(Math.floor(clm)).fill(1);
+        function draw() {
+            ctx.fillStyle = "rgba(0,0,0,0.05)"; ctx.fillRect(0,0,c.width,c.height);
+            ctx.fillStyle = "#e61e2a"; ctx.font = f+"px monospace";
+            d.forEach((y, i) => {
+                ctx.fillText(s[Math.floor(Math.random()*s.length)], i*f, y*f);
+                if (y*f > c.height && Math.random() > 0.975) d[i] = 0; d[i]++;
+            });
         }
-
-        /* خوارزميات الهكر المتساقطة */
-        #matrix-canvas {
-            position: fixed; top: 0; left: 0;
-            width: 100%; height: 100%;
-            z-index: -2;
-            opacity: 0.5; /* وضوح عالي للأكواد */
-        }
-
-        /* شخصية قوست فيس المخيفة */
-        .ghostface {
-            position: fixed;
-            left: -500px; bottom: 0;
-            width: 450px;
-            z-index: 100;
-            opacity: 0;
-            filter: drop-shadow(0 0 30px #e61e2a);
-            transition: all 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            pointer-events: none;
-        }
-
-        /* تأثير الحركة والجليتش */
-        .glitch-active .ghostface {
-            left: -50px;
-            opacity: 1;
-        }
-        .glitch-active .content {
-            animation: shake 0.15s infinite;
-        }
-
-        @keyframes shake {
-            0% { transform: translate(2px, 2px); }
-            50% { transform: translate(-2px, -2px); }
-            100% { transform: translate(0, 0); }
-        }
-
-        /* هالة الماوس */
-        #cursor-glow {
-            position: fixed; width: 600px; height: 600px;
-            background: radial-gradient(circle, rgba(230, 30, 42, 0.25) 0%, rgba(0,0,0,0) 70%);
-            border-radius: 50%; pointer-events: none;
-            transform: translate(-50%, -50%); z-index: 0;
-        }
-
-        /* المحتوى الرئيسي */
-        .content { position: relative; z-index: 10; text-align: center; }
-
-        h1 {
-            font-size: clamp(50px, 10vw, 90px); color: #e61e2a; margin: 0;
-            text-shadow: 0 0 30px #e61e2a;
-            letter-spacing: 5px;
-        }
-
-        p {
-            font-size: clamp(18px, 3vw, 24px); color: #ccc;
-            margin-bottom: 35px; line-height: 1.5; font-weight: bold;
-        }
-
-        .btn-discord {
-            display: inline-block; background: #e61e2a; color: white;
-            padding: 22px 55px; border-radius: 10px;
-            text-decoration: none; font
+        setInterval(draw, 35);
+        setInterval(() => { document.body.classList.add('glitch'); setTimeout(() => document.body.classList.remove('glitch'), 1500); }, 6000);
+    </script>
+</body>
+</html>
