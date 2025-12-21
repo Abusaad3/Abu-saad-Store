@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <title>REMEMBER STORE | أبو سعد</title>
     <style>
-        /* الأساسيات */
         body {
             margin: 0; padding: 0;
             background-color: #000;
@@ -15,80 +14,49 @@
             display: flex; flex-direction: column; align-items: center; justify-content: center;
         }
 
-        /* خلفية الأكواد المتحركة (Matrix) */
+        /* خلفية الأكواد المتحركة Matrix - مستمرة ولا تتوقف */
         #matrix-canvas {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            z-index: -2; opacity: 0.15;
-            transition: opacity 0.5s ease-in-out; /* لتلاشي الأكواد عند الجليتش */
+            z-index: -2; opacity: 0.4;
         }
 
-        /* صورة القوست فيس المتحركة */
+        /* صورة القوست فيس - تظهر وتختفي بشكل آلي مستمر */
         .ghostface {
             position: fixed;
-            left: -300px; /* مختفي جداً ليعطي تأثير الفتح */
+            left: -500px;
             bottom: 0;
-            width: 500px; /* حجم أكبر */
-            z-index: 100; /* ليظهر فوق كل شيء */
-            opacity: 0; /* يبدأ مخفياً */
-            filter: drop-shadow(0 0 25px rgba(230, 30, 42, 0.8));
-            transition: all 0.5s ease-out; /* حركة سلسة */
+            width: 450px;
+            z-index: 100;
+            opacity: 0;
+            filter: drop-shadow(0 0 25px #e61e2a);
+            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             pointer-events: none;
         }
 
-        /* تأثير الجليتش (Glitch Effect) */
+        /* تأثير الحركة والتشويش المستمر */
         .glitch-active .ghostface {
-            left: -100px; /* يظهر بشكل مفاجئ */
-            opacity: 0.9;
+            left: -50px;
+            opacity: 1;
         }
         .glitch-active .content {
-            animation: glitchEffect 0.3s infinite alternate; /* تأثير اهتزاز المحتوى */
-        }
-        .glitch-active #matrix-canvas {
-            opacity: 0.05; /* تخفيف الأكواد عند الجليتش */
+            animation: shake 0.1s infinite;
         }
         
-        @keyframes glitchEffect {
-            0% { transform: translate(-2px, 2px) skewX(2deg); }
-            25% { transform: translate(2px, -2px) skewX(-2deg); }
-            50% { transform: translate(-1px, 1px) skewX(1deg); }
-            75% { transform: translate(1px, -1px) skewX(-1deg); }
-            100% { transform: translate(0, 0) skewX(0); }
+        @keyframes shake {
+            0% { transform: translate(2px, 2px); }
+            50% { transform: translate(-2px, -2px); }
+            100% { transform: translate(0, 0); }
         }
 
-        /* الهالة الحمراء للماوس */
         #cursor-glow {
-            position: fixed; width: 600px; height: 600px;
-            background: radial-gradient(circle, rgba(230, 30, 42, 0.15) 0%, rgba(0,0,0,0) 70%);
+            position: fixed; width: 500px; height: 500px;
+            background: radial-gradient(circle, rgba(230, 30, 42, 0.2) 0%, rgba(0,0,0,0) 70%);
             border-radius: 50%; pointer-events: none;
             transform: translate(-50%, -50%); z-index: 0;
-            transition: transform 0.08s ease-out; /* حركة الماوس السريعة */
         }
 
-        .content {
-            position: relative; z-index: 10; text-align: center;
-            transition: transform 0.3s, opacity 0.3s;
-        }
+        .content { position: relative; z-index: 10; text-align: center; }
 
         h1 {
-            font-size: clamp(60px, 8vw, 80px); color: #e61e2a; margin: 0;
-            text-shadow: 0 0 25px rgba(230, 30, 42, 1);
-            letter-spacing: 5px; text-transform: uppercase;
-            animation: pulseGlow 3s infinite ease-in-out;
-        }
-
-        @keyframes pulseGlow {
-            0%, 100% { transform: scale(1); filter: brightness(1); text-shadow: 0 0 25px rgba(230, 30, 42, 1); }
-            50% { transform: scale(1.02); filter: brightness(1.2); text-shadow: 0 0 40px rgba(230, 30, 42, 1.2); }
-        }
-
-        p {
-            font-size: clamp(18px, 2.5vw, 22px); color: #ccc; max-width: 700px; line-height: 1.6;
-            margin-bottom: 40px;
-        }
-
-        .btn-discord {
-            display: inline-block; background: #e61e2a; color: white;
-            padding: 20px 60px; border-radius: 5px;
-            text-decoration: none; font-weight: bold; font-size: 24px;
-            box-shadow: 0 0 30px rgba(230, 30, 42, 0.6);
-            transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55); /* حركة زن
+            font-size: clamp(50px, 10vw, 90px); color: #e61e2a; margin: 0;
+            text-shadow: 0 0 30px rgba(230, 30, 42, 1);
