@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>REMEMBER STORE | ELITE</title>
+    <title>REMEMBER STORE | ELITE EDITION</title>
     <style>
         * { box-sizing: border-box; cursor: none; }
         body {
@@ -15,25 +15,25 @@
         #preloader {
             position: fixed; width: 100%; height: 100%; background: #000;
             display: flex; flex-direction: column; justify-content: center; align-items: center;
-            z-index: 9999; transition: 0.5s;
+            z-index: 9999; transition: 0.8s;
         }
-        .loader-bar { width: 200px; height: 2px; background: #222; margin-top: 10px; position: relative; }
+        .loader-bar { width: 250px; height: 2px; background: #111; margin-top: 15px; position: relative; }
         .loader-progress { position: absolute; height: 100%; background: #e61e2a; width: 0%; animation: load 1.5s forwards; }
         @keyframes load { to { width: 100%; } }
 
-        /* العناصر الخلفية */
+        /* الخلفية والقمر */
         #matrix-canvas { position: fixed; top: 0; left: 0; z-index: -2; opacity: 0.25; }
         .blood-moon {
-            position: fixed; top: 30px; right: 40px; width: 100px; height: 100px;
+            position: fixed; top: 30px; right: 40px; width: 110px; height: 110px;
             background: radial-gradient(circle, #ff0000 0%, #4a0000 100%);
-            border-radius: 50%; box-shadow: 0 0 40px rgba(255, 0, 0, 0.4); z-index: -1;
+            border-radius: 50%; box-shadow: 0 0 50px rgba(255, 0, 0, 0.5); z-index: -1;
             animation: pulse 4s infinite alternate;
         }
 
-        /* الماوس المخصص */
+        /* الماوس */
         #custom-cursor {
-            position: fixed; width: 10px; height: 10px; background: #e61e2a;
-            border-radius: 50%; pointer-events: none; z-index: 10000; box-shadow: 0 0 10px #e61e2a;
+            position: fixed; width: 12px; height: 12px; background: #e61e2a;
+            border-radius: 50%; pointer-events: none; z-index: 10000; box-shadow: 0 0 15px #e61e2a;
         }
 
         .wrapper {
@@ -41,76 +41,79 @@
             align-items: center; height: 100vh; width: 100%; z-index: 10; position: relative;
         }
 
-        /* Glitch Effect */
+        /* Glitch Title */
         .glitch {
             font-size: 3.5rem; color: #e61e2a; font-weight: bold; position: relative;
             text-shadow: 0.05em 0 0 #fff, -0.05em -0.025em 0 #e61e2a;
-            animation: glitch 1s infinite; margin-bottom: 15px;
+            animation: glitch 1s infinite; margin-bottom: 20px;
         }
         @keyframes glitch {
             0% { transform: translate(0); }
-            20% { transform: translate(-2px, 2px); }
-            40% { transform: translate(-2px, -2px); }
-            60% { transform: translate(2px, 2px); }
-            80% { transform: translate(2px, -2px); }
+            20% { transform: translate(-3px, 3px); }
+            40% { transform: translate(-3px, -3px); }
+            60% { transform: translate(3px, 3px); }
+            80% { transform: translate(3px, -3px); }
             100% { transform: translate(0); }
         }
 
+        /* شبكة البطاقات */
         .cards-grid {
             display: grid; grid-template-columns: repeat(4, 1fr);
-            gap: 12px; width: 95%; max-width: 1100px; margin-bottom: 15px;
+            gap: 15px; width: 95%; max-width: 1150px; margin-bottom: 20px;
         }
         .card {
-            background: rgba(10, 10, 10, 0.85); border: 1px solid #222;
-            border-radius: 8px; padding: 15px; text-align: center; transition: 0.3s;
-            backdrop-filter: blur(5px);
+            background: rgba(8, 8, 8, 0.9); border: 1px solid #1a1a1a;
+            border-radius: 12px; padding: 20px; text-align: center; transition: 0.3s;
+            backdrop-filter: blur(8px);
         }
-        .card:hover { border-color: #e61e2a; transform: scale(1.03); }
+        .card:hover { border-color: #e61e2a; transform: translateY(-8px) scale(1.02); box-shadow: 0 10px 30px rgba(230,30,42,0.3); }
 
-        .price { font-size: 1.5rem; color: #e61e2a; font-weight: bold; margin-bottom: 5px; display: block; }
-        .details { list-style: none; padding: 0; margin: 10px 0; font-size: 0.75rem; color: #aaa; text-align: right; }
-        .details li { padding: 3px 0; border-bottom: 1px solid #1a1a1a; }
+        .price { font-size: 1.8rem; color: #e61e2a; font-weight: bold; margin-bottom: 8px; display: block; }
+        .details { list-style: none; padding: 0; margin: 12px 0; font-size: 0.85rem; color: #bbb; text-align: right; }
+        .details li { padding: 4px 0; border-bottom: 1px solid #111; }
         .details li::before { content: "> "; color: #e61e2a; }
 
         .btn {
             display: block; width: 100%; background: #e61e2a; color: white;
-            padding: 7px; border-radius: 4px; text-decoration: none; font-weight: bold; font-size: 0.8rem;
+            padding: 10px; border-radius: 6px; text-decoration: none; font-weight: bold; font-size: 0.9rem; transition: 0.3s;
         }
+        .btn:hover { background: #ff1f2d; box-shadow: 0 0 15px #e61e2a; }
 
+        /* الإضافات */
         .addons-section {
-            background: rgba(15, 0, 0, 0.6); border: 1px solid #e61e2a;
-            border-radius: 10px; padding: 10px; width: 95%; max-width: 900px;
-            display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px;
+            background: rgba(20, 0, 0, 0.4); border: 1px solid #e61e2a;
+            border-radius: 12px; padding: 15px; width: 95%; max-width: 900px;
+            display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px;
         }
-        .addon-item { border-bottom: 1px dashed #333; padding: 4px; font-size: 0.75rem; display: flex; justify-content: space-between; }
+        .addon-item { border-bottom: 1px dashed #333; padding: 6px; font-size: 0.85rem; display: flex; justify-content: space-between; }
+        .addon-p { color: #e61e2a; font-weight: bold; }
 
         /* التنبيهات */
-        #notification-box {
-            position: fixed; bottom: 20px; left: 20px; z-index: 1000;
-        }
+        #notification-box { position: fixed; bottom: 20px; left: 20px; z-index: 1000; pointer-events: none; }
         .notif {
-            background: rgba(10, 10, 10, 0.9); border-right: 4px solid #e61e2a;
-            padding: 10px 20px; margin-top: 10px; font-size: 0.8rem;
+            background: rgba(10, 10, 10, 0.95); border-right: 4px solid #e61e2a;
+            padding: 12px 20px; margin-top: 10px; font-size: 0.85rem; width: 340px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.6);
             animation: slideIn 0.5s forwards, fadeOut 0.5s 4s forwards;
         }
-        @keyframes slideIn { from { transform: translateX(-100%); } to { transform: translateX(0); } }
+        @keyframes slideIn { from { transform: translateX(-110%); } to { transform: translateX(0); } }
         @keyframes fadeOut { to { opacity: 0; transform: translateY(20px); } }
 
-        /* العداد والتوقيع */
-        .live-counter { position: fixed; top: 20px; left: 20px; color: #e61e2a; font-size: 0.8rem; }
-        .credits { position: fixed; bottom: 15px; right: 20px; text-align: right; font-size: 0.75rem; }
+        /* معلومات الزاوية */
+        .live-counter { position: fixed; top: 20px; left: 20px; color: #e61e2a; font-size: 0.85rem; font-weight: bold; }
+        .credits { position: fixed; bottom: 15px; right: 20px; text-align: right; font-size: 0.8rem; line-height: 1.4; }
         .discord-copy { 
-            color: #fff; background: #e61e2a; padding: 2px 8px; border-radius: 5px; 
-            cursor: pointer; margin-top: 5px; display: inline-block; 
+            color: #fff; background: #e61e2a; padding: 4px 12px; border-radius: 6px; 
+            cursor: pointer; margin-top: 6px; display: inline-block; font-weight: bold;
         }
 
-        @keyframes pulse { from { opacity: 0.4; } to { opacity: 0.8; } }
+        @keyframes pulse { from { opacity: 0.5; transform: scale(1); } to { opacity: 0.9; transform: scale(1.05); } }
     </style>
 </head>
 <body>
 
     <div id="preloader">
-        <div style="color:#e61e2a; font-weight:bold; letter-spacing:5px;">BYPASSING...</div>
+        <div style="color:#e61e2a; font-weight:bold; letter-spacing:8px; font-size:1.2rem;">INITIALIZING SYSTEM...</div>
         <div class="loader-bar"><div class="loader-progress"></div></div>
     </div>
 
@@ -118,77 +121,92 @@
     <canvas id="matrix-canvas"></canvas>
     <div class="blood-moon"></div>
     <div id="notification-box"></div>
-    <div class="live-counter">LIVE USERS: <span id="user-count">43</span></div>
+    
+    <div class="live-counter">ACTIVE SESSIONS: <span id="user-count">128</span></div>
 
     <div class="wrapper">
         <div class="glitch">REMEMBER STORE</div>
 
         <div class="cards-grid">
-            <div class="card"><span class="price">$14</span><ul class="details"><li>1 Concur</li><li>60s Boot</li><li>45s Cool</li></ul><a href="#" class="btn">Select</a></div>
-            <div class="card"><span class="price">$17</span><ul class="details"><li>1 Concur</li><li>120s Boot</li><li>30s Cool</li></ul><a href="#" class="btn">Select</a></div>
-            <div class="card"><span class="price">$22</span><ul class="details"><li>2 Concur</li><li>120s Boot</li><li>20s Cool</li></ul><a href="#" class="btn">Select</a></div>
-            <div class="card" style="box-shadow: 0 0 15px #e61e2a;"><span class="price">$45+</span><ul class="details"><li>3 Concur</li><li>120s Boot</li><li>15s Cool</li></ul><a href="#" class="btn">Select</a></div>
+            <div class="card"><span class="price">$14</span><ul class="details"><li>1 Concur</li><li>60s Boot</li><li>45s Cooldown</li></ul><a href="https://discord.gg/RMB" class="btn">Select Plan</a></div>
+            <div class="card"><span class="price">$17</span><ul class="details"><li>1 Concur</li><li>120s Boot</li><li>30s Cooldown</li></ul><a href="https://discord.gg/RMB" class="btn">Select Plan</a></div>
+            <div class="card"><span class="price">$22</span><ul class="details"><li>2 Concur</li><li>120s Boot</li><li>20s Cooldown</li></ul><a href="https://discord.gg/RMB" class="btn">Select Plan</a></div>
+            <div class="card" style="border: 2px solid #e61e2a;"><span class="price">$45 / $150</span><ul class="details"><li>3 Concur</li><li>120s Boot</li><li>15s Cooldown</li></ul><a href="https://discord.gg/RMB" class="btn">Select Plan</a></div>
         </div>
 
         <div class="addons-section">
-            <div class="addon-item"><span>+1 Concur</span><span style="color:#e61e2a">15$</span></div>
-            <div class="addon-item"><span>+60s Boot</span><span style="color:#e61e2a">10$</span></div>
-            <div class="addon-item"><span>API Access</span><span style="color:#e61e2a">20$</span></div>
-            <div class="addon-item"><span>VIP Methods</span><span style="color:#e61e2a">15$</span></div>
-            <div class="addon-item"><span>0 Cooldown</span><span style="color:#e61e2a">10$</span></div>
-            <div class="addon-item"><span>Admin Support</span><span style="color:#e61e2a">FREE</span></div>
+            <div class="addon-item"><span>+1 Concurrent</span><span class="addon-p">15$</span></div>
+            <div class="addon-item"><span>+60s Boot Time</span><span class="addon-p">10$</span></div>
+            <div class="addon-item"><span>API Access</span><span class="addon-p">20$</span></div>
+            <div class="addon-item"><span>VIP Methods</span><span class="addon-p">15$</span></div>
+            <div class="addon-item"><span>0 Cooldown</span><span class="addon-p">10$</span></div>
+            <div class="addon-item"><span>Priority Support</span><span class="addon-p">FREE</span></div>
         </div>
     </div>
 
     <div class="credits">
         Designed & Programmed by<br>
-        <b style="color:#e61e2a">Abu saad</b><br>
+        <b style="color:#e61e2a; font-size: 1.1rem;">Abu saad</b><br>
         <div class="discord-copy" onclick="copyDiscord()">Discord: e65e</div>
     </div>
 
     <script>
-        // Matrix
+        // Matrix Effect
         const canvas = document.getElementById('matrix-canvas'), ctx = canvas.getContext('2d');
         canvas.width = window.innerWidth; canvas.height = window.innerHeight;
-        const letters = "REMEMBER01", fontSize = 16, columns = canvas.width/fontSize, drops = Array(Math.floor(columns)).fill(1);
-        function draw() {
-            ctx.fillStyle = "rgba(0,0,0,0.1)"; ctx.fillRect(0,0,canvas.width,canvas.height);
+        const letters = "REMEMBER1010", fontSize = 16, columns = canvas.width/fontSize, drops = Array(Math.floor(columns)).fill(1);
+        function drawMatrix() {
+            ctx.fillStyle = "rgba(0,0,0,0.12)"; ctx.fillRect(0,0,canvas.width,canvas.height);
             ctx.fillStyle = "#e61e2a"; ctx.font = fontSize+"px monospace";
             drops.forEach((y,i) => {
                 ctx.fillText(letters[Math.floor(Math.random()*letters.length)], i*fontSize, y*fontSize);
                 if(y*fontSize > canvas.height && Math.random() > 0.975) drops[i]=0; drops[i]++;
             });
         }
-        setInterval(draw, 35);
+        setInterval(drawMatrix, 35);
 
-        // Preloader
-        setTimeout(() => { document.getElementById('preloader').style.opacity = '0'; 
-        setTimeout(() => document.getElementById('preloader').remove(), 500); }, 1600);
+        // Remove Preloader
+        setTimeout(() => { 
+            document.getElementById('preloader').style.opacity = '0'; 
+            setTimeout(() => document.getElementById('preloader').remove(), 800); 
+        }, 1800);
 
-        // Cursor
+        // Custom Cursor
         const cursor = document.getElementById('custom-cursor');
         window.addEventListener('mousemove', (e) => {
             cursor.style.left = e.clientX + 'px'; cursor.style.top = e.clientY + 'px';
         });
 
-        // Notifications
-        const names = ["Shadow", "Ghost", "Root", "Admin", "User99", "Sniper"];
+        // Smart Name Generator (100,000+ Combinations)
+        const firstNames = ["صقر", "بندر", "خالد", "سيف", "تركي", "نواف", "عزوز", "سلطان", "فيصل", "راكان", "Shadow", "Ghost", "Dark", "Sniper", "Vortex", "Cyber", "Hunter", "Elite", "Root", "Admin", "Volt", "Alpha", "Zero"];
+        const lastNames = ["الشمري", "العنزي", "المطيري", "القحطاني", "العتيبي", "الدوسري", "الحربي", "Z", "Killer", "Master", "X", "DDoS", "Eagle", "Wolf", "Skull", "01", "707", "505"];
+        const plans = ["Month $14", "Month $17", "Month $22", "Month $45", "Lifetime $150"];
+
+        function generateName() {
+            const f = firstNames[Math.floor(Math.random()*firstNames.length)];
+            const l = lastNames[Math.floor(Math.random()*lastNames.length)];
+            const n = Math.floor(Math.random()*999);
+            return Math.random() > 0.4 ? `${f}_${l}` : `${f}${n}`;
+        }
+
         function showNotif() {
             const box = document.getElementById('notification-box');
             const n = document.createElement('div'); n.className = 'notif';
-            n.innerHTML = `User <b>${names[Math.floor(Math.random()*names.length)]}</b> purchased a plan!`;
+            const name = generateName();
+            const plan = plans[Math.floor(Math.random()*plans.length)];
+            n.innerHTML = `المستخدم <b>${name}</b> قام بشراء خطة <b>${plan}</b> بنجاح!`;
             box.appendChild(n);
-            setTimeout(() => n.remove(), 4500);
+            setTimeout(() => { n.style.opacity='0'; setTimeout(()=>n.remove(), 500); }, 4000);
         }
-        setInterval(showNotif, 8000);
+        setInterval(showNotif, 6000);
 
-        // Counter
-        setInterval(() => { document.getElementById('user-count').innerText = Math.floor(Math.random()*20)+30; }, 3000);
+        // Live Counter
+        setInterval(() => { document.getElementById('user-count').innerText = Math.floor(Math.random()*40)+120; }, 3000);
 
-        // Copy
+        // Copy Discord
         function copyDiscord() {
             navigator.clipboard.writeText("e65e");
-            alert("Discord ID Copied: e65e");
+            alert("✅ Discord ID Copied: e65e");
         }
     </script>
 </body>
