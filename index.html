@@ -1,37 +1,50 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>REMEMBER STORE | SYSTEM</title>
+    <title>REMEMBER OS | SECURE TERMINAL</title>
     <style>
         * { box-sizing: border-box; cursor: none; }
-        body { margin: 0; padding: 0; background: #000; color: white; font-family: 'Consolas', monospace; overflow: hidden; height: 100vh; }
+        body { margin: 0; padding: 0; background: #000; color: #ff0000; font-family: 'Courier New', Courier, monospace; overflow: hidden; height: 100vh; }
 
-        /* المؤشر والتأثيرات */
-        #custom-cursor { position: fixed; width: 10px; height: 10px; background: #e61e2a; border-radius: 50%; pointer-events: none; z-index: 10001; box-shadow: 0 0 10px #e61e2a; }
+        /* Custom Laser Cursor */
+        #custom-cursor { position: fixed; width: 12px; height: 12px; background: #ff0000; border-radius: 50%; pointer-events: none; z-index: 10001; box-shadow: 0 0 15px #ff0000, 0 0 30px #ff0000; }
         
-        /* قماش خلفية الخوارزميات */
-        #hacker-canvas { position: fixed; top: 0; left: 0; z-index: -1; }
+        /* High Density Hacker Canvas */
+        #hacker-canvas { position: fixed; top: 0; left: 0; z-index: -1; filter: blur(0.5px); }
 
-        /* حاوية النماذج */
-        #auth-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 999; display: flex; justify-content: center; align-items: center; }
-        .auth-container { background: rgba(10, 10, 10, 0.98); border: 1px solid #e61e2a; padding: 30px; border-radius: 15px; width: 380px; text-align: center; box-shadow: 0 0 30px #e61e2a44; backdrop-filter: blur(5px); }
-        .auth-input { width: 100%; background: #050505; border: 1px solid #333; padding: 12px; margin-bottom: 5px; color: white; border-radius: 5px; text-align: center; outline: none; transition: 0.3s; }
-        .auth-input:focus { border-color: #e61e2a; box-shadow: 0 0 10px #e61e2a; }
+        /* Auth Screen */
+        #auth-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 999; display: flex; justify-content: center; align-items: center; }
+        .auth-container { background: rgba(5, 5, 5, 0.95); border: 2px solid #ff0000; padding: 40px; border-radius: 5px; width: 400px; text-align: center; box-shadow: 0 0 50px rgba(255, 0, 0, 0.3); border-style: double; }
         
-        .error-msg { color: #e61e2a; font-size: 0.8rem; height: 18px; margin-bottom: 10px; opacity: 0; transition: 0.3s; font-weight: bold; }
+        h2 { letter-spacing: 5px; text-shadow: 0 0 10px #ff0000; margin-bottom: 30px; font-size: 1.5rem; }
+
+        .auth-input { width: 100%; background: #000; border: 1px solid #ff0000; padding: 15px; margin-bottom: 5px; color: #ff0000; border-radius: 0; text-align: center; outline: none; font-weight: bold; }
+        .auth-input:focus { box-shadow: 0 0 15px rgba(255, 0, 0, 0.5); }
         
-        .auth-btn { width: 100%; background: #e61e2a; color: white; border: none; padding: 12px; border-radius: 5px; font-weight: bold; cursor: pointer; margin-top: 5px; text-transform: uppercase; letter-spacing: 2px; }
-        .auth-btn:hover { background: #ff0011; box-shadow: 0 0 20px #e61e2a; }
+        .error-msg { color: #fff; background: #ff0000; font-size: 0.7rem; height: 20px; margin-bottom: 15px; opacity: 0; transition: 0.2s; font-weight: bold; line-height: 20px; text-transform: uppercase; }
+        
+        .auth-btn { width: 100%; background: #ff0000; color: #000; border: none; padding: 15px; font-weight: bold; cursor: pointer; margin-top: 10px; font-size: 1rem; transition: 0.3s; text-transform: uppercase; }
+        .auth-btn:hover { background: #fff; color: #ff0000; box-shadow: 0 0 25px #ff0000; }
 
-        .switch-text { margin-top: 20px; font-size: 0.85rem; color: #888; }
-        .switch-link { color: #e61e2a; cursor: pointer; text-decoration: underline; }
+        .switch-text { margin-top: 25px; font-size: 0.8rem; color: #666; }
+        .switch-link { color: #ff0000; cursor: pointer; text-decoration: none; font-weight: bold; }
+        .switch-link:hover { text-decoration: underline; }
 
-        /* المتجر */
-        #store-content { display: none; opacity: 0; transition: 1s ease; padding: 20px; position: relative; z-index: 10; }
-        .user-header { width: 100%; max-width: 1100px; margin: 0 auto 15px auto; display: flex; justify-content: space-between; padding: 10px 20px; background: rgba(230, 30, 42, 0.1); border: 1px solid #e61e2a; border-radius: 8px; backdrop-filter: blur(10px); }
-        .glitch { font-size: 3.5rem; color: #e61e2a; font-weight: bold; text-align: center; margin-bottom: 20px; text-shadow: 3px 3px #000; letter-spacing: 5px; }
+        /* Store UI */
+        #store-content { display: none; opacity: 0; transition: 1s ease; padding: 30px; }
+        .user-header { display: flex; justify-content: space-between; padding: 15px; border: 1px solid #ff0000; margin-bottom: 40px; background: rgba(255, 0, 0, 0.05); }
+        .glitch { font-size: 4rem; text-align: center; font-weight: 900; text-shadow: 5px 5px #000; letter-spacing: 10px; animation: glitch-anim 2s infinite; }
+        
+        @keyframes glitch-anim {
+            0% { transform: translate(0); }
+            20% { transform: translate(-3px, 3px); }
+            40% { transform: translate(-3px, -3px); }
+            60% { transform: translate(3px, 3px); }
+            80% { transform: translate(3px, -3px); }
+            100% { transform: translate(0); }
+        }
     </style>
 </head>
 <body>
@@ -41,79 +54,69 @@
 
     <div id="auth-screen">
         <div class="auth-container" id="login-box">
-            <h2 style="color:#e61e2a; margin-bottom:20px;">SYSTEM LOGIN</h2>
-            <input type="text" class="auth-input" id="login-user" placeholder="USER ID">
+            <h2>TERMINAL LOGIN</h2>
+            <input type="text" class="auth-input" id="login-user" placeholder="USERNAME">
             <input type="password" class="auth-input" id="login-pass" placeholder="PASSWORD">
-            <div id="login-error" class="error-msg">INVALID DATA</div>
-            <button class="auth-btn" onclick="handleLogin()">ACCESS SYSTEM</button>
-            <p class="switch-text">ليس لديك تصريح؟ <span class="switch-link" onclick="toggleAuth()">إنشاء حساب جديد</span></p>
+            <div id="login-error" class="error-msg">ACCESS DENIED</div>
+            <button class="auth-btn" onclick="handleLogin()">INITIALIZE SESSION</button>
+            <p class="switch-text">NEW USER? <span class="switch-link" onclick="toggleAuth()">REGISTER ID</span></p>
         </div>
 
         <div class="auth-container" id="signup-box" style="display:none;">
-            <h2 style="color:#e61e2a; margin-bottom:20px;">INITIALIZE ID</h2>
-            <input type="text" class="auth-input" id="reg-user" placeholder="NEW USER ID">
+            <h2>ENCRYPT NEW ID</h2>
+            <input type="text" class="auth-input" id="reg-user" placeholder="PICK USERNAME">
             <input type="password" class="auth-input" id="reg-pass" placeholder="PASSWORD">
-            <input type="password" class="auth-input" id="reg-pass-confirm" placeholder="CONFIRM PASSWORD">
-            <div id="reg-error" class="error-msg">SYSTEM ERROR</div>
-            <button class="auth-btn" onclick="handleSignup()">SAVE & PROTECT</button>
-            <p class="switch-text">لديك تصريح سابق؟ <span class="switch-link" onclick="toggleAuth()">تسجيل الدخول</span></p>
+            <input type="password" class="auth-input" id="reg-pass-confirm" placeholder="CONFIRM PASS">
+            <div id="reg-error" class="error-msg">ERROR DETECTED</div>
+            <button class="auth-btn" onclick="handleSignup()">ENCRYPT & SAVE</button>
+            <p class="switch-text">HAVE ID? <span class="switch-link" onclick="toggleAuth()">BACK TO LOGIN</span></p>
         </div>
     </div>
 
     <div id="store-content">
         <div class="user-header">
-            <div>REMEMBER_OS: <b id="display-name" style="color:#e61e2a;"></b></div>
-            <button onclick="logout()" style="background:#e61e2a; border:none; color:#fff; cursor:pointer; font-size:0.7rem; padding:5px 15px; border-radius:3px;">TERMINATE SESSION</button>
+            <div>LOGGED_AS: <span id="display-name" style="color:#fff;"></span></div>
+            <div onclick="logout()" style="color:#ff0000; cursor:pointer;">[ TERMINATE ]</div>
         </div>
-        <div class="glitch">REMEMBER STORE</div>
-        </div>
+        <h1 class="glitch">REMEMBER STORE</h1>
+    </div>
 
     <script>
-        // تشغيل الخلفية فوراً
+        // High Intensity Matrix Rain
         const canvas = document.getElementById('hacker-canvas');
         const ctx = canvas.getContext('2d');
-
         canvas.width = window.innerWidth;
         canvas.height = window.innerHeight;
 
-        // خوارزميات وأكواد هاك حقيقية
-        const algorithms = [
-            "01", "10", "root@access", "inject_void", "bypass_firewall", 
-            "encrypt_0x99", "kernel.dll", "void_main()", "{ status: 200 }",
-            "proxy_node", "db_overflow", "REMEMBER_CORE", "sys.admin",
-            "HTTP_REQUEST", "GET_SESSION", "000.12.X.0"
-        ];
-
-        const fontSize = 16;
+        const codes = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789$#@%&*()_+-=[]{}|;:,.<>?/";
+        const fontSize = 18;
         const columns = canvas.width / fontSize;
-        const drops = Array.from({ length: columns }).fill(1);
+        const drops = Array(Math.floor(columns)).fill(1);
 
         function drawMatrix() {
-            ctx.fillStyle = "rgba(0, 0, 0, 0.08)"; // جعل الخلفية شبه شفافة لتترك أثراً
+            ctx.fillStyle = "rgba(0, 0, 0, 0.1)"; 
             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-            ctx.fillStyle = "#e61e2a"; // اللون الأحمر
-            ctx.font = fontSize + "px monospace";
+            // Glow effect
+            ctx.shadowBlur = 8;
+            ctx.shadowColor = "#ff0000";
+            ctx.fillStyle = "#ff0000";
+            ctx.font = "bold " + fontSize + "px monospace";
 
             drops.forEach((y, i) => {
-                const text = algorithms[Math.floor(Math.random() * algorithms.length)];
-                ctx.fillText(text, i * fontSize * 4, y * fontSize); // ضربنا بـ 4 لتباعد الأكواد
+                const text = codes[Math.floor(Math.random() * codes.length)];
+                ctx.fillText(text, i * fontSize, y * fontSize);
 
-                if (y * fontSize > canvas.height && Math.random() > 0.975) {
+                if (y * fontSize > canvas.height && Math.random() > 0.98) {
                     drops[i] = 0;
                 }
                 drops[i]++;
             });
         }
 
-        setInterval(drawMatrix, 50);
+        setInterval(drawMatrix, 40); // Faster and stronger
 
-        // نظام تسجيل الدخول (LocalStorage)
-        window.onload = () => {
-            const loggedIn = localStorage.getItem("current_session");
-            if (loggedIn) { showStore(loggedIn); }
-        };
-
+        // System Logic
         function showError(elementId, message) {
             const errEl = document.getElementById(elementId);
             errEl.innerText = message;
@@ -122,8 +125,10 @@
         }
 
         function toggleAuth() {
-            document.getElementById('login-box').style.display = (document.getElementById('login-box').style.display === "none") ? "block" : "none";
-            document.getElementById('signup-box').style.display = (document.getElementById('signup-box').style.display === "none") ? "block" : "none";
+            const loginBox = document.getElementById('login-box');
+            const signupBox = document.getElementById('signup-box');
+            loginBox.style.display = (loginBox.style.display === "none") ? "block" : "none";
+            signupBox.style.display = (signupBox.style.display === "none") ? "block" : "none";
         }
 
         function handleSignup() {
@@ -131,12 +136,12 @@
             const pass = document.getElementById('reg-pass').value;
             const confirm = document.getElementById('reg-pass-confirm').value;
 
-            if(!user || !pass) { showError("reg-error", "DATA MISSING"); return; }
-            if(pass !== confirm) { showError("reg-error", "PASSWORD MISMATCH"); return; }
-            if(localStorage.getItem("user_" + user)) { showError("reg-error", "ID ALREADY EXISTS"); return; }
+            if(!user || !pass) { showError("reg-error", "DATA NULL"); return; }
+            if(pass !== confirm) { showError("reg-error", "MISMATCH DETECTED"); return; }
+            if(localStorage.getItem("user_" + user)) { showError("reg-error", "ID TAKEN"); return; }
 
             localStorage.setItem("user_" + user, pass);
-            alert("SUCCESS: ACCOUNT SECURED.");
+            alert("ID SUCCESSFULLY ENCRYPTED.");
             toggleAuth();
         }
 
@@ -149,7 +154,7 @@
                 localStorage.setItem("current_session", user);
                 showStore(user);
             } else {
-                showError("login-error", "ACCESS DENIED: WRONG ID/PASS");
+                showError("login-error", "INVALID CREDENTIALS");
             }
         }
 
@@ -170,6 +175,11 @@
         window.addEventListener('resize', () => {
             canvas.width = window.innerWidth; canvas.height = window.innerHeight;
         });
+
+        window.onload = () => {
+            const loggedIn = localStorage.getItem("current_session");
+            if (loggedIn) showStore(loggedIn);
+        };
     </script>
 </body>
 </html>
