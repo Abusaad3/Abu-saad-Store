@@ -3,144 +3,193 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>REMEMBER STORE | BLOOD MOON</title>
+    <title>REMEMBER STORE | ELITE</title>
     <style>
-        * { box-sizing: border-box; }
+        * { box-sizing: border-box; cursor: none; }
         body {
             margin: 0; padding: 0; background: #000; color: white;
-            font-family: 'Segoe UI', sans-serif; overflow: hidden; height: 100vh;
+            font-family: 'Consolas', monospace; overflow: hidden; height: 100vh;
         }
 
-        /* خلفية الخوارزميات */
-        #matrix-canvas { position: fixed; top: 0; left: 0; z-index: -2; opacity: 0.3; }
+        /* شاشة التحميل */
+        #preloader {
+            position: fixed; width: 100%; height: 100%; background: #000;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            z-index: 9999; transition: 0.5s;
+        }
+        .loader-bar { width: 200px; height: 2px; background: #222; margin-top: 10px; position: relative; }
+        .loader-progress { position: absolute; height: 100%; background: #e61e2a; width: 0%; animation: load 1.5s forwards; }
+        @keyframes load { to { width: 100%; } }
 
-        /* القمر الأحمر في الزاوية */
+        /* العناصر الخلفية */
+        #matrix-canvas { position: fixed; top: 0; left: 0; z-index: -2; opacity: 0.25; }
         .blood-moon {
-            position: fixed; top: 40px; right: 40px;
-            width: 120px; height: 120px;
-            background: radial-gradient(circle, #ff0000 0%, #8b0000 70%, #4a0000 100%);
-            border-radius: 50%;
-            box-shadow: 0 0 50px rgba(255, 0, 0, 0.6), inset 20px 0 40px rgba(0,0,0,0.7);
-            z-index: -1;
-            animation: moon-glow 5s infinite alternate ease-in-out;
+            position: fixed; top: 30px; right: 40px; width: 100px; height: 100px;
+            background: radial-gradient(circle, #ff0000 0%, #4a0000 100%);
+            border-radius: 50%; box-shadow: 0 0 40px rgba(255, 0, 0, 0.4); z-index: -1;
+            animation: pulse 4s infinite alternate;
         }
 
-        @keyframes moon-glow {
-            from { box-shadow: 0 0 40px rgba(255, 0, 0, 0.5); transform: scale(1); }
-            to { box-shadow: 0 0 70px rgba(255, 0, 0, 0.8); transform: scale(1.05); }
+        /* الماوس المخصص */
+        #custom-cursor {
+            position: fixed; width: 10px; height: 10px; background: #e61e2a;
+            border-radius: 50%; pointer-events: none; z-index: 10000; box-shadow: 0 0 10px #e61e2a;
         }
-
-        #cursor-glow {
-            position: fixed; width: 400px; height: 400px;
-            background: radial-gradient(circle, rgba(230, 30, 42, 0.15) 0%, rgba(0,0,0,0) 70%);
-            border-radius: 50%; pointer-events: none; transform: translate(-50%, -50%); z-index: 0;
-        }
-
-        .particle { position: fixed; background: #e61e2a; border-radius: 50%; pointer-events: none; z-index: 99; }
 
         .wrapper {
             display: flex; flex-direction: column; justify-content: center;
-            align-items: center; height: 100vh; width: 100%; padding: 10px; z-index: 10; position: relative;
+            align-items: center; height: 100vh; width: 100%; z-index: 10; position: relative;
         }
 
-        h1 { font-size: 3.2rem; color: #e61e2a; text-shadow: 0 0 20px #e61e2a; margin: 0 0 20px 0; letter-spacing: 3px; }
+        /* Glitch Effect */
+        .glitch {
+            font-size: 3.5rem; color: #e61e2a; font-weight: bold; position: relative;
+            text-shadow: 0.05em 0 0 #fff, -0.05em -0.025em 0 #e61e2a;
+            animation: glitch 1s infinite; margin-bottom: 15px;
+        }
+        @keyframes glitch {
+            0% { transform: translate(0); }
+            20% { transform: translate(-2px, 2px); }
+            40% { transform: translate(-2px, -2px); }
+            60% { transform: translate(2px, 2px); }
+            80% { transform: translate(2px, -2px); }
+            100% { transform: translate(0); }
+        }
 
         .cards-grid {
             display: grid; grid-template-columns: repeat(4, 1fr);
-            gap: 12px; width: 100%; max-width: 1100px; margin-bottom: 20px;
+            gap: 12px; width: 95%; max-width: 1100px; margin-bottom: 15px;
         }
-
         .card {
-            background: rgba(10, 10, 10, 0.9); border: 1px solid #1a1a1a;
-            border-radius: 10px; padding: 15px; text-align: center; transition: 0.3s;
+            background: rgba(10, 10, 10, 0.85); border: 1px solid #222;
+            border-radius: 8px; padding: 15px; text-align: center; transition: 0.3s;
+            backdrop-filter: blur(5px);
         }
-        .card:hover { border-color: #e61e2a; transform: translateY(-5px); box-shadow: 0 5px 25px rgba(230,30,42,0.4); }
+        .card:hover { border-color: #e61e2a; transform: scale(1.03); }
 
-        .price { font-size: 1.6rem; color: #e61e2a; font-weight: bold; margin-bottom: 8px; display: block; }
-        .details { list-style: none; padding: 0; margin: 10px 0; font-size: 0.78rem; color: #ccc; text-align: right; }
+        .price { font-size: 1.5rem; color: #e61e2a; font-weight: bold; margin-bottom: 5px; display: block; }
+        .details { list-style: none; padding: 0; margin: 10px 0; font-size: 0.75rem; color: #aaa; text-align: right; }
         .details li { padding: 3px 0; border-bottom: 1px solid #1a1a1a; }
-        .details li::before { content: "• "; color: #e61e2a; }
+        .details li::before { content: "> "; color: #e61e2a; }
 
         .btn {
             display: block; width: 100%; background: #e61e2a; color: white;
-            padding: 8px; border-radius: 4px; text-decoration: none; font-weight: bold; font-size: 0.85rem;
+            padding: 7px; border-radius: 4px; text-decoration: none; font-weight: bold; font-size: 0.8rem;
         }
 
         .addons-section {
-            background: rgba(20, 0, 0, 0.5); border: 1px solid #e61e2a;
-            border-radius: 10px; padding: 12px; width: 100%; max-width: 900px;
+            background: rgba(15, 0, 0, 0.6); border: 1px solid #e61e2a;
+            border-radius: 10px; padding: 10px; width: 95%; max-width: 900px;
             display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px;
         }
-        .addons-header { grid-column: 1 / -1; color: #e61e2a; font-size: 1.3rem; font-weight: bold; margin-bottom: 5px; }
-        .addon-item { border-bottom: 1px dashed #333; padding: 4px; font-size: 0.8rem; display: flex; justify-content: space-between; }
-        .addon-p { color: #e61e2a; font-weight: bold; }
+        .addon-item { border-bottom: 1px dashed #333; padding: 4px; font-size: 0.75rem; display: flex; justify-content: space-between; }
 
-        /* توقيع أبو سعد */
-        .credits {
-            position: fixed; bottom: 15px; right: 20px; text-align: right;
-            font-size: 0.75rem; color: #888; z-index: 100;
+        /* التنبيهات */
+        #notification-box {
+            position: fixed; bottom: 20px; left: 20px; z-index: 1000;
         }
-        .credits b { color: #e61e2a; text-shadow: 0 0 10px #e61e2a; font-size: 0.95rem; }
-        .discord-tag { color: #fff; background: rgba(230,30,42,0.2); padding: 2px 8px; border-radius: 10px; margin-top: 5px; display: inline-block; border: 1px solid #e61e2a; }
+        .notif {
+            background: rgba(10, 10, 10, 0.9); border-right: 4px solid #e61e2a;
+            padding: 10px 20px; margin-top: 10px; font-size: 0.8rem;
+            animation: slideIn 0.5s forwards, fadeOut 0.5s 4s forwards;
+        }
+        @keyframes slideIn { from { transform: translateX(-100%); } to { transform: translateX(0); } }
+        @keyframes fadeOut { to { opacity: 0; transform: translateY(20px); } }
+
+        /* العداد والتوقيع */
+        .live-counter { position: fixed; top: 20px; left: 20px; color: #e61e2a; font-size: 0.8rem; }
+        .credits { position: fixed; bottom: 15px; right: 20px; text-align: right; font-size: 0.75rem; }
+        .discord-copy { 
+            color: #fff; background: #e61e2a; padding: 2px 8px; border-radius: 5px; 
+            cursor: pointer; margin-top: 5px; display: inline-block; 
+        }
+
+        @keyframes pulse { from { opacity: 0.4; } to { opacity: 0.8; } }
     </style>
 </head>
 <body>
 
-    <canvas id="matrix-canvas"></canvas>
-    
-    <div class="blood-moon"></div>
+    <div id="preloader">
+        <div style="color:#e61e2a; font-weight:bold; letter-spacing:5px;">BYPASSING...</div>
+        <div class="loader-bar"><div class="loader-progress"></div></div>
+    </div>
 
-    <div id="cursor-glow"></div>
+    <div id="custom-cursor"></div>
+    <canvas id="matrix-canvas"></canvas>
+    <div class="blood-moon"></div>
+    <div id="notification-box"></div>
+    <div class="live-counter">LIVE USERS: <span id="user-count">43</span></div>
 
     <div class="wrapper">
-        <h1>REMEMBER STORE</h1>
+        <div class="glitch">REMEMBER STORE</div>
 
         <div class="cards-grid">
-            <div class="card"><span class="price">$14</span><ul class="details"><li>1 Concur</li><li>60s Boot</li><li>45s Cool</li><li>Default</li></ul><a href="https://discord.gg/RMB" class="btn">Purchase</a></div>
-            <div class="card"><span class="price">$17</span><ul class="details"><li>1 Concur</li><li>120s Boot</li><li>30s Cool</li><li>Default</li></ul><a href="https://discord.gg/RMB" class="btn">Purchase</a></div>
-            <div class="card"><span class="price">$22</span><ul class="details"><li>2 Concur</li><li>120s Boot</li><li>20s Cool</li><li>VIP Methods</li></ul><a href="https://discord.gg/RMB" class="btn">Purchase</a></div>
-            <div class="card" style="border-color:#e61e2a;"><span class="price">$45 / $150</span><ul class="details"><li>3 Concur</li><li>120s Boot</li><li>15s Cool</li><li>VIP Methods</li></ul><a href="https://discord.gg/RMB" class="btn">Purchase</a></div>
+            <div class="card"><span class="price">$14</span><ul class="details"><li>1 Concur</li><li>60s Boot</li><li>45s Cool</li></ul><a href="#" class="btn">Select</a></div>
+            <div class="card"><span class="price">$17</span><ul class="details"><li>1 Concur</li><li>120s Boot</li><li>30s Cool</li></ul><a href="#" class="btn">Select</a></div>
+            <div class="card"><span class="price">$22</span><ul class="details"><li>2 Concur</li><li>120s Boot</li><li>20s Cool</li></ul><a href="#" class="btn">Select</a></div>
+            <div class="card" style="box-shadow: 0 0 15px #e61e2a;"><span class="price">$45+</span><ul class="details"><li>3 Concur</li><li>120s Boot</li><li>15s Cool</li></ul><a href="#" class="btn">Select</a></div>
         </div>
 
         <div class="addons-section">
-            <div class="addons-header">Remember Addons</div>
-            <div class="addon-item"><span>+1 Concur</span><span class="addon-p">15$</span></div>
-            <div class="addon-item"><span>+60s Boot</span><span class="addon-p">10$</span></div>
-            <div class="addon-item"><span>API Access</span><span class="addon-p">20$</span></div>
-            <div class="addon-item"><span>VIP Methods</span><span class="addon-p">15$</span></div>
-            <div class="addon-item"><span>0 Cooldown</span><span class="addon-p">10$</span></div>
+            <div class="addon-item"><span>+1 Concur</span><span style="color:#e61e2a">15$</span></div>
+            <div class="addon-item"><span>+60s Boot</span><span style="color:#e61e2a">10$</span></div>
+            <div class="addon-item"><span>API Access</span><span style="color:#e61e2a">20$</span></div>
+            <div class="addon-item"><span>VIP Methods</span><span style="color:#e61e2a">15$</span></div>
+            <div class="addon-item"><span>0 Cooldown</span><span style="color:#e61e2a">10$</span></div>
+            <div class="addon-item"><span>Admin Support</span><span style="color:#e61e2a">FREE</span></div>
         </div>
     </div>
 
     <div class="credits">
         Designed & Programmed by<br>
-        <b>Abu saad</b><br>
-        <span class="discord-tag">Discord: e65e</span>
+        <b style="color:#e61e2a">Abu saad</b><br>
+        <div class="discord-copy" onclick="copyDiscord()">Discord: e65e</div>
     </div>
 
     <script>
+        // Matrix
         const canvas = document.getElementById('matrix-canvas'), ctx = canvas.getContext('2d');
         canvas.width = window.innerWidth; canvas.height = window.innerHeight;
-        const letters = "010101REMEMBER", fontSize = 16, columns = canvas.width / fontSize, drops = Array(Math.floor(columns)).fill(1);
+        const letters = "REMEMBER01", fontSize = 16, columns = canvas.width/fontSize, drops = Array(Math.floor(columns)).fill(1);
         function draw() {
-            ctx.fillStyle = "rgba(0, 0, 0, 0.1)"; ctx.fillRect(0, 0, canvas.width, canvas.height);
-            ctx.fillStyle = "#e61e2a"; ctx.font = fontSize + "px monospace";
-            drops.forEach((y, i) => {
+            ctx.fillStyle = "rgba(0,0,0,0.1)"; ctx.fillRect(0,0,canvas.width,canvas.height);
+            ctx.fillStyle = "#e61e2a"; ctx.font = fontSize+"px monospace";
+            drops.forEach((y,i) => {
                 ctx.fillText(letters[Math.floor(Math.random()*letters.length)], i*fontSize, y*fontSize);
-                if (y*fontSize > canvas.height && Math.random() > 0.975) drops[i] = 0; drops[i]++;
+                if(y*fontSize > canvas.height && Math.random() > 0.975) drops[i]=0; drops[i]++;
             });
         }
         setInterval(draw, 35);
 
-        const glow = document.getElementById('cursor-glow');
+        // Preloader
+        setTimeout(() => { document.getElementById('preloader').style.opacity = '0'; 
+        setTimeout(() => document.getElementById('preloader').remove(), 500); }, 1600);
+
+        // Cursor
+        const cursor = document.getElementById('custom-cursor');
         window.addEventListener('mousemove', (e) => {
-            glow.style.left = e.clientX + 'px'; glow.style.top = e.clientY + 'px';
-            const p = document.createElement('div'); p.className = 'particle';
-            const s = Math.random() * 4 + 'px'; p.style.width = s; p.style.height = s;
-            p.style.left = e.clientX + 'px'; p.style.top = e.clientY + 'px';
-            document.body.appendChild(p);
-            p.animate([{ opacity: 1 }, { opacity: 0, transform: `translate(${(Math.random()-0.5)*80}px, 80px)` }], 800).onfinish = () => p.remove();
+            cursor.style.left = e.clientX + 'px'; cursor.style.top = e.clientY + 'px';
         });
+
+        // Notifications
+        const names = ["Shadow", "Ghost", "Root", "Admin", "User99", "Sniper"];
+        function showNotif() {
+            const box = document.getElementById('notification-box');
+            const n = document.createElement('div'); n.className = 'notif';
+            n.innerHTML = `User <b>${names[Math.floor(Math.random()*names.length)]}</b> purchased a plan!`;
+            box.appendChild(n);
+            setTimeout(() => n.remove(), 4500);
+        }
+        setInterval(showNotif, 8000);
+
+        // Counter
+        setInterval(() => { document.getElementById('user-count').innerText = Math.floor(Math.random()*20)+30; }, 3000);
+
+        // Copy
+        function copyDiscord() {
+            navigator.clipboard.writeText("e65e");
+            alert("Discord ID Copied: e65e");
+        }
     </script>
 </body>
 </html>
