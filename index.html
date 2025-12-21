@@ -34,6 +34,7 @@
         .card { background: rgba(10,10,10,0.9); border: 1px solid #222; border-radius: 10px; padding: 15px; text-align: center; }
         .price { font-size: 1.5rem; color: #e61e2a; font-weight: bold; }
         
+        /* قسم الإضافات Remember Addons */
         .addons-section { background: rgba(20, 0, 0, 0.4); border: 1px solid #e61e2a; border-radius: 10px; padding: 15px; width: 100%; max-width: 900px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 0 auto; }
         .addon-item { border-bottom: 1px dashed #333; padding: 5px; font-size: 0.8rem; display: flex; justify-content: space-between; }
         
@@ -84,7 +85,7 @@
     </div>
 
     <script>
-        // دمج المفاتيح الخاصة بك يا أبو سعد
+        // تفعيل الإعدادات الخاصة بك
         (function(){ 
             emailjs.init("iyQw6V8cIt5c-9d6c"); 
         })();
@@ -118,14 +119,14 @@
                 otp_code: realOTP
             };
 
-            // استخدام الـ Service ID والـ Template ID الخاصين بك
+            // استخدام Service ID و Template ID الخاصين بك
             emailjs.send("service_dzosdhs", "template_x4dkp5s", params)
             .then(() => {
-                alert("تم إرسال الكود لبريدك بنجاح!");
+                alert("تم إرسال الكود لبريدك بنجاح! تحقق من الوارد أو البريد غير الهام.");
                 document.getElementById('input-fields').style.display = 'none';
                 document.getElementById('otp-section').style.display = 'block';
             }, (err) => {
-                alert("فشل الإرسال: تحقق من إعدادات EmailJS");
+                alert("فشل الإرسال: " + JSON.stringify(err));
                 btn.innerText = "ارسال كود التحقق";
                 btn.disabled = false;
             });
@@ -138,7 +139,7 @@
                 localStorage.setItem("rem_user", user);
                 showStore(user);
             } else {
-                alert("الكود خاطئ!");
+                alert("الكود خاطئ! تحقق من الإيميل.");
             }
         }
 
