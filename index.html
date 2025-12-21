@@ -29,7 +29,7 @@
         #store-content { display: none; width: 95%; max-width: 1300px; z-index: 10; flex-direction: column; align-items: center; padding: 40px 0; }
         .header-section { text-align: center; margin-bottom: 50px; }
         .header-title { color: #e61e2a; font-size: 3.5rem; font-weight: 900; letter-spacing: 15px; text-shadow: 0 0 30px #e61e2a; margin: 0; font-family: 'Consolas', monospace; }
-        .welcome-text { font-size: 0.9rem; color: #888; letter-spacing: 2px; margin-top: 10px; }
+        .live-counter { font-size: 0.8rem; color: #e61e2a; letter-spacing: 2px; margin-top: 15px; font-weight: bold; text-transform: uppercase; }
 
         /* Pricing Grid */
         .plans-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; width: 100%; margin-bottom: 40px; }
@@ -45,19 +45,22 @@
         .features-list li::before { content: "» "; color: #e61e2a; font-weight: bold; }
 
         /* Addons Section */
-        .addons-container { width: 100%; background: #050505; border: 1px solid #e61e2a; padding: 30px; border-radius: 4px; margin-bottom: 40px; box-shadow: inset 0 0 20px rgba(230, 30, 42, 0.1); }
+        .addons-container { width: 100%; background: #050505; border: 1px solid #e61e2a; padding: 30px; border-radius: 4px; margin-bottom: 40px; }
         .addons-title { color: #e61e2a; font-weight: bold; font-size: 1.2rem; letter-spacing: 3px; margin-bottom: 20px; display: block; text-align: center; }
         .addons-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; }
         .addon-item { background: #0a0a0a; border: 1px solid #1a1a1a; padding: 15px; display: flex; justify-content: space-between; align-items: center; font-size: 0.85rem; }
         .addon-item b { color: #e61e2a; font-size: 1rem; }
 
-        /* Footer / Credits */
+        /* Fake Purchase Notifications */
+        #notification-toast { position: fixed; bottom: 20px; left: 20px; background: #050505; border-left: 4px solid #e61e2a; padding: 15px 25px; border-radius: 4px; font-size: 0.8rem; z-index: 10000; box-shadow: 0 10px 30px rgba(0,0,0,0.8); display: none; animation: slideIn 0.5s ease; }
+        @keyframes slideIn { from { transform: translateX(-100%); } to { transform: translateX(0); } }
+
         .footer { text-align: center; border-top: 1px solid #1a1a1a; width: 100%; padding-top: 30px; margin-top: 20px; }
-        .dev-info { font-size: 0.9rem; letter-spacing: 1px; color: #fff; }
+        .dev-info { font-size: 0.9rem; color: #fff; }
         .dev-info span { color: #e61e2a; font-weight: bold; }
-        .discord-tag { color: #5865F2; font-weight: bold; margin-top: 10px; display: block; font-size: 0.85rem; }
+        .discord-tag { color: #5865F2; font-weight: bold; margin-top: 10px; display: block; }
         
-        .buy-btn { display: block; background: #e61e2a; color: white; text-decoration: none; padding: 12px; border-radius: 4px; font-weight: bold; font-size: 0.8rem; letter-spacing: 1px; transition: 0.3s; }
+        .buy-btn { display: block; background: #e61e2a; color: white; text-decoration: none; padding: 12px; border-radius: 4px; font-weight: bold; font-size: 0.8rem; text-align: center; transition: 0.3s; }
         .buy-btn:hover { background: #fff; color: #000; }
         .logout-link { color: #666; background: none; border: none; cursor: pointer; font-size: 0.75rem; margin-top: 20px; text-decoration: underline; }
     </style>
@@ -65,6 +68,7 @@
 <body>
 
     <canvas id="hacker-canvas"></canvas>
+    <div id="notification-toast"></div>
 
     <div id="auth-screen">
         <div class="insta-box">
@@ -92,7 +96,7 @@
     <div id="store-content">
         <div class="header-section">
             <h1 class="header-title">REMEMBER STORE</h1>
-            <div class="welcome-text">WELCOME BACK, <span id="display-user" style="color:#fff"></span></div>
+            <div class="live-counter">LIVE USERS: <span id="user-count">4,281</span></div>
         </div>
 
         <div class="plans-grid">
@@ -173,7 +177,37 @@
     </div>
 
     <script>
-        // UI & Auth Logic
+        // --- LIVE DATA ARRAYS ---
+        const names = [
+            "Al-Otaibi", "Al-Shammari", "Al-Harbi", "Al-Qahtani", "Al-Mutairi", "Al-Anzi", "Al-Dawsari", "Al-Subaie", "Al-Ghamdi", "Al-Zahrani",
+            "Smith", "Johnson", "Williams", "Brown", "Jones", "Garcia", "Miller", "Davis", "Rodriguez", "Martinez", "Hernandez", "Lopez",
+            "Fahad", "Sultan", "Mohammed", "Abdullah", "James", "Alex", "Tyler", "Shadow", "Ghost", "Root", "Admin", "User_88", "Sniper", "Wolf"
+        ];
+        const plans = ["Basic Plan", "Gold Plan", "Diamond Plan", "Champion Plan", "VIP Addon", "API Access"];
+
+        // --- COUNTER & NOTIFICATION LOGIC ---
+        function updateCounter() {
+            const countEl = document.getElementById('user-count');
+            let current = parseInt(countEl.innerText.replace(',', ''));
+            let change = Math.floor(Math.random() * 10) - 4; // عشوائي بين -4 و +5
+            countEl.innerText = (current + change).toLocaleString();
+        }
+        setInterval(updateCounter, 3000);
+
+        function showFakePurchase() {
+            const toast = document.getElementById('notification-toast');
+            const name = names[Math.floor(Math.random() * names.length)];
+            const plan = plans[Math.floor(Math.random() * plans.length)];
+            
+            toast.innerHTML = `🛒 <b style="color:#e61e2a">${name}</b> just purchased <b>${plan}</b>!`;
+            toast.style.display = 'block';
+            
+            setTimeout(() => { toast.style.display = 'none'; }, 4000);
+        }
+        // تظهر إشعار شراء كل 8 إلى 15 ثانية
+        setInterval(showFakePurchase, Math.random() * (15000 - 8000) + 8000);
+
+        // --- AUTH & UI LOGIC ---
         let currentMode = 'login';
         function toggleAuth() {
             const loginForm = document.getElementById('login-form');
@@ -230,7 +264,6 @@
         function enterApp(name) {
             document.getElementById('auth-screen').style.display = 'none';
             document.getElementById('store-content').style.display = 'flex';
-            document.getElementById('display-user').innerText = name.toUpperCase();
         }
 
         function logout() { sessionStorage.clear(); location.reload(); }
