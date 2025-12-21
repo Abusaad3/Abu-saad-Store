@@ -19,7 +19,7 @@
         .live-stats { color: #e61e2a; font-size: 0.85rem; margin-bottom: 5px; font-weight: bold; letter-spacing: 2px; text-shadow: 0 0 5px #e61e2a; }
         .header-title { color: #e61e2a; font-size: 2.8rem; font-weight: 900; letter-spacing: 12px; margin-bottom: 15px; text-shadow: 0 0 20px #e61e2a; }
 
-        /* Plans Grid - No Gaps */
+        /* Plans Grid */
         .plans-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; width: 100%; margin-bottom: 15px; }
         .card { background: rgba(5, 5, 5, 0.98); border: 1px solid #333; padding: 15px; border-radius: 4px; display: flex; flex-direction: column; text-align: left; transition: 0.3s; }
         .card:hover { border-color: #e61e2a; box-shadow: 0 0 15px rgba(230, 30, 42, 0.5); }
@@ -34,10 +34,29 @@
         .addon-item b { color: #e61e2a; }
 
         /* Buttons */
-        .btn-group { display: flex; flex-direction: column; gap: 4px; margin-top: auto; }
-        .buy-btn { background: #e61e2a; color: #fff; text-decoration: none; padding: 8px; border-radius: 3px; font-size: 0.8rem; font-weight: bold; text-align: center; transition: 0.3s; }
-        .ask-btn { background: transparent; color: #555; border: 1px solid #222; text-decoration: none; padding: 5px; border-radius: 3px; font-size: 0.65rem; text-align: center; }
-        .buy-btn:hover { background: #fff; color: #000; }
+        .btn-group { display: flex; flex-direction: column; gap: 6px; margin-top: auto; }
+        .buy-btn { background: #e61e2a; color: #fff; text-decoration: none; padding: 10px; border-radius: 3px; font-size: 0.8rem; font-weight: bold; text-align: center; transition: 0.3s; border: 1px solid #e61e2a; }
+        .buy-btn:hover { background: #fff; color: #000; border-color: #fff; }
+
+        /* الدعم المعدل - ابيض وعند الماوس احمر */
+        .ask-btn { 
+            background: transparent; 
+            color: #fff; 
+            border: 1px solid #fff; 
+            text-decoration: none; 
+            padding: 8px; 
+            border-radius: 3px; 
+            font-size: 0.75rem; 
+            font-weight: bold;
+            text-align: center; 
+            transition: 0.3s;
+        }
+        .ask-btn:hover { 
+            background: #e61e2a; 
+            color: #fff; 
+            border-color: #e61e2a; 
+            box-shadow: 0 0 10px #e61e2a;
+        }
 
         /* Credits */
         .credits { margin-top: 15px; text-align: center; padding: 10px; border-top: 1px solid #1a1a1a; width: 100%; }
@@ -73,8 +92,8 @@
                 <ul class="features">
                     <li>1 Concurrents</li>
                     <li>60 Seconds Boot Time</li>
-                    <li>45 Seconds Cooldown Time</li>
-                    <li>Access To Default Methods</li>
+                    <li>45 Seconds Cooldown</li>
+                    <li>Default Methods</li>
                 </ul>
                 <div class="btn-group">
                     <a href="https://discord.gg/RMB" target="_blank" class="buy-btn">PURCHASE</a>
@@ -88,8 +107,8 @@
                 <ul class="features">
                     <li>1 Concurrents</li>
                     <li>120 Seconds Boot Time</li>
-                    <li>30 Seconds Cooldown Time</li>
-                    <li>Access To Default Methods</li>
+                    <li>30 Seconds Cooldown</li>
+                    <li>Default Methods</li>
                 </ul>
                 <div class="btn-group">
                     <a href="https://discord.gg/RMB" target="_blank" class="buy-btn">PURCHASE</a>
@@ -103,8 +122,8 @@
                 <ul class="features">
                     <li>2 Concurrents</li>
                     <li>120 Seconds Boot Time</li>
-                    <li>20 Seconds Cooldown Time</li>
-                    <li>Access To Vip Methods</li>
+                    <li>20 Seconds Cooldown</li>
+                    <li>VIP Methods</li>
                 </ul>
                 <div class="btn-group">
                     <a href="https://discord.gg/RMB" target="_blank" class="buy-btn">PURCHASE</a>
@@ -118,9 +137,8 @@
                 <ul class="features">
                     <li>3 Concurrents</li>
                     <li>120 Seconds Boot Time</li>
-                    <li>15 Seconds Cooldown Time</li>
-                    <li>Access To Vip Methods</li>
-                    <li>Lifetime Option Available</li>
+                    <li>15 Seconds Cooldown</li>
+                    <li>VIP Methods</li>
                 </ul>
                 <div class="btn-group">
                     <a href="https://discord.gg/RMB" target="_blank" class="buy-btn">PURCHASE</a>
@@ -145,7 +163,7 @@
     </div>
 
     <script>
-        // Background Logic
+        // Matrix Canvas
         const canvas = document.getElementById('hacker-canvas');
         const ctx = canvas.getContext('2d');
         canvas.width = window.innerWidth; canvas.height = window.innerHeight;
@@ -162,17 +180,15 @@
         }
         setInterval(draw, 50);
 
-        // View Counter
-        let views = 1842;
-        setInterval(() => {
-            views += Math.floor(Math.random() * 15) - 7;
-            document.getElementById('view-count').innerText = views.toLocaleString();
-        }, 2500);
+        // Session Logic
+        function login() {
+            document.getElementById('auth-screen').style.display='none';
+            document.getElementById('store-content').style.display='flex';
+        }
 
-        // Name Database
-        const names = ["عبدالله العتيبي", "Alex Smith", "سلطان الحربي", "محمد القحطاني", "James Walker", "فهد المطيري", "خالد الشمري", "Ryan Jones", "صالح الرشيدي", "Ivan Petrov", "تركي العنزي", "احمد الدوسري"];
-        const b_plans = ["Champion Plan", "Diamond Plan", "Gold Plan", "VIP Methods", "API Access"];
-
+        // Fake Notifications
+        const names = ["عبدالله العتيبي", "محمد القحطاني", "سلطان الحربي", "James Walker", "Alex Smith", "فهد المطيري"];
+        const b_plans = ["Champion Plan", "Diamond Plan", "Gold Plan", "VIP Methods"];
         function spawnNotify() {
             const box = document.getElementById('notify-box');
             const n = document.createElement('div');
@@ -183,13 +199,7 @@
             box.appendChild(n);
             setTimeout(() => { n.style.opacity='0'; setTimeout(()=>n.remove(),500); }, 5000);
         }
-        setInterval(spawnNotify, 7000);
-
-        function login() {
-            document.getElementById('auth-screen').style.display='none';
-            document.getElementById('store-content').style.display='flex';
-        }
+        setInterval(spawnNotify, 8000);
     </script>
 </body>
 </html>
-
