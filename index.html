@@ -8,19 +8,20 @@
         * { box-sizing: border-box; cursor: none; }
         body { margin: 0; padding: 0; background: #000; color: white; font-family: 'Consolas', monospace; overflow: hidden; height: 100vh; }
 
-        #loading-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #e61e2a; z-index: 10000; display: flex; justify-content: center; align-items: center; transition: 1s ease; }
-        .loader-text { font-size: 2rem; font-weight: bold; letter-spacing: 5px; animation: blink 0.8s infinite; }
-        @keyframes blink { 50% { opacity: 0; } }
-
+        /* المؤشر والتأثيرات */
         #custom-cursor { position: fixed; width: 10px; height: 10px; background: #e61e2a; border-radius: 50%; pointer-events: none; z-index: 10001; box-shadow: 0 0 10px #e61e2a; }
+        #matrix-canvas { position: fixed; top: 0; left: 0; z-index: -1; opacity: 0.15; }
 
         /* حاوية النماذج */
         #auth-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 999; display: flex; justify-content: center; align-items: center; }
         .auth-container { background: rgba(10, 10, 10, 0.95); border: 1px solid #e61e2a; padding: 30px; border-radius: 15px; width: 380px; text-align: center; box-shadow: 0 0 30px #e61e2a44; }
-        .auth-input { width: 100%; background: #050505; border: 1px solid #333; padding: 12px; margin-bottom: 15px; color: white; border-radius: 5px; text-align: center; outline: none; }
+        .auth-input { width: 100%; background: #050505; border: 1px solid #333; padding: 12px; margin-bottom: 5px; color: white; border-radius: 5px; text-align: center; outline: none; transition: 0.3s; }
         .auth-input:focus { border-color: #e61e2a; }
-        .auth-btn { width: 100%; background: #e61e2a; color: white; border: none; padding: 12px; border-radius: 5px; font-weight: bold; cursor: pointer; margin-top: 10px; }
         
+        /* رسالة الخطأ الحمراء */
+        .error-msg { color: #e61e2a; font-size: 0.8rem; height: 18px; margin-bottom: 10px; opacity: 0; transition: 0.3s; }
+        
+        .auth-btn { width: 100%; background: #e61e2a; color: white; border: none; padding: 12px; border-radius: 5px; font-weight: bold; cursor: pointer; margin-top: 5px; }
         .switch-text { margin-top: 20px; font-size: 0.85rem; color: #888; }
         .switch-link { color: #e61e2a; cursor: pointer; text-decoration: underline; }
 
@@ -28,17 +29,13 @@
         #store-content { display: none; opacity: 0; transition: 1s ease; padding: 20px; position: relative; z-index: 10; }
         .user-header { width: 100%; max-width: 1100px; margin: 0 auto 15px auto; display: flex; justify-content: space-between; padding: 10px 20px; background: #e61e2a1a; border: 1px solid #e61e2a; border-radius: 8px; }
         .glitch { font-size: 3rem; color: #e61e2a; font-weight: bold; text-align: center; margin-bottom: 20px; text-shadow: 2px 2px #fff; }
-        
         .cards-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; width: 100%; max-width: 1100px; margin: 0 auto 20px auto; }
         .card { background: rgba(10,10,10,0.9); border: 1px solid #222; border-radius: 10px; padding: 20px; text-align: center; }
         .price { font-size: 1.8rem; color: #e61e2a; font-weight: bold; }
-        
-        #matrix-canvas { position: fixed; top: 0; left: 0; z-index: -1; opacity: 0.15; }
     </style>
 </head>
 <body>
 
-    <div id="loading-overlay"><div class="loader-text">REMEMBERING...</div></div>
     <div id="custom-cursor"></div>
     <canvas id="matrix-canvas"></canvas>
 
@@ -47,15 +44,17 @@
             <h2 style="color:#e61e2a; margin-bottom:20px;">SYSTEM LOGIN</h2>
             <input type="text" class="auth-input" id="login-user" placeholder="اسم المستخدم">
             <input type="password" class="auth-input" id="login-pass" placeholder="كلمة المرور">
+            <div id="login-error" class="error-msg">خطأ في البيانات</div>
             <button class="auth-btn" onclick="handleLogin()">دخول</button>
             <p class="switch-text">ليس لديك حساب؟ <span class="switch-link" onclick="toggleAuth()">إنشاء حساب جديد</span></p>
         </div>
 
         <div class="auth-container" id="signup-box" style="display:none;">
             <h2 style="color:#e61e2a; margin-bottom:20px;">CREATE ACCOUNT</h2>
-            <input type="text" class="auth-input" id="reg-user" placeholder="اختر اسم مستخدم">
+            <input type="text" class="auth-input" id="reg-user" placeholder="اسم مستخدم جديد">
             <input type="password" class="auth-input" id="reg-pass" placeholder="كلمة المرور">
             <input type="password" class="auth-input" id="reg-pass-confirm" placeholder="تأكيد كلمة المرور">
+            <div id="reg-error" class="error-msg">حدث خطأ ما</div>
             <button class="auth-btn" onclick="handleSignup()">إنشاء وحفظ</button>
             <p class="switch-text">لديك حساب بالفعل؟ <span class="switch-link" onclick="toggleAuth()">تسجيل الدخول</span></p>
         </div>
@@ -76,50 +75,48 @@
     </div>
 
     <script>
-        // التحقق من وجود مستخدم مسجل مسبقاً
         window.onload = () => {
-            setTimeout(() => { document.getElementById('loading-overlay').style.display = 'none'; }, 1500);
             const loggedIn = localStorage.getItem("current_session");
             if (loggedIn) { showStore(loggedIn); }
+            startMatrix();
         };
 
-        function toggleAuth() {
-            const lBox = document.getElementById('login-box');
-            const sBox = document.getElementById('signup-box');
-            if(lBox.style.display === "none") {
-                lBox.style.display = "block"; sBox.style.display = "none";
-            } else {
-                lBox.style.display = "none"; sBox.style.display = "block";
-            }
+        function showError(elementId, message) {
+            const errEl = document.getElementById(elementId);
+            errEl.innerText = message;
+            errEl.style.opacity = "1";
+            setTimeout(() => { errEl.style.opacity = "0"; }, 3000);
         }
 
-        // إنشاء حساب وحفظه
+        function toggleAuth() {
+            document.getElementById('login-box').style.display = (document.getElementById('login-box').style.display === "none") ? "block" : "none";
+            document.getElementById('signup-box').style.display = (document.getElementById('signup-box').style.display === "none") ? "block" : "none";
+        }
+
         function handleSignup() {
             const user = document.getElementById('reg-user').value.trim();
             const pass = document.getElementById('reg-pass').value;
             const confirm = document.getElementById('reg-pass-confirm').value;
 
-            if(!user || !pass) { alert("أكمل البيانات!"); return; }
-            if(pass !== confirm) { alert("كلمة المرور غير متطابقة!"); return; }
+            if(!user || !pass) { showError("reg-error", "يرجى ملء جميع الخانات"); return; }
+            if(pass !== confirm) { showError("reg-error", "كلمة المرور غير متطابقة"); return; }
+            if(localStorage.getItem("user_" + user)) { showError("reg-error", "اسم المستخدم موجود مسبقاً"); return; }
 
-            // حفظ في LocalStorage (اسم المستخدم كـ مفتاح)
             localStorage.setItem("user_" + user, pass);
-            alert("تم إنشاء الحساب بنجاح! يمكنك الدخول الآن.");
+            alert("تم إنشاء حسابك بنجاح!");
             toggleAuth();
         }
 
-        // تسجيل الدخول
         function handleLogin() {
             const user = document.getElementById('login-user').value.trim();
             const pass = document.getElementById('login-pass').value;
-
             const savedPass = localStorage.getItem("user_" + user);
 
             if(savedPass && savedPass === pass) {
                 localStorage.setItem("current_session", user);
                 showStore(user);
             } else {
-                alert("خطأ في اسم المستخدم أو كلمة المرور!");
+                showError("login-error", "اسم المستخدم أو كلمة المرور خطأ");
             }
         }
 
@@ -128,15 +125,10 @@
             document.getElementById('auth-screen').style.display = 'none';
             document.getElementById('store-content').style.display = 'block';
             setTimeout(() => document.getElementById('store-content').style.opacity = '1', 50);
-            startMatrix();
         }
 
-        function logout() {
-            localStorage.removeItem("current_session");
-            location.reload();
-        }
+        function logout() { localStorage.removeItem("current_session"); location.reload(); }
 
-        // تأثيرات الماوس والماتريكس
         window.addEventListener('mousemove', (e) => {
             const c = document.getElementById('custom-cursor');
             c.style.left = e.clientX + 'px'; c.style.top = e.clientY + 'px';
