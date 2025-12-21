@@ -57,4 +57,155 @@
             transition: 0.4s ease;
         }
 
-        .card
+        .card:hover {
+            border-color: #e61e2a; transform: translateY(-10px);
+            box-shadow: 0 10px 30px rgba(230, 30, 42, 0.3);
+        }
+
+        .price { 
+            font-size: 38px; color: #e61e2a; 
+            font-weight: bold; display: block; margin-bottom: 15px; 
+        }
+
+        .details { list-style: none; padding: 0; margin: 20px 0; text-align: right; color: #ccc; }
+        .details li { padding: 8px 0; border-bottom: 1px solid #222; }
+        .details li::before { content: "• "; color: #e61e2a; margin-left: 5px; }
+
+        .btn-purchase {
+            display: block; width: 100%; background: #e61e2a; color: white;
+            padding: 12px; border-radius: 6px; text-decoration: none;
+            font-weight: bold; transition: 0.3s;
+        }
+
+        .btn-purchase:hover { box-shadow: 0 0 20px #e61e2a; background: #ff1f2d; }
+
+        /* قسم Remember Addons (الإضافات) */
+        .addons-section {
+            background: rgba(15, 0, 0, 0.7);
+            border: 2px solid #e61e2a;
+            border-radius: 15px; padding: 30px;
+            max-width: 800px; margin: 0 auto;
+        }
+
+        .addons-title { font-size: 35px; color: #e61e2a; margin-bottom: 25px; font-weight: bold; }
+
+        .addon-item {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 15px; border-bottom: 1px dashed #444; font-size: 18px;
+        }
+
+        .addon-price { 
+            color: #e61e2a; font-weight: bold; 
+            border-left: 3px solid #e61e2a; padding-left: 15px; 
+        }
+
+    </style>
+</head>
+<body>
+
+    <canvas id="matrix-canvas"></canvas>
+    <div id="cursor-glow"></div>
+
+    <div class="store-container">
+        <h1>REMEMBER STORE</h1>
+
+        <div class="cards-grid">
+            <div class="card">
+                <span class="price">Month $14</span>
+                <ul class="details">
+                    <li>1 Concurrents</li>
+                    <li>60 Seconds Boot Time</li>
+                    <li>45 Seconds Cooldown Time</li>
+                    <li>Access To Default Methods</li>
+                </ul>
+                <a href="https://discord.gg/RMB" class="btn-purchase">Purchase</a>
+            </div>
+
+            <div class="card">
+                <span class="price">Month $17</span>
+                <ul class="details">
+                    <li>1 Concurrents</li>
+                    <li>120 Seconds Boot Time</li>
+                    <li>30 Seconds Cooldown Time</li>
+                    <li>Access To Default Methods</li>
+                </ul>
+                <a href="https://discord.gg/RMB" class="btn-purchase">Purchase</a>
+            </div>
+
+            <div class="card">
+                <span class="price">Month $22</span>
+                <ul class="details">
+                    <li>2 Concurrents</li>
+                    <li>120 Seconds Boot Time</li>
+                    <li>20 Seconds Cooldown Time</li>
+                    <li>Access To Vip Methods</li>
+                </ul>
+                <a href="https://discord.gg/RMB" class="btn-purchase">Purchase</a>
+            </div>
+
+            <div class="card">
+                <span class="price">Month $45 <br> <span style="font-size: 18px;">Lifetime $150</span></span>
+                <ul class="details">
+                    <li>3 Concurrents</li>
+                    <li>120 Seconds Boot Time</li>
+                    <li>15 Seconds Cooldown Time</li>
+                    <li>Access To Vip Methods</li>
+                </ul>
+                <a href="https://discord.gg/RMB" class="btn-purchase">Purchase</a>
+            </div>
+        </div>
+
+        <div class="addons-section">
+            <div class="addons-title">Remember Addons</div>
+            <div class="addon-item"><span>1+ Concurrents</span> <span class="addon-price">[ 15$ ]</span></div>
+            <div class="addon-item"><span>+60 Seconds Boot Time</span> <span class="addon-price">[ 10$ ]</span></div>
+            <div class="addon-item"><span>API Access</span> <span class="addon-price">[ 20$ ]</span></div>
+            <div class="addon-item"><span>Access To Vip Methods</span> <span class="addon-price">[ 15$ ]</span></div>
+            <div class="addon-item"><span>0 Cooldown</span> <span class="addon-price">[ 10$ ]</span></div>
+        </div>
+    </div>
+
+    <script>
+        // برمجة خلفية الـ Matrix
+        const canvas = document.getElementById('matrix-canvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+        const letters = "010101REMEMBERDDOSSERVER";
+        const fontSize = 16;
+        const columns = canvas.width / fontSize;
+        const drops = Array(Math.floor(columns)).fill(1);
+
+        function drawMatrix() {
+            ctx.fillStyle = "rgba(0, 0, 0, 0.08)"; ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = "#e61e2a"; ctx.font = fontSize + "px monospace";
+            for (let i = 0; i < drops.length; i++) {
+                const text = letters[Math.floor(Math.random() * letters.length)];
+                ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+                if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) drops[i] = 0;
+                drops[i]++;
+            }
+        }
+        setInterval(drawMatrix, 35);
+
+        // برمجة تتبع الماوس والجزيئات
+        const glow = document.getElementById('cursor-glow');
+        window.addEventListener('mousemove', (e) => {
+            glow.style.left = e.clientX + 'px';
+            glow.style.top = e.clientY + 'px';
+
+            // إنشاء الجزيئات
+            const p = document.createElement('div');
+            p.className = 'particle';
+            const size = Math.random() * 5 + 'px';
+            p.style.width = size; p.style.height = size;
+            p.style.left = e.clientX + 'px'; p.style.top = e.clientY + 'px';
+            document.body.appendChild(p);
+            
+            p.animate([
+                { opacity: 1, transform: 'translate(0, 0)' },
+                { opacity: 0, transform: `translate(${(Math.random()-0.5)*120}px, ${Math.random()*120}px)` }
+            ], 1200).onfinish = () => p.remove();
+        });
+    </script>
+</body>
+</html>
