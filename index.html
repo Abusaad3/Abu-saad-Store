@@ -2,48 +2,64 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>REMEMBER STORE</title>
+    <title>REMEMBER STORE | التميز</title>
     <style>
-        body { margin: 0; background: #000; color: white; font-family: sans-serif; overflow-x: hidden; }
-        #matrix { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; opacity: 0.4; }
-        .ghostface { position: fixed; left: -500px; bottom: 0; width: 400px; transition: 0.6s; opacity: 0; z-index: 100; filter: drop-shadow(0 0 20px #e61e2a); }
-        .glitch .ghostface { left: -50px; opacity: 1; }
-        .container { position: relative; z-index: 10; max-width: 1100px; margin: 50px auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; padding: 20px; }
-        h1 { grid-column: 1/-1; text-align: center; color: #e61e2a; font-size: 50px; text-shadow: 0 0 20px #e61e2a; }
-        .card { background: rgba(10,10,10,0.9); border: 1px solid #222; border-radius: 10px; padding: 25px; text-align: center; transition: 0.3s; }
-        .card:hover { border-color: #e61e2a; transform: translateY(-10px); box-shadow: 0 0 20px rgba(230,30,42,0.3); }
-        .price { font-size: 35px; color: #e61e2a; font-weight: bold; display: block; margin-bottom: 15px; }
-        .list { list-style: none; padding: 0; margin: 20px 0; color: #888; text-align: right; }
-        .list li { margin-bottom: 10px; border-bottom: 1px solid #1a1a1a; padding-bottom: 5px; }
-        .list li::before { content: "• "; color: #e61e2a; }
-        .btn { display: block; background: #e61e2a; color: white; padding: 12px; text-decoration: none; border-radius: 5px; font-weight: bold; transition: 0.3s; }
-        .btn:hover { background: #ff1f2d; box-shadow: 0 0 15px #e61e2a; }
-    </style>
-</head>
-<body>
-    <canvas id="matrix"></canvas>
-    <img src="https://i.imgur.com/vHq03P1.png" class="ghostface">
-    <div class="container">
-        <h1>REMEMBER STORE</h1>
-        <div class="card"><span class="price">$10</span><ul class="list"><li>Concurrent: 1</li><li>Max Time: 60s</li></ul><a href="https://discord.gg/RMB" class="btn">Purchase</a></div>
-        <div class="card"><span class="price">$35</span><ul class="list"><li>Concurrent: 3</li><li>Max Time: 400s</li></ul><a href="https://discord.gg/RMB" class="btn">Purchase</a></div>
-        <div class="card"><span class="price">$100</span><ul class="list"><li>Concurrent: 8</li><li>Max Time: 600s</li></ul><a href="https://discord.gg/RMB" class="btn">Purchase</a></div>
-        <div class="card" style="border-color:#e61e2a"><span class="price">$200</span><ul class="list"><li>Concurrent: 20</li><li>Max Time: 2000s</li></ul><a href="https://discord.gg/RMB" class="btn">Purchase</a></div>
-    </div>
-    <script>
-        const c = document.getElementById('matrix'), ctx = c.getContext('2d');
-        c.width = window.innerWidth; c.height = window.innerHeight;
-        const s = "010101REMEMBERDDOS", f = 16, clm = c.width/f, d = Array(Math.floor(clm)).fill(1);
-        function draw() {
-            ctx.fillStyle = "rgba(0,0,0,0.05)"; ctx.fillRect(0,0,c.width,c.height);
-            ctx.fillStyle = "#e61e2a"; ctx.font = f+"px monospace";
-            d.forEach((y, i) => {
-                ctx.fillText(s[Math.floor(Math.random()*s.length)], i*f, y*f);
-                if (y*f > c.height && Math.random() > 0.975) d[i] = 0; d[i]++;
-            });
+        body {
+            margin: 0; padding: 0;
+            background-color: #000;
+            color: white;
+            font-family: 'Segoe UI', Tahoma, sans-serif;
+            overflow-x: hidden;
         }
-        setInterval(draw, 35);
-        setInterval(() => { document.body.classList.add('glitch'); setTimeout(() => document.body.classList.remove('glitch'), 1500); }, 6000);
-    </script>
-</body>
-</html>
+
+        /* خوارزميات متحركة مستمرة باللون الأحمر */
+        #matrix-canvas {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -2; opacity: 0.4;
+        }
+
+        /* هالة تتبع الماوس */
+        #cursor-glow {
+            position: fixed; width: 600px; height: 600px;
+            background: radial-gradient(circle, rgba(230, 30, 42, 0.25) 0%, rgba(0,0,0,0) 70%);
+            border-radius: 50%; pointer-events: none;
+            transform: translate(-50%, -50%); z-index: 100;
+        }
+
+        /* جزيئات تتبع الماوس */
+        .particle {
+            position: fixed; background: #e61e2a;
+            border-radius: 50%; pointer-events: none; z-index: 99;
+        }
+
+        .store-container {
+            position: relative; z-index: 10;
+            max-width: 1200px; margin: 40px auto;
+            padding: 20px; text-align: center;
+        }
+
+        h1 { font-size: 60px; color: #e61e2a; text-shadow: 0 0 25px #e61e2a; margin-bottom: 40px; }
+
+        /* حاوية البطاقات الأساسية */
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px; margin-bottom: 60px;
+        }
+
+        .card {
+            background: rgba(12, 12, 12, 0.95);
+            border: 1px solid #1a1a1a;
+            border-radius: 12px; padding: 30px 20px;
+            transition: 0.4s ease;
+        }
+
+        .card:hover {
+            border-color: #e61e2a; transform: translateY(-10px);
+            box-shadow: 0 10px 30px rgba(230, 30, 42, 0.3);
+        }
+
+        .price { font-size: 40px; color: #e61e2a; font-weight: bold; display: block; margin-bottom: 15px; }
+
+        .details { list-style: none; padding: 0; margin: 20px 0; text-align: right; color: #ccc; }
+        .details li { padding: 8px 0; border-
