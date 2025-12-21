@@ -3,189 +3,169 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>REMEMBER STORE | FINAL ELITE</title>
+    <title>REMEMBER STORE | OFFICIAL VERIFIED</title>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
     <style>
         * { box-sizing: border-box; cursor: none; }
-        body {
-            margin: 0; padding: 0; background: #000; color: white;
-            font-family: 'Consolas', monospace; overflow: hidden; height: 100vh;
-        }
+        body { margin: 0; padding: 0; background: #000; color: white; font-family: 'Consolas', monospace; overflow: hidden; height: 100vh; }
 
-        /* الماوس المخصص */
-        #custom-cursor {
-            position: fixed; width: 12px; height: 12px; background: #e61e2a;
-            border-radius: 50%; pointer-events: none; z-index: 10000; box-shadow: 0 0 15px #e61e2a;
-        }
+        /* شاشة التحميل الحمراء */
+        #loading-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #e61e2a; z-index: 10000; display: flex; justify-content: center; align-items: center; transition: 1s ease; }
+        .loader-text { font-size: 2rem; font-weight: bold; letter-spacing: 5px; animation: blink 0.8s infinite; }
+        @keyframes blink { 50% { opacity: 0; } }
 
-        /* شاشة الدخول */
-        #auth-screen {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: #000; z-index: 999; display: none; justify-content: center; align-items: center;
-        }
-        .auth-container {
-            background: rgba(10, 10, 10, 0.95); border: 1px solid #e61e2a;
-            padding: 40px; border-radius: 15px; width: 380px; text-align: center;
-            box-shadow: 0 0 40px rgba(230, 30, 42, 0.3);
-        }
-        .auth-input {
-            width: 100%; background: #050505; border: 1px solid #222;
-            padding: 12px; margin-bottom: 15px; color: white; border-radius: 5px;
-            text-align: center; outline: none; transition: 0.3s;
-        }
+        #custom-cursor { position: fixed; width: 10px; height: 10px; background: #e61e2a; border-radius: 50%; pointer-events: none; z-index: 10001; box-shadow: 0 0 10px #e61e2a; }
+
+        /* شاشات الدخول */
+        #auth-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 999; display: none; justify-content: center; align-items: center; }
+        .auth-container { background: rgba(10, 10, 10, 0.95); border: 1px solid #e61e2a; padding: 35px; border-radius: 15px; width: 400px; text-align: center; box-shadow: 0 0 30px #e61e2a44; }
+        .auth-input { width: 100%; background: #050505; border: 1px solid #333; padding: 12px; margin-bottom: 15px; color: white; border-radius: 5px; text-align: center; outline: none; transition: 0.3s; }
         .auth-input:focus { border-color: #e61e2a; box-shadow: 0 0 10px #e61e2a; }
-        .auth-btn {
-            width: 100%; background: #e61e2a; color: white; border: none;
-            padding: 12px; border-radius: 5px; font-weight: bold; cursor: pointer;
-        }
+        .auth-btn { width: 100%; background: #e61e2a; color: white; border: none; padding: 12px; border-radius: 5px; font-weight: bold; cursor: pointer; }
+        .auth-btn:disabled { background: #555; cursor: not-allowed; }
+        #otp-section { display: none; }
 
         /* المتجر */
         #store-content { display: none; opacity: 0; transition: 1s ease; padding: 20px; }
+        .user-header { width: 100%; max-width: 1100px; margin: 0 auto 15px auto; display: flex; justify-content: space-between; padding: 10px 20px; background: #e61e2a1a; border: 1px solid #e61e2a; border-radius: 8px; }
+        .glitch { font-size: 2.8rem; color: #e61e2a; font-weight: bold; text-align: center; margin-bottom: 20px; text-shadow: 2px 2px #fff; }
         
-        .user-header {
-            width: 100%; max-width: 1150px; margin: 0 auto 15px auto;
-            display: flex; justify-content: space-between; align-items: center;
-            padding: 10px 20px; background: rgba(230, 30, 42, 0.1);
-            border: 1px solid #e61e2a; border-radius: 10px;
-        }
-        .user-info b { color: #e61e2a; font-size: 1.1rem; }
-        .logout-btn { color: #888; cursor: pointer; font-size: 0.7rem; text-decoration: underline; }
-
-        /* العناصر البصرية */
-        #matrix-canvas { position: fixed; top: 0; left: 0; z-index: -2; opacity: 0.2; }
-        .blood-moon { position: fixed; top: 30px; right: 40px; width: 100px; height: 100px; background: radial-gradient(circle, #f00 0%, #400 100%); border-radius: 50%; box-shadow: 0 0 50px #f00; z-index: -1; }
-        .wrapper { display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; }
-        .glitch { font-size: 3rem; color: #e61e2a; text-shadow: 2px 2px #fff; margin-bottom: 15px; font-weight: bold; }
-
-        .cards-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; width: 100%; max-width: 1100px; margin-bottom: 15px; }
+        .cards-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; width: 100%; max-width: 1100px; margin-bottom: 20px; }
         .card { background: rgba(10,10,10,0.9); border: 1px solid #222; border-radius: 10px; padding: 15px; text-align: center; }
         .price { font-size: 1.5rem; color: #e61e2a; font-weight: bold; }
-        .details { list-style: none; padding: 0; margin: 10px 0; font-size: 0.75rem; color: #aaa; text-align: right; }
-        .details li::before { content: "> "; color: #e61e2a; }
-        .btn-buy { display: block; background: #e61e2a; color: white; text-decoration: none; padding: 8px; margin-top: 10px; border-radius: 5px; font-weight: bold; font-size: 0.8rem; }
-
-        /* قسم الإضافات (Remember Addons) */
-        .addons-section {
-            background: rgba(15, 0, 0, 0.5); border: 1px solid #e61e2a;
-            border-radius: 10px; padding: 12px; width: 100%; max-width: 900px;
-            display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px;
-        }
-        .addons-header { grid-column: 1 / -1; color: #e61e2a; font-size: 1.1rem; font-weight: bold; margin-bottom: 5px; border-bottom: 1px solid #e61e2a; padding-bottom: 5px;}
-        .addon-item { border-bottom: 1px dashed #333; padding: 4px; font-size: 0.8rem; display: flex; justify-content: space-between; }
-        .addon-p { color: #e61e2a; font-weight: bold; }
-
-        #notification-box { position: fixed; bottom: 20px; left: 20px; z-index: 1000; }
-        .notif { background: rgba(10,10,10,0.95); border-right: 4px solid #e61e2a; padding: 12px; margin-top: 10px; font-size: 0.8rem; width: 320px; box-shadow: 0 5px 15px rgba(0,0,0,0.5); animation: slideIn 0.5s forwards; }
-        @keyframes slideIn { from { transform: translateX(-110%); } to { transform: translateX(0); } }
-
-        .credits { position: fixed; bottom: 15px; right: 20px; text-align: right; font-size: 0.7rem; }
+        
+        .addons-section { background: rgba(20, 0, 0, 0.4); border: 1px solid #e61e2a; border-radius: 10px; padding: 15px; width: 100%; max-width: 900px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 0 auto; }
+        .addon-item { border-bottom: 1px dashed #333; padding: 5px; font-size: 0.8rem; display: flex; justify-content: space-between; }
+        
+        #matrix-canvas { position: fixed; top: 0; left: 0; z-index: -2; opacity: 0.2; }
     </style>
 </head>
 <body>
 
+    <div id="loading-overlay"><div class="loader-text">REMEMBERING...</div></div>
     <div id="custom-cursor"></div>
     <canvas id="matrix-canvas"></canvas>
 
     <div id="auth-screen">
         <div class="auth-container">
-            <h2 style="color:#e61e2a; letter-spacing:5px;">TERMINAL ACCESS</h2>
-            <input type="text" class="auth-input" id="username" placeholder="اسم المستخدم">
-            <input type="password" class="auth-input" placeholder="كلمة المرور">
-            <button class="auth-btn" onclick="handleLogin()">ENTER STORE</button>
+            <h2 style="color:#e61e2a; margin-bottom:20px;">SYSTEM ACCESS</h2>
+            <div id="input-fields">
+                <input type="email" class="auth-input" id="email" placeholder="البريد الإلكتروني الحقيقي">
+                <input type="text" class="auth-input" id="username" placeholder="اسم المستخدم">
+                <input type="password" class="auth-input" id="password" placeholder="كلمة المرور">
+                <button class="auth-btn" id="send-btn" onclick="sendEmail()">ارسال كود التحقق</button>
+            </div>
+            <div id="otp-section">
+                <p style="font-size: 0.8rem; color: #888; margin-bottom: 15px;">أدخل كود الإثبات المرسل لبريدك</p>
+                <input type="text" class="auth-input" id="otp-input" placeholder="0000">
+                <button class="auth-btn" onclick="verifyOTP()">تأكيد ودخول</button>
+            </div>
         </div>
     </div>
 
     <div id="store-content">
-        <div class="blood-moon"></div>
         <div class="user-header">
-            <div class="user-info">Logged in as: <b id="display-name">User</b></div>
-            <div class="logout-btn" onclick="handleLogout()">End Session (Logout)</div>
+            <div>User: <b id="display-name" style="color:#e61e2a;"></b></div>
+            <div style="color:#0f0; font-size:0.7rem;">● SESSION VERIFIED</div>
         </div>
-
-        <div class="wrapper">
-            <div class="glitch">REMEMBER STORE</div>
-
-            <div class="cards-grid">
-                <div class="card"><span class="price">$14</span><ul class="details"><li>1 Concur</li><li>60s Boot</li><li>45s Cool</li></ul><a href="#" class="btn-buy">PURCHASE</a></div>
-                <div class="card"><span class="price">$17</span><ul class="details"><li>1 Concur</li><li>120s Boot</li><li>30s Cool</li></ul><a href="#" class="btn-buy">PURCHASE</a></div>
-                <div class="card"><span class="price">$22</span><ul class="details"><li>2 Concur</li><li>120s Boot</li><li>20s Cool</li></ul><a href="#" class="btn-buy">PURCHASE</a></div>
-                <div class="card" style="border-color:#e61e2a"><span class="price">$45+</span><ul class="details"><li>3 Concur</li><li>150s Boot</li><li>10s Cool</li></ul><a href="#" class="btn-buy">PURCHASE</a></div>
-            </div>
-
-            <div class="addons-section">
-                <div class="addons-header">Remember Addons</div>
-                <div class="addon-item"><span>+1 Concur</span><span class="addon-p">15$</span></div>
-                <div class="addon-item"><span>+60s Boot</span><span class="addon-p">10$</span></div>
-                <div class="addon-item"><span>API Access</span><span class="addon-p">20$</span></div>
-                <div class="addon-item"><span>VIP Methods</span><span class="addon-p">15$</span></div>
-                <div class="addon-item"><span>0 Cooldown</span><span class="addon-p">10$</span></div>
-                <div class="addon-item"><span>Special Support</span><span class="addon-p">FREE</span></div>
-            </div>
+        <div class="glitch">REMEMBER STORE</div>
+        <div class="cards-grid">
+            <div class="card"><span class="price">$14</span><p>1 Concur / 60s</p></div>
+            <div class="card"><span class="price">$17</span><p>1 Concur / 120s</p></div>
+            <div class="card"><span class="price">$22</span><p>2 Concur / 120s</p></div>
+            <div class="card" style="border-color:#e61e2a"><span class="price">$45+</span><p>3 Concur / 150s</p></div>
         </div>
-
-        <div id="notification-box"></div>
-        <div class="credits">Designed & Programmed by <b style="color:#e61e2a">Abu saad</b> | Discord: e65e</div>
+        <div class="addons-section">
+             <div style="grid-column: 1/-1; color:#e61e2a; font-weight:bold; margin-bottom:5px;">Remember Addons</div>
+            <div class="addon-item"><span>+1 Concur</span><span style="color:#e61e2a">15$</span></div>
+            <div class="addon-item"><span>+60s Boot</span><span style="color:#e61e2a">10$</span></div>
+            <div class="addon-item"><span>API Access</span><span style="color:#e61e2a">20$</span></div>
+        </div>
     </div>
 
     <script>
-        // التحقق من الجلسة
+        // دمج المفاتيح الخاصة بك يا أبو سعد
+        (function(){ 
+            emailjs.init("iyQw6V8cIt5c-9d6c"); 
+        })();
+
+        let realOTP;
+
         window.onload = function() {
-            const savedUser = localStorage.getItem("remember_user");
-            if (savedUser) { showStore(savedUser); } 
-            else { document.getElementById('auth-screen').style.display = 'flex'; }
+            setTimeout(() => {
+                document.getElementById('loading-overlay').style.display = 'none';
+                const savedUser = localStorage.getItem("rem_user");
+                if (savedUser) { showStore(savedUser); } 
+                else { document.getElementById('auth-screen').style.display = 'flex'; }
+            }, 2500);
         };
 
-        function handleLogin() {
-            const user = document.getElementById('username').value;
-            if(user.length < 2) { alert("أدخل اسم المستخدم"); return; }
-            localStorage.setItem("remember_user", user);
-            showStore(user);
-        }
+        function sendEmail() {
+            const email = document.getElementById('email').value;
+            const name = document.getElementById('username').value;
+            const btn = document.getElementById('send-btn');
 
-        function showStore(userName) {
-            document.getElementById('display-name').innerText = userName;
-            document.getElementById('auth-screen').style.display = 'none';
-            document.getElementById('store-content').style.display = 'block';
-            setTimeout(() => { document.getElementById('store-content').style.opacity = '1'; }, 50);
-            setInterval(showNotif, 5000); // تنبيهات كل 5 ثواني
-        }
+            if(!email.includes("@")) { alert("أدخل بريد صحيح!"); return; }
+            
+            btn.innerText = "جاري الإرسال...";
+            btn.disabled = true;
 
-        function handleLogout() {
-            localStorage.removeItem("remember_user");
-            location.reload();
-        }
+            realOTP = Math.floor(1000 + Math.random() * 9000);
 
-        // الماوس
-        const cursor = document.getElementById('custom-cursor');
-        window.addEventListener('mousemove', (e) => {
-            cursor.style.left = e.clientX + 'px'; cursor.style.top = e.clientY + 'px';
-        });
+            const params = {
+                to_email: email,
+                name: name,
+                otp_code: realOTP
+            };
 
-        // خوارزمية الأسماء للتنبيهات
-        const fNames = ["صقر", "بندر", "خالد", "Shadow", "Ghost", "Dark", "Sniper", "أبو_فهد", "Vortex", "Elite"];
-        const lNames = ["الشمري", "العنزي", "Killer", "Master", "DDoS", "707", "505", "X"];
-
-        function showNotif() {
-            const box = document.getElementById('notification-box');
-            const n = document.createElement('div'); n.className = 'notif';
-            const name = fNames[Math.floor(Math.random()*fNames.length)] + "_" + lNames[Math.floor(Math.random()*lNames.length)];
-            n.innerHTML = `المستخدم <b>${name}</b> قام بترقية حسابه الآن!`;
-            box.appendChild(n);
-            setTimeout(() => { n.style.opacity='0'; setTimeout(()=>n.remove(), 500); }, 4000);
-        }
-
-        // Matrix
-        const canvas = document.getElementById('matrix-canvas'), ctx = canvas.getContext('2d');
-        canvas.width = window.innerWidth; canvas.height = window.innerHeight;
-        const letters = "01", fontSize = 16, columns = canvas.width/fontSize, drops = Array(Math.floor(columns)).fill(1);
-        function draw() {
-            ctx.fillStyle = "rgba(0,0,0,0.1)"; ctx.fillRect(0,0,canvas.width,canvas.height);
-            ctx.fillStyle = "#e61e2a"; ctx.font = fontSize+"px monospace";
-            drops.forEach((y,i) => {
-                ctx.fillText(letters[Math.floor(Math.random()*2)], i*fontSize, y*fontSize);
-                if(y*fontSize > canvas.height && Math.random() > 0.975) drops[i]=0; drops[i]++;
+            // استخدام الـ Service ID والـ Template ID الخاصين بك
+            emailjs.send("service_dzosdhs", "template_x4dkp5s", params)
+            .then(() => {
+                alert("تم إرسال الكود لبريدك بنجاح!");
+                document.getElementById('input-fields').style.display = 'none';
+                document.getElementById('otp-section').style.display = 'block';
+            }, (err) => {
+                alert("فشل الإرسال: تحقق من إعدادات EmailJS");
+                btn.innerText = "ارسال كود التحقق";
+                btn.disabled = false;
             });
         }
-        setInterval(draw, 35);
+
+        function verifyOTP() {
+            const input = document.getElementById('otp-input').value;
+            if(input == realOTP) {
+                const user = document.getElementById('username').value;
+                localStorage.setItem("rem_user", user);
+                showStore(user);
+            } else {
+                alert("الكود خاطئ!");
+            }
+        }
+
+        function showStore(name) {
+            document.getElementById('display-name').innerText = name;
+            document.getElementById('auth-screen').style.display = 'none';
+            document.getElementById('store-content').style.display = 'block';
+            setTimeout(() => document.getElementById('store-content').style.opacity = '1', 50);
+            startMatrix();
+        }
+
+        const cursor = document.getElementById('custom-cursor');
+        window.addEventListener('mousemove', (e) => { cursor.style.left = e.clientX + 'px'; cursor.style.top = e.clientY + 'px'; });
+
+        function startMatrix() {
+            const c = document.getElementById('matrix-canvas'), ctx = c.getContext('2d');
+            c.width = window.innerWidth; c.height = window.innerHeight;
+            const drops = Array(Math.floor(c.width/16)).fill(1);
+            setInterval(() => {
+                ctx.fillStyle = "rgba(0,0,0,0.05)"; ctx.fillRect(0,0,c.width,c.height);
+                ctx.fillStyle = "#e61e2a"; ctx.font = "16px monospace";
+                drops.forEach((y,i) => {
+                    ctx.fillText(Math.floor(Math.random()*2), i*16, y*16);
+                    if(y*16 > c.height && Math.random() > 0.975) drops[i]=0; drops[i]++;
+                });
+            }, 35);
+        }
     </script>
 </body>
 </html>
