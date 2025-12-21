@@ -3,42 +3,40 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>REMEMBER STORE | OFFICIAL VERIFIED</title>
+    <title>REMEMBER STORE | OFFICIAL</title>
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
     <style>
         * { box-sizing: border-box; cursor: none; }
         body { margin: 0; padding: 0; background: #000; color: white; font-family: 'Consolas', monospace; overflow: hidden; height: 100vh; }
 
-        /* شاشة التحميل الحمراء */
+        /* شاشة التحميل */
         #loading-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #e61e2a; z-index: 10000; display: flex; justify-content: center; align-items: center; transition: 1s ease; }
         .loader-text { font-size: 2rem; font-weight: bold; letter-spacing: 5px; animation: blink 0.8s infinite; }
         @keyframes blink { 50% { opacity: 0; } }
 
         #custom-cursor { position: fixed; width: 10px; height: 10px; background: #e61e2a; border-radius: 50%; pointer-events: none; z-index: 10001; box-shadow: 0 0 10px #e61e2a; }
 
-        /* شاشات الدخول */
-        #auth-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 999; display: none; justify-content: center; align-items: center; }
+        /* شاشة التحقق */
+        #auth-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 999; display: flex; justify-content: center; align-items: center; }
         .auth-container { background: rgba(10, 10, 10, 0.95); border: 1px solid #e61e2a; padding: 35px; border-radius: 15px; width: 400px; text-align: center; box-shadow: 0 0 30px #e61e2a44; }
-        .auth-input { width: 100%; background: #050505; border: 1px solid #333; padding: 12px; margin-bottom: 15px; color: white; border-radius: 5px; text-align: center; outline: none; transition: 0.3s; }
-        .auth-input:focus { border-color: #e61e2a; box-shadow: 0 0 10px #e61e2a; }
-        .auth-btn { width: 100%; background: #e61e2a; color: white; border: none; padding: 12px; border-radius: 5px; font-weight: bold; cursor: pointer; }
-        .auth-btn:disabled { background: #555; cursor: not-allowed; }
-        #otp-section { display: none; }
+        .auth-input { width: 100%; background: #050505; border: 1px solid #333; padding: 12px; margin-bottom: 15px; color: white; border-radius: 5px; text-align: center; outline: none; }
+        .auth-btn { width: 100%; background: #e61e2a; color: white; border: none; padding: 12px; border-radius: 5px; font-weight: bold; cursor: pointer; transition: 0.3s; }
+        .auth-btn:hover { background: #ff1f2d; box-shadow: 0 0 15px #e61e2a; }
 
-        /* المتجر */
-        #store-content { display: none; opacity: 0; transition: 1s ease; padding: 20px; }
+        /* محتوى المتجر */
+        #store-content { display: none; opacity: 0; transition: 1s ease; padding: 20px; position: relative; z-index: 10; }
         .user-header { width: 100%; max-width: 1100px; margin: 0 auto 15px auto; display: flex; justify-content: space-between; padding: 10px 20px; background: #e61e2a1a; border: 1px solid #e61e2a; border-radius: 8px; }
-        .glitch { font-size: 2.8rem; color: #e61e2a; font-weight: bold; text-align: center; margin-bottom: 20px; text-shadow: 2px 2px #fff; }
+        .glitch { font-size: 3rem; color: #e61e2a; font-weight: bold; text-align: center; margin-bottom: 20px; text-shadow: 2px 2px #fff; letter-spacing: 3px; }
         
-        .cards-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; width: 100%; max-width: 1100px; margin-bottom: 20px; }
-        .card { background: rgba(10,10,10,0.9); border: 1px solid #222; border-radius: 10px; padding: 15px; text-align: center; }
-        .price { font-size: 1.5rem; color: #e61e2a; font-weight: bold; }
+        .cards-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; width: 100%; max-width: 1100px; margin: 0 auto 20px auto; }
+        .card { background: rgba(10,10,10,0.9); border: 1px solid #222; border-radius: 10px; padding: 20px; text-align: center; transition: 0.3s; }
+        .card:hover { border-color: #e61e2a; transform: translateY(-5px); }
+        .price { font-size: 1.8rem; color: #e61e2a; font-weight: bold; display: block; margin-bottom: 5px; }
         
-        /* قسم الإضافات Remember Addons */
-        .addons-section { background: rgba(20, 0, 0, 0.4); border: 1px solid #e61e2a; border-radius: 10px; padding: 15px; width: 100%; max-width: 900px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 0 auto; }
-        .addon-item { border-bottom: 1px dashed #333; padding: 5px; font-size: 0.8rem; display: flex; justify-content: space-between; }
+        .addons-section { background: rgba(20, 0, 0, 0.4); border: 1px solid #e61e2a; border-radius: 10px; padding: 15px; width: 100%; max-width: 900px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin: 0 auto; }
+        .addon-item { border-bottom: 1px dashed #333; padding: 8px; font-size: 0.9rem; display: flex; justify-content: space-between; }
         
-        #matrix-canvas { position: fixed; top: 0; left: 0; z-index: -2; opacity: 0.2; }
+        #matrix-canvas { position: fixed; top: 0; left: 0; z-index: -1; opacity: 0.15; }
     </style>
 </head>
 <body>
@@ -49,15 +47,14 @@
 
     <div id="auth-screen">
         <div class="auth-container">
-            <h2 style="color:#e61e2a; margin-bottom:20px;">SYSTEM ACCESS</h2>
+            <h2 style="color:#e61e2a; margin-bottom:20px; letter-spacing:2px;">REMEMBER ACCESS</h2>
             <div id="input-fields">
-                <input type="email" class="auth-input" id="email" placeholder="البريد الإلكتروني الحقيقي">
+                <input type="email" class="auth-input" id="email" placeholder="البريد الإلكتروني (لإرسال الكود)">
                 <input type="text" class="auth-input" id="username" placeholder="اسم المستخدم">
-                <input type="password" class="auth-input" id="password" placeholder="كلمة المرور">
-                <button class="auth-btn" id="send-btn" onclick="sendEmail()">ارسال كود التحقق</button>
+                <button class="auth-btn" id="send-btn" onclick="sendOTP()">إرسال كود التحقق</button>
             </div>
-            <div id="otp-section">
-                <p style="font-size: 0.8rem; color: #888; margin-bottom: 15px;">أدخل كود الإثبات المرسل لبريدك</p>
+            <div id="otp-section" style="display:none;">
+                <p style="font-size: 0.8rem; color: #888; margin-bottom: 15px;">أدخل كود الإثبات المكون من 4 أرقام</p>
                 <input type="text" class="auth-input" id="otp-input" placeholder="0000">
                 <button class="auth-btn" onclick="verifyOTP()">تأكيد ودخول</button>
             </div>
@@ -66,101 +63,107 @@
 
     <div id="store-content">
         <div class="user-header">
-            <div>User: <b id="display-name" style="color:#e61e2a;"></b></div>
-            <div style="color:#0f0; font-size:0.7rem;">● SESSION VERIFIED</div>
+            <div>USER: <b id="display-name" style="color:#e61e2a; text-transform: uppercase;"></b></div>
+            <div style="color:#0f0; font-size:0.75rem; font-weight:bold;">● SESSION VERIFIED</div>
         </div>
+        
         <div class="glitch">REMEMBER STORE</div>
+
         <div class="cards-grid">
             <div class="card"><span class="price">$14</span><p>1 Concur / 60s</p></div>
             <div class="card"><span class="price">$17</span><p>1 Concur / 120s</p></div>
             <div class="card"><span class="price">$22</span><p>2 Concur / 120s</p></div>
-            <div class="card" style="border-color:#e61e2a"><span class="price">$45+</span><p>3 Concur / 150s</p></div>
+            <div class="card" style="border-color:#e61e2a;"><span class="price">$45+</span><p>3 Concur / 150s</p></div>
         </div>
+
         <div class="addons-section">
-             <div style="grid-column: 1/-1; color:#e61e2a; font-weight:bold; margin-bottom:5px;">Remember Addons</div>
+            <div style="grid-column: 1/-1; color:#e61e2a; font-weight:bold; font-size:1.1rem; border-bottom:1px solid #e61e2a; padding-bottom:5px;">Remember Addons</div>
             <div class="addon-item"><span>+1 Concur</span><span style="color:#e61e2a">15$</span></div>
             <div class="addon-item"><span>+60s Boot</span><span style="color:#e61e2a">10$</span></div>
             <div class="addon-item"><span>API Access</span><span style="color:#e61e2a">20$</span></div>
+            <div class="addon-item"><span>VIP Methods</span><span style="color:#e61e2a">15$</span></div>
+            <div class="addon-item"><span>0 Cooldown</span><span style="color:#e61e2a">10$</span></div>
+            <div class="addon-item"><span>Support</span><span style="color:#0f0">FREE</span></div>
         </div>
     </div>
 
     <script>
-        // تفعيل الإعدادات الخاصة بك
+        // إعدادات EmailJS الخاصة بك
         (function(){ 
             emailjs.init("iyQw6V8cIt5c-9d6c"); 
         })();
 
-        let realOTP;
+        let generatedOTP;
 
-        window.onload = function() {
+        // إخفاء شاشة التحميل
+        window.onload = () => {
             setTimeout(() => {
-                document.getElementById('loading-overlay').style.display = 'none';
-                const savedUser = localStorage.getItem("rem_user");
-                if (savedUser) { showStore(savedUser); } 
-                else { document.getElementById('auth-screen').style.display = 'flex'; }
-            }, 2500);
+                document.getElementById('loading-overlay').style.opacity = '0';
+                setTimeout(() => document.getElementById('loading-overlay').style.display = 'none', 1000);
+            }, 2000);
         };
 
-        function sendEmail() {
+        // وظيفة إرسال الكود
+        function sendOTP() {
             const email = document.getElementById('email').value;
             const name = document.getElementById('username').value;
             const btn = document.getElementById('send-btn');
 
-            if(!email.includes("@")) { alert("أدخل بريد صحيح!"); return; }
+            if(!email.includes("@")) { alert("يرجى إدخال بريد إلكتروني صحيح!"); return; }
             
             btn.innerText = "جاري الإرسال...";
             btn.disabled = true;
 
-            realOTP = Math.floor(1000 + Math.random() * 9000);
+            generatedOTP = Math.floor(1000 + Math.random() * 9000);
 
             const params = {
                 to_email: email,
                 name: name,
-                otp_code: realOTP
+                otp_code: generatedOTP // يتم إرساله إلى {{otp_code}} في القالب
             };
 
-            // استخدام Service ID و Template ID الخاصين بك
             emailjs.send("service_dzosdhs", "template_x4dkp5s", params)
             .then(() => {
-                alert("تم إرسال الكود لبريدك بنجاح! تحقق من الوارد أو البريد غير الهام.");
+                alert("تم إرسال كود التحقق لبريدك بنجاح!");
                 document.getElementById('input-fields').style.display = 'none';
                 document.getElementById('otp-section').style.display = 'block';
             }, (err) => {
-                alert("فشل الإرسال: " + JSON.stringify(err));
-                btn.innerText = "ارسال كود التحقق";
+                alert("خطأ في الإرسال، تحقق من اتصال حسابك بـ EmailJS.");
+                btn.innerText = "إرسال كود التحقق";
                 btn.disabled = false;
             });
         }
 
+        // وظيفة التحقق والدخول
         function verifyOTP() {
             const input = document.getElementById('otp-input').value;
-            if(input == realOTP) {
+            if(input == generatedOTP) {
                 const user = document.getElementById('username').value;
-                localStorage.setItem("rem_user", user);
-                showStore(user);
+                document.getElementById('display-name').innerText = user;
+                document.getElementById('auth-screen').style.display = 'none';
+                document.getElementById('store-content').style.display = 'block';
+                setTimeout(() => document.getElementById('store-content').style.opacity = '1', 50);
+                startMatrix();
             } else {
-                alert("الكود خاطئ! تحقق من الإيميل.");
+                alert("الكود غير صحيح، يرجى المحاولة مرة أخرى.");
             }
         }
 
-        function showStore(name) {
-            document.getElementById('display-name').innerText = name;
-            document.getElementById('auth-screen').style.display = 'none';
-            document.getElementById('store-content').style.display = 'block';
-            setTimeout(() => document.getElementById('store-content').style.opacity = '1', 50);
-            startMatrix();
-        }
-
+        // تحريك المؤشر المخصص
         const cursor = document.getElementById('custom-cursor');
-        window.addEventListener('mousemove', (e) => { cursor.style.left = e.clientX + 'px'; cursor.style.top = e.clientY + 'px'; });
+        window.addEventListener('mousemove', (e) => {
+            cursor.style.left = e.clientX + 'px';
+            cursor.style.top = e.clientY + 'px';
+        });
 
+        // تأثير Matrix الخلفي
         function startMatrix() {
             const c = document.getElementById('matrix-canvas'), ctx = c.getContext('2d');
             c.width = window.innerWidth; c.height = window.innerHeight;
             const drops = Array(Math.floor(c.width/16)).fill(1);
             setInterval(() => {
                 ctx.fillStyle = "rgba(0,0,0,0.05)"; ctx.fillRect(0,0,c.width,c.height);
-                ctx.fillStyle = "#e61e2a"; ctx.font = "16px monospace";
+                ctx.fillStyle = "#e61e2a"; ctx.font = "15px monospace";
                 drops.forEach((y,i) => {
                     ctx.fillText(Math.floor(Math.random()*2), i*16, y*16);
                     if(y*16 > c.height && Math.random() > 0.975) drops[i]=0; drops[i]++;
