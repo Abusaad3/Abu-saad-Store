@@ -18,9 +18,10 @@
             display: none; 
             flex-direction: column; 
             align-items: center; 
-            background: rgba(0,0,0,0.4);
+            background: rgba(0,0,0,0.6);
             padding: 20px;
             border-radius: 15px;
+            backdrop-filter: blur(5px);
         }
 
         .header-title { color: #e61e2a; font-size: 2.8rem; font-weight: 900; letter-spacing: 10px; text-shadow: 0 0 20px #e61e2a; margin: 0; }
@@ -33,7 +34,8 @@
         .features { font-size: 0.72rem; color: #aaa; list-style: none; padding: 0; margin-bottom: 15px; line-height: 1.6; }
         .features li::before { content: "› "; color: #e61e2a; }
 
-        .buy-btn { background: #e61e2a; color: white; text-decoration: none; padding: 10px; border-radius: 3px; font-weight: bold; font-size: 0.8rem; text-align: center; border: none; }
+        .buy-btn { background: #e61e2a; color: white; text-decoration: none; padding: 10px; border-radius: 3px; font-weight: bold; font-size: 0.8rem; text-align: center; border: none; transition: 0.3s; }
+        .buy-btn:hover { background: #ff1e2e; box-shadow: 0 0 10px #e61e2a; }
 
         #auth-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 9999; display: flex; justify-content: center; align-items: center; }
         
@@ -47,7 +49,7 @@
 
     <div id="auth-screen">
         <div style="text-align: center;">
-            <h1 style="color:#e61e2a; letter-spacing:10px;">REMEMBER</h1>
+            <h1 style="color:#e61e2a; letter-spacing:10px; text-shadow: 0 0 15px #e61e2a;">REMEMBER</h1>
             <button class="buy-btn" style="width: 200px; cursor: pointer;" onclick="start()">START SYSTEM</button>
         </div>
     </div>
@@ -66,10 +68,14 @@
     <script>
         const canvas = document.getElementById('hacker-canvas');
         const ctx = canvas.getContext('2d');
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
+        
+        function resize() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        window.onresize = resize;
+        resize();
 
-        // النص كاملًا كما أرسلته يا أبو سعد
         const asciiArt = [
             "⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠐⠠⠄⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⠠⠐⡀⠄⠤⠀⠅⡐⠠⡡⠠⠐⠠⠐⠨⢐⢘⢘⢬⢫⣪⢯⣫⢪⠬⡇⡕⣕⣏⢎⢗⡽⢕⢯⢣⢕⠢⡱⡈⡂⡔⠄⢐⡀⠄⠀⠄⠀⠀⠀⠀⠀⠀⠠⠀⠀⢀",
             "⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢄⢐⠠⢠⢠⠀⠀⠀⠀⠀⠀⠠⣄⢬⣰⣀⠍⡀⡂⠄⡀⠀⠀⠀⠀⠀⠀⠀⢈⠈⠄⠠⠈⠄⠕⡀⠡⢀⠐⢘⢀⠘⠠⢘⢨⢐⠐⠠⢘⣣⢥⡫⢾⣨⣺⣞⣾⣲⣽⣌⡇⡇⡯⡪⣃⢱⢅⠪⣂⣢⣤⣇⣶⡄⣆⠨⡀⠂⠅⠂⠁⠀⠁⡀⠄⣠⢤⠤⣤",
@@ -102,10 +108,7 @@
             "⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀",
             "⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀",
             "⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠆⠠⠀⠀⢀⢀⡀⢀⢀⡀⢀⢠⡀⡀⠀⠀⠀⣀⠂⠀⠀⠀⢀⢄⠀⡀⣀⢀⠀⣀⢀⢠⠀⡃⠠⠀⠀⢀⢀⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀",
-            "⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⡄⠠⠀⣎⢐⠠⣁⠨⢐⣃⠸⠨⣅⡀⠀⠀⠠⠐⣄⢈⣀⠄⢸⢠⠀⡇⢭⢠⠁⡥⢀⢰⠀⣅⡠⠀⢈⣤⢠⡅⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀",
-            "⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠐⠃⠀⠐⠃⠀⠀⠘⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀",
-            "⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀",
-            "⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀"
+            "⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⡄⠠⠀⣎⢐⠠⣁⠨⢐⣃⠸⠨⣅⡀⠀⠀⠠⠐⣄⢈⣀⠄⢸⢠⠀⡇⢭⢠⠁⡥⢀⢰⠀⣅⡠⠀⢈⣤⢠⡅⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀"
         ];
 
         let mode = "rain"; 
@@ -113,16 +116,15 @@
 
         const alphabet = "01REMEMBER";
         const fontSize = 14;
-        const columns = canvas.width / fontSize;
-        const rainDrops = Array.from({ length: columns }).fill(1);
+        let columns = canvas.width / fontSize;
+        let rainDrops = Array.from({ length: columns }).fill(1);
 
         function draw() {
-            ctx.fillStyle = "rgba(0, 0, 0, 0.1)";
+            ctx.fillStyle = "rgba(0, 0, 0, 0.15)";
             ctx.fillRect(0, 0, canvas.width, canvas.height);
             
-            ctx.font = fontSize + "px monospace";
-
             if (mode === "rain") {
+                ctx.font = fontSize + "px monospace";
                 ctx.fillStyle = "#e61e2a";
                 for (let i = 0; i < rainDrops.length; i++) {
                     const text = alphabet.charAt(Math.floor(Math.random() * alphabet.length));
@@ -132,23 +134,28 @@
                 }
             } else {
                 ctx.fillStyle = "#ff0000";
+                // تصغير الخط قليلاً ليناسب الرسمة المنقطة
+                ctx.font = "8px monospace";
                 ctx.textAlign = "center";
-                const startY = (canvas.height / 2) - (asciiArt.length * 6);
+                
+                // حساب نقطة البداية لتوسيط الرسمة
+                const startY = (canvas.height / 2) - (asciiArt.length * 4);
                 
                 asciiArt.forEach((line, index) => {
-                    ctx.fillText(line, canvas.width / 2, startY + (index * 13));
+                    ctx.fillText(line, canvas.width / 2, startY + (index * 9));
                 });
                 ctx.textAlign = "left";
             }
 
             counter++;
-            if (counter % 1200 === 0) {
+            // التبديل إلى الرسمة المنقطة كل 600 إطار (حوالي 30 ثانية)
+            if (counter % 600 === 0) {
                 mode = "portrait";
                 document.getElementById('algo-status').innerText = "PORTRAIT GENERATING...";
                 setTimeout(() => { 
                     mode = "rain"; 
                     document.getElementById('algo-status').innerText = "SYSTEM IDLE...";
-                }, 8000); // مدة عرض النص المنقط (8 ثوانٍ)
+                }, 10000); // مدة العرض (10 ثوانٍ)
             }
         }
 
