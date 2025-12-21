@@ -3,172 +3,193 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>REMEMBER | ALGO ART FULL</title>
+    <title>REMEMBER STORE | ELITE EDITION</title>
     <style>
         * { box-sizing: border-box; cursor: default; }
         body { margin: 0; padding: 0; background: #000; color: white; font-family: 'Consolas', monospace; overflow: hidden; height: 100vh; display: flex; align-items: center; justify-content: center; }
-        
-        #hacker-canvas { position: fixed; top: 0; left: 0; z-index: 2; width: 100%; height: 100%; }
+        #hacker-canvas { position: fixed; top: 0; left: 0; z-index: 1; opacity: 0.7; }
 
-        #store-content { 
-            position: relative; 
-            z-index: 10; 
-            width: 95%; 
-            max-width: 1100px; 
-            display: none; 
-            flex-direction: column; 
-            align-items: center; 
-            background: rgba(0,0,0,0.5);
-            padding: 20px;
-            border-radius: 15px;
-            border: 1px solid rgba(230, 30, 42, 0.3);
-        }
+        /* Login Layer */
+        #auth-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 9999; display: flex; justify-content: center; align-items: center; }
+        .auth-container { background: #050505; border: 2px solid #e61e2a; padding: 30px; border-radius: 5px; width: 320px; text-align: center; box-shadow: 0 0 30px #e61e2a; }
+        .auth-btn { width: 100%; background: #e61e2a; color: white; border: none; padding: 12px; cursor: pointer; font-weight: bold; letter-spacing: 2px; }
 
-        .header-title { color: #e61e2a; font-size: 2.8rem; font-weight: 900; letter-spacing: 10px; text-shadow: 0 0 20px #e61e2a; margin: 0; }
-        
-        .plans-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; width: 100%; margin: 20px 0; }
-        .card { background: rgba(5, 5, 5, 0.95); border: 1px solid #333; padding: 15px; border-radius: 4px; display: flex; flex-direction: column; }
-        .card:hover { border-color: #e61e2a; box-shadow: 0 0 15px rgba(230, 30, 42, 0.4); }
-        .plan-name { color: #e61e2a; font-size: 0.9rem; font-weight: bold; text-align: center; border-bottom: 1px solid #222; margin-bottom: 10px; padding-bottom: 5px; }
-        .price { font-size: 1.8rem; font-weight: 900; text-align: center; margin-bottom: 10px; }
-        .features { font-size: 0.72rem; color: #aaa; list-style: none; padding: 0; margin-bottom: 15px; line-height: 1.6; }
-        .features li::before { content: "› "; color: #e61e2a; }
+        /* Main Dashboard */
+        #store-content { display: none; width: 95%; max-width: 1200px; z-index: 10; flex-direction: column; align-items: center; }
+        .live-stats { color: #e61e2a; font-size: 0.85rem; margin-bottom: 5px; font-weight: bold; letter-spacing: 2px; text-shadow: 0 0 5px #e61e2a; }
+        .header-title { color: #e61e2a; font-size: 2.8rem; font-weight: 900; letter-spacing: 12px; margin-bottom: 15px; text-shadow: 0 0 20px #e61e2a; }
 
-        .buy-btn { background: #e61e2a; color: white; text-decoration: none; padding: 10px; border-radius: 3px; font-weight: bold; font-size: 0.8rem; text-align: center; border: none; cursor: pointer; }
+        /* Plans Grid - No Gaps */
+        .plans-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; width: 100%; margin-bottom: 15px; }
+        .card { background: rgba(5, 5, 5, 0.98); border: 1px solid #333; padding: 15px; border-radius: 4px; display: flex; flex-direction: column; text-align: left; transition: 0.3s; }
+        .card:hover { border-color: #e61e2a; box-shadow: 0 0 15px rgba(230, 30, 42, 0.5); }
+        .plan-name { color: #e61e2a; font-size: 0.95rem; font-weight: bold; text-align: center; border-bottom: 1px solid #222; margin-bottom: 10px; padding-bottom: 5px; }
+        .price { font-size: 1.8rem; font-weight: 900; text-align: center; margin-bottom: 10px; color: #fff; }
+        .features { font-size: 0.72rem; color: #aaa; list-style: none; padding: 0; margin: 0 0 15px 0; line-height: 1.6; }
+        .features li::before { content: "• "; color: #e61e2a; font-weight: bold; }
 
-        #auth-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 9999; display: flex; justify-content: center; align-items: center; }
-        
-        #algo-status { position: fixed; top: 20px; right: 20px; color: #e61e2a; font-size: 0.7rem; z-index: 100; font-weight: bold; letter-spacing: 2px; }
+        /* Addons Bar */
+        .addons-bar { width: 100%; background: rgba(10, 10, 10, 0.98); border: 1px solid #e61e2a; padding: 10px; border-radius: 4px; display: flex; flex-wrap: wrap; justify-content: center; gap: 20px; margin-bottom: 10px; }
+        .addon-item { font-size: 0.75rem; color: #bbb; }
+        .addon-item b { color: #e61e2a; }
+
+        /* Buttons */
+        .btn-group { display: flex; flex-direction: column; gap: 4px; margin-top: auto; }
+        .buy-btn { background: #e61e2a; color: #fff; text-decoration: none; padding: 8px; border-radius: 3px; font-size: 0.8rem; font-weight: bold; text-align: center; transition: 0.3s; }
+        .ask-btn { background: transparent; color: #555; border: 1px solid #222; text-decoration: none; padding: 5px; border-radius: 3px; font-size: 0.65rem; text-align: center; }
+        .buy-btn:hover { background: #fff; color: #000; }
+
+        /* Credits */
+        .credits { margin-top: 15px; text-align: center; padding: 10px; border-top: 1px solid #1a1a1a; width: 100%; }
+        .dev-tag { font-size: 1.1rem; color: #fff; letter-spacing: 4px; text-transform: uppercase; }
+        .dev-tag span { color: #e61e2a; font-weight: 900; text-shadow: 0 0 15px #e61e2a; }
+
+        /* Notifications */
+        #notify-box { position: fixed; bottom: 20px; left: 20px; z-index: 10000; }
+        .notification { background: #050505; border-left: 5px solid #e61e2a; color: white; padding: 12px; margin-top: 10px; border-radius: 2px; font-size: 0.75rem; box-shadow: 0 10px 20px rgba(0,0,0,0.8); animation: slide 0.4s ease; }
+        @keyframes slide { from { transform: translateX(-110%); } to { transform: translateX(0); } }
     </style>
 </head>
 <body>
 
-    <div id="algo-status">SYSTEM IDLE...</div>
     <canvas id="hacker-canvas"></canvas>
+    <div id="notify-box"></div>
 
     <div id="auth-screen">
-        <div style="text-align: center;">
-            <h1 style="color:#e61e2a; letter-spacing:10px;">REMEMBER</h1>
-            <button class="buy-btn" style="width: 200px;" onclick="start()">START SYSTEM</button>
+        <div class="auth-container">
+            <h2 style="color:#e61e2a; letter-spacing:5px; margin-bottom:20px;">SYSTEM ACCESS</h2>
+            <button class="auth-btn" onclick="login()">INITIALIZE SESSION</button>
         </div>
     </div>
 
     <div id="store-content">
+        <div class="live-stats">LIVE SESSIONS: <span id="view-count">1,842</span></div>
         <h1 class="header-title">REMEMBER STORE</h1>
+
         <div class="plans-grid">
-            <div class="card"><span class="plan-name">BASIC</span><span class="price">$14</span><ul class="features"><li>1 Concur</li><li>60s Boot</li></ul><a href="#" class="buy-btn">PURCHASE</a></div>
-            <div class="card"><span class="plan-name">GOLD</span><span class="price">$17</span><ul class="features"><li>1 Concur</li><li>120s Boot</li></ul><a href="#" class="buy-btn">PURCHASE</a></div>
-            <div class="card" style="border-color:#e61e2a;"><span class="plan-name">DIAMOND</span><span class="price">$22</span><ul class="features"><li>2 Concur</li><li>120s Boot</li></ul><a href="#" class="buy-btn">PURCHASE</a></div>
-            <div class="card"><span class="plan-name">CHAMPION</span><span class="price">$45</span><ul class="features"><li>3 Concur</li><li>120s Boot</li></ul><a href="#" class="buy-btn">PURCHASE</a></div>
+            <div class="card">
+                <span class="plan-name">[ BASIC PLAN ]</span>
+                <span class="price">$14</span>
+                <ul class="features">
+                    <li>1 Concurrents</li>
+                    <li>60 Seconds Boot Time</li>
+                    <li>45 Seconds Cooldown Time</li>
+                    <li>Access To Default Methods</li>
+                </ul>
+                <div class="btn-group">
+                    <a href="https://discord.gg/RMB" target="_blank" class="buy-btn">PURCHASE</a>
+                    <a href="https://discord.gg/RMB" target="_blank" class="ask-btn">INQUIRY</a>
+                </div>
+            </div>
+
+            <div class="card">
+                <span class="plan-name">[ GOLD PLAN ]</span>
+                <span class="price">$17</span>
+                <ul class="features">
+                    <li>1 Concurrents</li>
+                    <li>120 Seconds Boot Time</li>
+                    <li>30 Seconds Cooldown Time</li>
+                    <li>Access To Default Methods</li>
+                </ul>
+                <div class="btn-group">
+                    <a href="https://discord.gg/RMB" target="_blank" class="buy-btn">PURCHASE</a>
+                    <a href="https://discord.gg/RMB" target="_blank" class="ask-btn">INQUIRY</a>
+                </div>
+            </div>
+
+            <div class="card" style="border-color:#e61e2a;">
+                <span class="plan-name">[ DIAMOND PLAN ]</span>
+                <span class="price">$22</span>
+                <ul class="features">
+                    <li>2 Concurrents</li>
+                    <li>120 Seconds Boot Time</li>
+                    <li>20 Seconds Cooldown Time</li>
+                    <li>Access To Vip Methods</li>
+                </ul>
+                <div class="btn-group">
+                    <a href="https://discord.gg/RMB" target="_blank" class="buy-btn">PURCHASE</a>
+                    <a href="https://discord.gg/RMB" target="_blank" class="ask-btn">INQUIRY</a>
+                </div>
+            </div>
+
+            <div class="card" style="background:rgba(230,30,42,0.05);">
+                <span class="plan-name">[ CHAMPION PLAN ]</span>
+                <span class="price">$45 <small style="font-size:0.6rem;">/ $150</small></span>
+                <ul class="features">
+                    <li>3 Concurrents</li>
+                    <li>120 Seconds Boot Time</li>
+                    <li>15 Seconds Cooldown Time</li>
+                    <li>Access To Vip Methods</li>
+                    <li>Lifetime Option Available</li>
+                </ul>
+                <div class="btn-group">
+                    <a href="https://discord.gg/RMB" target="_blank" class="buy-btn">PURCHASE</a>
+                    <a href="https://discord.gg/RMB" target="_blank" class="ask-btn">INQUIRY</a>
+                </div>
+            </div>
         </div>
-        <div style="color:#fff; letter-spacing:3px; font-size:0.9rem;">Designed by <b>Abu saad</b></div>
+
+        <div class="addons-bar">
+            <span style="color:#e61e2a; font-weight:bold; margin-right:15px;">ADDONS:</span>
+            <div class="addon-item">1+ Concur: <b>15$</b></div>
+            <div class="addon-item">+60s Boot: <b>10$</b></div>
+            <div class="addon-item">API Access: <b>20$</b></div>
+            <div class="addon-item">VIP Methods: <b>15$</b></div>
+            <div class="addon-item">0 Cooldown: <b>10$</b></div>
+        </div>
+
+        <div class="credits">
+            <div class="dev-tag">Designed & Programmed by <span>Abu saad</span></div>
+            <div style="font-size:0.8rem; color:#666; margin-top:5px; letter-spacing:2px;">DISCORD: <b style="color:#e61e2a;">e65e</b></div>
+        </div>
     </div>
 
     <script>
+        // Background Logic
         const canvas = document.getElementById('hacker-canvas');
         const ctx = canvas.getContext('2d');
-        
-        function resize() {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-        }
-        window.addEventListener('resize', resize);
-        resize();
-
-        const asciiArt = [
-            "⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠐⠠⠄⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⠠⠐⡀⠄⠤⠀⠅⡐⠠⡡⠠⠐⠠⠐⠨⢐⢘⢘⢬⢫⣪⢯⣫⢪⠬⡇⡕⣕⣏⢎⢗⡽⢕⢯⢣⢕⠢⡱⡈⡂⡔⠄⢐⡀⠄⠀⠄⠀⠀⠀⠀⠀⠀⠠⠀⠀⢀",
-            "⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢄⢐⠠⢠⢠⠀⠀⠀⠀⠀⠀⠠⣄⢬⣰⣀⠍⡀⡂⠄⡀⠀⠀⠀⠀⠀⠀⠀⢈⠈⠄⠠⠈⠄⠕⡀⠡⢀⠐⢘⢀⠘⠠⢘⢨⢐⠐⠠⢘⣣⢥⡫⢾⣨⣺⣞⣾⣲⣽⣌⡇⡇⡯⡪⣃⢱⢅⠪⣂⣢⣤⣇⣶⡄⣆⠨⡀⠂⠅⠂⠁⠀⠁⡀⠄⣠⢤⠤⣤",
-            "⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠨⠐⢀⢈⠰⢸⢸⣔⠄⠀⢈⢨⢪⠺⣜⣯⢾⣳⡄⠄⠁⡀⡠⠅⡀⠀⡀⠀⠁⠀⠄⠂⡀⣌⠠⠂⠢⡁⠇⢐⢑⢀⢨⠐⠐⠠⠀⠌⠨⠠⢪⠲⣱⢿⣽⣽⠿⡾⣏⡷⣧⡇⡇⠧⠣⡑⡱⢐⣢⣿⠿⡯⡗⡿⡪⡂⡂⡂⠀⡂⡁⡂⠁⢤⣞⣮⣾⢵⡣⡪⠂⠁",
-            "⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠁⠠⠙⠸⣘⢄⡺⡽⡄⢐⢔⢅⡫⠩⢹⠽⠳⡭⡆⠄⠀⠀⠄⠐⠀⠀⠄⠐⠀⢄⠠⠀⠤⠀⢂⠡⠐⡈⢀⠔⠀⢠⢠⢰⢀⢁⠈⠐⠨⡨⢨⢞⡿⣦⣳⠝⢇⢕⣎⣎⢮⣊⣜⣬⢴⢺⢺⣏⡟⠯⡗⠹⡨⡂⠂⠠⡀⠀⠀⠂⡆⣯⣟⣕⣴⠅⠇⠑⡢⠁",
-            "⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣀⠀⠀⠀⡀⢀⠀⠡⢊⢣⠀⢹⡉⠀⡠⣶⣆⠀⢧⢅⠀⠠⢀⠐⢐⢔⣦⣦⡁⠀⠠⢀⢀⢀⠀⠀⠄⡀⠠⢀⠰⢬⢰⢱⢕⢷⢴⢠⠁⢌⠰⢸⢊⠣⢠⣺⠌⢄⠃⢷⣵⡕⡠⠠⡲⡘⡕⣞⢶⠀⢂⢂⠀⡐⢄⣈⢀⠂⠀⠀⠀⡊⡏⠂⠄⠁⠀⠂",
-            "⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠐⡀⢀⠀⢐⢐⡐⠀⠀⢪⠂⠐⡀⢉⢭⡚⠉⠘⢔⡈⣢⠂⠀⡐⡈⢆⠃⣵⡽⡽⣎⢀⠀⠄⢀⠀⠐⠀⠂⠐⠀⠪⢆⠚⢖⠱⡑⣊⢇⠅⠂⡂⢮⡂⡣⡲⠻⢏⠢⡌⡀⡓⡑⠂⢂⠒⢕⢲⠋⠐⡠⡵⡇⢆⢀⠀⠠⠑⢂⠀⠈⠀⢈⠅⠀⣠⠂⢀⠀⠀⠉⡂",
-            "⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⡀⠂⠈⠑⠠⢀⠈⡆⠀⠐⢑⡒⠺⠛⢗⠆⠈⡑⠀⠐⡐⢌⣢⠃⠅⣏⠋⢞⠄⡀⢂⢀⢄⠤⣀⠂⠐⠈⡂⠄⠂⠀⠁⠀⠀⠀⠀⠀⠐⡀⡃⡸⣠⠥⡠⣑⠂⢂⢐⢀⠂⡒⡊⡢⡚⡂⡙⣐⡁⠂⡁⡀⠌⢀⠐⡀⠀⠀⢀⠂⠀⢐⠎⠂⠀⠁⠒⠒",
-            "⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠬⠰⢘⡆⠀⢉⠌⠀⡁⣑⡈⠀⠀⢀⡿⡌⡀⠂⢁⢈⠪⢄⡢⣰⣷⡁⢹⡂⡂⣐⣜⣇⣿⡹⠮⠂⠀⠀⠀⠀⠀⠀⡀⠀⡀⠀⠀⠀⠀⠀⢊⠌⠄⡈⡢⡱⡐⡐⠀⢐⢐⠪⢔⢨⢀⢄⡻⠉⠁⠂⢂⡐⢀⠠⠀⠀⠀⠈⠓⠈⢰⣀⡀⠠",
-            "⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢸⠡⢀⠂⠀⠀⠐⡰⡇⠠⡁⣼⠪⢈⠂⠅⠀⠅⡁⣖⣮⣅⣨⡑⣅⡗⡑⣆⣵⣱⠝⠉⠀⠀⠀⠀⠠⢐⠠⡂⡖⢰⢬⡐⢄⢀⠀⠀⠀⠈⢐⠌⡜⡎⣊⢒⢑⣬⣼⣾⢷⣕⣥⡣⣧⢀⠃⠀⣰⢁⠂⡀⠁⠀⡀⠁⠀⠐⢸⠁⠀⠀⠀⠐",
-            "⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⡄⠀⠀⢀⠾⠘⢀⢈⠀⠀⠈⡨⣗⡒⣵⠢⢑⢢⠀⡃⡂⠅⡆⢧⠊⠀⡱⡇⢆⢓⠜⠞⢾⠀⠀⠀⠀⠀⠀⡮⡸⢐⠌⠘⢜⢜⡺⣪⡳⡖⡐⠀⠀⠀⢢⠅⡕⡵⣢⢷⣿⡿⣟⣿⡽⣽⡵⣝⢞⡆⢂⠁⡮⡂⠂⠀⡀⢀⠀⡀⠀⠀⠁⠆",
-            "⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⡇⠀⠀⡜⢑⢀⢀⠈⠀⠀⠀⠩⣣⢘⠆⣑⢨⣂⣌⢄⠂⡨⠂⡗⠂⡀⡮⠃⠌⡕⡝⠜⠁⠀⠀⠀⠀⠀⠨⡲⢘⠰⠸⢹⣳⢎⢩⢼⢼⣯⡣⡁⠀⠀⠈⡾⢨⢂⡾⡛⡯⡯⡹⣞⣭⣳⢫⢢⠂⣑⣀⢢⡘⢠⣦⣽⡳⣇⡇⡆⡃⠄⢂⠈⡀⠀⠀⡂",
-            "⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠇⠀⢰⠁⠀⠀⠠⣁⣁⡀⠀⠀⠑⠐⡰⣞⡟⣿⢯⡿⡧⣄⠅⠆⠇⡒⠀⠇⠱⡚⠎⠀⠀⠀⠀⠀⠀⠀⠸⠩⠐⠸⠈⠀⢸⢰⠐⠈⠪⡗⡇⠀⠀⠀⠀⠈⢐⠐⡽⠐⢾⢵⠈⠑⠞⣾⡵⠪⠀⢸⠲⠹⢨⡯⣽⢓⢏⣂⠃⠆⠂⠁⠀⠁⢡⠀⠂⠃",
-            "⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠣⢀⠆⠀⠠⡘⡸⡩⣝⡏⣿⣶⣄⠨⠠⡪⡪⢏⠏⡗⣍⠽⠅⠡⢡⢁⢮⠯⢵⡏⠀⠀⠀⠀⠀⠀⠀⢀⢨⠰⠐⠀⠀⠀⡈⠰⠁⠀⠀⢱⠇⠀⠀⠀⠀⠀⠀⢰⠁⢄⡺⢦⡳⠤⠠⠎⠑⠀⠀⠐⠈⠁⠨⠝⠁⠰⠁⠁⠈⠀⠀⠀⠀⠀⠈⠄⠠",
-            "⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠨⠈⢍⢨⣍⣻⢽⣝⡥⣵⢳⠛⠈⠀⠭⠀⢉⠂⠈⢀⠢⡋⡏⠜⠀⠀⠀⠀⠀⠀⠀⢎⠗⠀⠀⠀⠀⢀⢐⠡⢉⠄⠀⠀⠈⠻⣄⠀⠀⠀⠀⠈⠨⠉⢡⠠⠠⠌⠄⠀⠁⠈⠀⠀⠀⡁⠁⡗⠁⠀⠀⠄⠀⠐⠀⠐⠀⠀⠀⠀⠁⠈",
-            "⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠨⠂⠈⠈⠙⠝⠙⢞⡌⠱⠤⢘⡵⠏⠄⠐⠅⠀⠁⡍⠯⠋⠀⠀⠀⠀⠀⠀⠀⠈⠕⠱⢄⢀⠠⠀⠅⡐⠽⣃⠣⡀⠀⠀⠀⠉⠧⠀⠀⠀⠀⢈⠨⠈⠋⠈⠨⠀⠁⠁⠅⠁⠀⠡⠐⠕⠀⢀⠸⠞⠆⠀⢀⠀⠁⠁⠀⠂⠀⠀⠀⠀",
-            "⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠔⠋⠉⠀⡠⣱⠃⠀⠫⠃⡐⠸⢔⣄⡠⠍⠒⢁⠁⠄⠂⡈⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⡐⢄⠰⠹⠀⠀⠀⠈⣣⠈⠲⢒⢆⠯⠏⠀⠀⠀⠀⠁⠆⠂⢡⠂⠀⢁⠅⡈⠀⠀⠀⠀⠅⠂⢁⠀⡆⠀⠀⠁⠀⠀⠀⠀⠀⠀⠀⠀",
-            "⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⠑⠒⠊⠌⠛⠏⠤⡀⠇⠀⢛⠁⠀⠘⢀⠈⠂⠐⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠐⠘⢌⠸⢘⠄⢜⢺⢘⢞⢢⠀⠄⠄⠀⠀⠀⠀⠀⠀⠰⡣⡈⠀⠄⠂⠈⠐⠈⠀⣡⡰⣖⡲⡒⡠⡑⡊⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀",
-            "⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢑⢀⣀⢮⠃⠀⠀⠐⡄⠀⠀⡂⠁⠠⠁⠄⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢉⠪⠨⠀⠀⠀⠀⠈⢏⡪⢊⠊⠀⠀⠀⠀⠀⠀⠀⠀⡳⣑⢁⢁⠀⠨⠁⢁⡾⣝⢯⠣⡛⡑⢘⠀⢂⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀",
-            "⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠰⠁⠀⠀⠐⠆⡀⡈⠀⢀⠢⡢⠢⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⠃⠕⠀⠀⠀⠀⠀⢸⠨⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⠢⠁⠀⠨⠂⠁⠈⢏⠮⢊⠆⠆⠀⠀⠀⠀⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀",
-            "⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⠃⡀⡁⡀⠀⡇⡔⠀⠀⠠⠘⡂⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⡂⠀⠀⠀⠀⠀⡊⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣣⢃⢀⠀⠀⠀⢸⡁⠀⢐⠀⠀⠁⣀⠀⠀⠀⠀⠀⠁⠀⠀⠀⠀⠀⠀⠀⠀",
-            "⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠆⠁⠂⠐⠀⠀⠀⠀⡀⠈⠀⠈⠂⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠸⠀⠀⠀⠀⠸⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠘⡁⠀⠀⠈⠠⡃⠀⡀⣲⡐⢀⠀⠈⠇⠂⠨⠀⡐⠀⠀⠀⠀⠀⠀⠀⠀",
-            "⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠐⠀⠐⢀⣀⠂⡀⠀⠀⠀⠀⢁⠠⠃⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⠀⠀⠀⢀⠂⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠐⠀⠈⠀⠀⠈⠉⠘⠁⠁⠂⠈⠈⠀⠀⠀⠁⠁⠀⠀⠀⠀⠀⠀⠀⠀",
-            "⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⠐⠁⠀⠊⡕⣱⡹⡱⣭⢢⠀⠐⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⡂⠀⢀⠐⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠁⠀⣀⣀⡠⠀⠐⡸⠃⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀",
-            "⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠄⠄⠄⠂⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠢⠤⠠⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠉⠣⡃⡪⠐⠐⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀",
-            "⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠐⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⠆⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀",
-            "⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⠤⠆⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⠀⠀⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀",
-            "⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠆⢀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀",
-            "⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀",
-            "⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀",
-            "⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀",
-            "⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠆⠠⠀⠀⢀⢀⡀⢀⢀⡀⢀⢠⡀⡀⠀⠀⠀⣀⠂⠀⠀⠀⢀⢄⠀⡀⣀⢀⠀⣀⢀⢠⠀⡃⠠⠀⠀⢀⢀⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀",
-            "⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⡄⠠⠀⣎⢐⠠⣁⠨⢐⣃⠸⠨⣅⡀⠀⠀⠠⠐⣄⢈⣀⠄⢸⢠⠀⡇⢭⢠⠁⡥⢀⢰⠀⣅⡠⠀⢈⣤⢠⡅⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀"
-        ];
-
-        let mode = "rain"; 
-        let counter = 0;
-
-        const alphabet = "01REMEMBER";
-        const fontSize = 14;
-        let columns = canvas.width / fontSize;
-        let rainDrops = Array.from({ length: columns }).fill(1);
-
+        canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+        const codes = "01REMEMBERSTORESYSTEM";
+        const drops = Array(Math.floor(canvas.width/14)).fill(1);
         function draw() {
-            ctx.fillStyle = "rgba(0, 0, 0, 0.1)";
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-            
-            if (mode === "rain") {
-                ctx.font = fontSize + "px monospace";
-                ctx.fillStyle = "#e61e2a";
-                ctx.textAlign = "left";
-                for (let i = 0; i < rainDrops.length; i++) {
-                    const text = alphabet.charAt(Math.floor(Math.random() * alphabet.length));
-                    ctx.fillText(text, i * fontSize, rainDrops[i] * fontSize);
-                    if (rainDrops[i] * fontSize > canvas.height && Math.random() > 0.975) rainDrops[i] = 0;
-                    rainDrops[i]++;
-                }
-            } else {
-                ctx.fillStyle = "#ff0000";
-                
-                // --- التعديل هنا لجعل النص كبيراً جداً ---
-                // جعل حجم الخط يتناسب مع عرض الشاشة (تقريباً 1.5% من العرض)
-                let portraitFontSize = Math.floor(canvas.width / 60); 
-                ctx.font = `bold ${portraitFontSize}px monospace`;
-                ctx.textAlign = "center";
-                
-                // المسافة الرأسية بين السطور (تلقائية بناءً على حجم الخط)
-                const lineSpacing = portraitFontSize * 0.9; 
-                const totalHeight = asciiArt.length * lineSpacing;
-                const startY = (canvas.height / 2) - (totalHeight / 2);
-                
-                asciiArt.forEach((line, index) => {
-                    ctx.fillText(line, canvas.width / 2, startY + (index * lineSpacing));
-                });
-            }
-
-            counter++;
-            // يظهر كل فترة (مثلاً كل 20 ثانية)
-            if (counter % 400 === 0) {
-                mode = "portrait";
-                document.getElementById('algo-status').innerText = "GENERATING FULL ART...";
-                setTimeout(() => { 
-                    mode = "rain"; 
-                    document.getElementById('algo-status').innerText = "SYSTEM IDLE...";
-                }, 10000); // 10 ثوانٍ
-            }
+            ctx.fillStyle = "rgba(0,0,0,0.1)"; ctx.fillRect(0,0,canvas.width,canvas.height);
+            ctx.fillStyle = "#e61e2a"; ctx.font = "14px monospace";
+            drops.forEach((y,i) => {
+                ctx.fillText(codes[Math.floor(Math.random()*codes.length)], i*14, y*14);
+                if(y*14 > canvas.height && Math.random() > 0.975) drops[i] = 0;
+                drops[i]++;
+            });
         }
-
         setInterval(draw, 50);
 
-        function start() {
-            document.getElementById('auth-screen').style.display = 'none';
-            document.getElementById('store-content').style.display = 'flex';
+        // View Counter
+        let views = 1842;
+        setInterval(() => {
+            views += Math.floor(Math.random() * 15) - 7;
+            document.getElementById('view-count').innerText = views.toLocaleString();
+        }, 2500);
+
+        // Name Database
+        const names = ["عبدالله العتيبي", "Alex Smith", "سلطان الحربي", "محمد القحطاني", "James Walker", "فهد المطيري", "خالد الشمري", "Ryan Jones", "صالح الرشيدي", "Ivan Petrov", "تركي العنزي", "احمد الدوسري"];
+        const b_plans = ["Champion Plan", "Diamond Plan", "Gold Plan", "VIP Methods", "API Access"];
+
+        function spawnNotify() {
+            const box = document.getElementById('notify-box');
+            const n = document.createElement('div');
+            n.className = 'notification';
+            const user = names[Math.floor(Math.random()*names.length)];
+            const plan = b_plans[Math.floor(Math.random()*b_plans.length)];
+            n.innerHTML = `🛒 <b style="color:#e61e2a;">${user}</b> has just purchased <b>${plan}</b>!`;
+            box.appendChild(n);
+            setTimeout(() => { n.style.opacity='0'; setTimeout(()=>n.remove(),500); }, 5000);
+        }
+        setInterval(spawnNotify, 7000);
+
+        function login() {
+            document.getElementById('auth-screen').style.display='none';
+            document.getElementById('store-content').style.display='flex';
         }
     </script>
 </body>
 </html>
+
