@@ -4,90 +4,101 @@
     <meta charset="UTF-8">
     <title>REMEMBER STORE | أبو سعد</title>
     <style>
-        /* إعدادات الصفحة الأساسية */
         body {
             margin: 0; padding: 0;
-            background-color: #050505;
+            background-color: #000;
             color: white;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            overflow: hidden; /* لمنع التمرير وضمان سلاسة الحركة */
+            font-family: 'Segoe UI', Tahoma, sans-serif;
+            overflow: hidden;
             height: 100vh;
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            display: flex; align-items: center; justify-content: center;
         }
 
-        /* تأثير الخلفية المتوهجة المتحركة */
-        .bg-glow {
+        /* خلفية الأكواد المتحركة (Matrix) */
+        #matrix-canvas {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: radial-gradient(circle at center, #1a0505 0%, #050505 100%);
-            z-index: -1;
+            z-index: -2; opacity: 0.15;
         }
 
-        /* الماوس السحري */
+        /* صورة القوست فيس المتحركة */
+        .ghostface {
+            position: fixed;
+            left: -150px; /* مختفي جهة اليسار */
+            bottom: 0;
+            width: 400px;
+            z-index: -1;
+            opacity: 0.6;
+            filter: drop-shadow(0 0 20px #e61e2a);
+            animation: ghostMove 8s infinite ease-in-out;
+            pointer-events: none;
+        }
+
+        @keyframes ghostMove {
+            0%, 100% { transform: translateX(0) scale(1); }
+            50% { transform: translateX(180px) scale(1.05); } /* يخرج للشاشة ويرجع */
+        }
+
+        /* الهالة الحمراء للماوس */
         #cursor-glow {
-            position: fixed; width: 400px; height: 400px;
+            position: fixed; width: 600px; height: 600px;
             background: radial-gradient(circle, rgba(230, 30, 42, 0.15) 0%, rgba(0,0,0,0) 70%);
             border-radius: 50%; pointer-events: none;
             transform: translate(-50%, -50%); z-index: 0;
-            transition: transform 0.1s ease-out;
         }
 
-        /* تصميم المحتوى */
         .content { position: relative; z-index: 10; text-align: center; }
-        
+
         h1 {
-            font-size: clamp(40px, 8vw, 80px);
-            color: #e61e2a;
-            text-transform: uppercase;
-            letter-spacing: 5px;
-            text-shadow: 0 0 20px rgba(230, 30, 42, 0.5);
-            margin-bottom: 10px;
-            animation: pulse 3s infinite ease-in-out;
+            font-size: 70px; color: #e61e2a; margin: 0;
+            text-shadow: 0 0 20px rgba(230, 30, 42, 0.8);
+            letter-spacing: 3px;
         }
 
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); opacity: 1; }
-            50% { transform: scale(1.05); opacity: 0.8; }
+        p {
+            font-size: 22px; color: #ccc; max-width: 600px; line-height: 1.6;
         }
 
         .btn-discord {
-            display: inline-block;
-            background: #e61e2a; color: white;
-            padding: 15px 40px; border-radius: 50px;
-            text-decoration: none; font-weight: bold;
-            box-shadow: 0 0 15px rgba(230, 30, 42, 0.4);
-            transition: 0.3s;
+            display: inline-block; background: #e61e2a; color: white;
+            padding: 18px 50px; border-radius: 5px;
+            text-decoration: none; font-weight: bold; font-size: 20px;
+            box-shadow: 0 0 20px rgba(230, 30, 42, 0.5);
+            transition: 0.3s; border: 1px solid transparent;
         }
 
         .btn-discord:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 0 30px rgba(230, 30, 42, 0.8);
-            letter-spacing: 2px;
+            background: transparent; border-color: #e61e2a;
+            box-shadow: 0 0 40px #e61e2a; transform: scale(1.1);
         }
 
-        footer { position: fixed; bottom: 20px; opacity: 0.4; font-size: 12px; }
+        .particle {
+            position: absolute; background: #e61e2a;
+            border-radius: 50%; pointer-events: none;
+        }
+
+        footer { position: fixed; bottom: 15px; opacity: 0.3; font-size: 11px; }
     </style>
 </head>
 <body>
 
-    <div class="bg-glow"></div>
+    <canvas id="matrix-canvas"></canvas>
+
+    <img src="https://www.pngarts.com/files/10/Ghostface-Scream-PNG-High-Quality-Image.png" class="ghostface" alt="Ghostface">
+
     <div id="cursor-glow"></div>
 
     <div class="content">
         <h1>REMEMBER STORE</h1>
-        <p style="color: #888; font-size: 18px;">مرحباً بك في عالم التميز. الماوس الخاص بك الآن يحرك الضوء!</p>
-        <br><br>
-        <a href="https://discord.gg/yourlink" class="btn-discord">الدخول للسيرفر</a>
+        <p>مرحباً بكم في عالم Remember المتخصص في السيرفرات و ddos</p>
+        <br>
+        <a href="https://discord.gg/RMB" class="btn-discord">الانضمام إلى Discord</a>
     </div>
 
     <footer>البرمجة والتصميم بواسطة أبو سعد</footer>
 
     <script>
-        // كود تحريك التوهج مع الماوس
-        const glow = document.getElementById('cursor-glow');
-        window.addEventListener('mousemove', (e) => {
-            glow.style.left = e.clientX + 'px';
-            glow.style.top = e.clientY + 'px';
-        });
-    </script>
-</body>
-</html>
+        // --- كود مصفوفة الأكواد (Matrix) ---
+        const canvas = document.getElementById('matrix-canvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth;
+        canvas.height = window.
