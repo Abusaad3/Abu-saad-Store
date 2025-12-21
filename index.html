@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>REMEMBER STORE | GHOSTFACE EDITION</title>
+    <title>REMEMBER STORE | BLOOD MOON</title>
     <style>
         * { box-sizing: border-box; }
         body {
@@ -11,20 +11,23 @@
             font-family: 'Segoe UI', sans-serif; overflow: hidden; height: 100vh;
         }
 
-        /* خوارزميات Matrix الحمراء */
+        /* خلفية الخوارزميات */
         #matrix-canvas { position: fixed; top: 0; left: 0; z-index: -2; opacity: 0.3; }
 
-        /* صورة القوست فيس في الخلفية */
-        .ghostface-bg {
-            position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            width: 500px; height: auto; opacity: 0.15; z-index: -1;
-            filter: grayscale(1) sepia(1) hue-rotate(-50deg) saturate(5);
-            animation: pulse-ghost 4s infinite ease-in-out;
+        /* القمر الأحمر في الزاوية */
+        .blood-moon {
+            position: fixed; top: 40px; right: 40px;
+            width: 120px; height: 120px;
+            background: radial-gradient(circle, #ff0000 0%, #8b0000 70%, #4a0000 100%);
+            border-radius: 50%;
+            box-shadow: 0 0 50px rgba(255, 0, 0, 0.6), inset 20px 0 40px rgba(0,0,0,0.7);
+            z-index: -1;
+            animation: moon-glow 5s infinite alternate ease-in-out;
         }
 
-        @keyframes pulse-ghost {
-            0%, 100% { opacity: 0.1; transform: translate(-50%, -50%) scale(1); }
-            50% { opacity: 0.25; transform: translate(-50%, -50%) scale(1.05); }
+        @keyframes moon-glow {
+            from { box-shadow: 0 0 40px rgba(255, 0, 0, 0.5); transform: scale(1); }
+            to { box-shadow: 0 0 70px rgba(255, 0, 0, 0.8); transform: scale(1.05); }
         }
 
         #cursor-glow {
@@ -40,22 +43,21 @@
             align-items: center; height: 100vh; width: 100%; padding: 10px; z-index: 10; position: relative;
         }
 
-        h1 { font-size: 3.5rem; color: #e61e2a; text-shadow: 0 0 20px #e61e2a; margin: 0 0 15px 0; letter-spacing: 5px; }
+        h1 { font-size: 3.2rem; color: #e61e2a; text-shadow: 0 0 20px #e61e2a; margin: 0 0 20px 0; letter-spacing: 3px; }
 
         .cards-grid {
             display: grid; grid-template-columns: repeat(4, 1fr);
-            gap: 15px; width: 100%; max-width: 1100px; margin-bottom: 20px;
+            gap: 12px; width: 100%; max-width: 1100px; margin-bottom: 20px;
         }
 
         .card {
-            background: rgba(0, 0, 0, 0.85); border: 1px solid #222;
+            background: rgba(10, 10, 10, 0.9); border: 1px solid #1a1a1a;
             border-radius: 10px; padding: 15px; text-align: center; transition: 0.3s;
-            backdrop-filter: blur(5px);
         }
         .card:hover { border-color: #e61e2a; transform: translateY(-5px); box-shadow: 0 5px 25px rgba(230,30,42,0.4); }
 
-        .price { font-size: 1.7rem; color: #e61e2a; font-weight: bold; margin-bottom: 8px; display: block; }
-        .details { list-style: none; padding: 0; margin: 10px 0; font-size: 0.8rem; color: #ccc; text-align: right; }
+        .price { font-size: 1.6rem; color: #e61e2a; font-weight: bold; margin-bottom: 8px; display: block; }
+        .details { list-style: none; padding: 0; margin: 10px 0; font-size: 0.78rem; color: #ccc; text-align: right; }
         .details li { padding: 3px 0; border-bottom: 1px solid #1a1a1a; }
         .details li::before { content: "• "; color: #e61e2a; }
 
@@ -65,9 +67,9 @@
         }
 
         .addons-section {
-            background: rgba(15, 0, 0, 0.7); border: 1px solid #e61e2a;
+            background: rgba(20, 0, 0, 0.5); border: 1px solid #e61e2a;
             border-radius: 10px; padding: 12px; width: 100%; max-width: 900px;
-            display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;
+            display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px;
         }
         .addons-header { grid-column: 1 / -1; color: #e61e2a; font-size: 1.3rem; font-weight: bold; margin-bottom: 5px; }
         .addon-item { border-bottom: 1px dashed #333; padding: 4px; font-size: 0.8rem; display: flex; justify-content: space-between; }
@@ -86,7 +88,7 @@
 
     <canvas id="matrix-canvas"></canvas>
     
-    <img src="https://i.postimg.cc/qM6n8r5y/ghostface.png" class="ghostface-bg" alt="Ghostface">
+    <div class="blood-moon"></div>
 
     <div id="cursor-glow"></div>
 
@@ -97,7 +99,7 @@
             <div class="card"><span class="price">$14</span><ul class="details"><li>1 Concur</li><li>60s Boot</li><li>45s Cool</li><li>Default</li></ul><a href="https://discord.gg/RMB" class="btn">Purchase</a></div>
             <div class="card"><span class="price">$17</span><ul class="details"><li>1 Concur</li><li>120s Boot</li><li>30s Cool</li><li>Default</li></ul><a href="https://discord.gg/RMB" class="btn">Purchase</a></div>
             <div class="card"><span class="price">$22</span><ul class="details"><li>2 Concur</li><li>120s Boot</li><li>20s Cool</li><li>VIP Methods</li></ul><a href="https://discord.gg/RMB" class="btn">Purchase</a></div>
-            <div class="card" style="border: 2px solid #e61e2a;"><span class="price">$45 / $150</span><ul class="details"><li>3 Concur</li><li>120s Boot</li><li>15s Cool</li><li>VIP Methods</li></ul><a href="https://discord.gg/RMB" class="btn">Purchase</a></div>
+            <div class="card" style="border-color:#e61e2a;"><span class="price">$45 / $150</span><ul class="details"><li>3 Concur</li><li>120s Boot</li><li>15s Cool</li><li>VIP Methods</li></ul><a href="https://discord.gg/RMB" class="btn">Purchase</a></div>
         </div>
 
         <div class="addons-section">
@@ -134,10 +136,10 @@
         window.addEventListener('mousemove', (e) => {
             glow.style.left = e.clientX + 'px'; glow.style.top = e.clientY + 'px';
             const p = document.createElement('div'); p.className = 'particle';
-            const s = (Math.random() * 4 + 2) + 'px'; p.style.width = s; p.style.height = s;
+            const s = Math.random() * 4 + 'px'; p.style.width = s; p.style.height = s;
             p.style.left = e.clientX + 'px'; p.style.top = e.clientY + 'px';
             document.body.appendChild(p);
-            p.animate([{ opacity: 1 }, { opacity: 0, transform: `translate(${(Math.random()-0.5)*100}px, 100px)` }], 1000).onfinish = () => p.remove();
+            p.animate([{ opacity: 1 }, { opacity: 0, transform: `translate(${(Math.random()-0.5)*80}px, 80px)` }], 800).onfinish = () => p.remove();
         });
     </script>
 </body>
