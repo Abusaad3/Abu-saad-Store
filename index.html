@@ -3,187 +3,202 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>REMEMBER STORE | GHOSTFACE</title>
+    <title>REMEMBER STORE | TEAM REMEMBER</title>
     <style>
         * { box-sizing: border-box; cursor: default; }
         body { margin: 0; padding: 0; background: #000; color: white; font-family: 'Consolas', monospace; overflow: hidden; height: 100vh; display: flex; align-items: center; justify-content: center; }
         
-        /* الخلفية: الخوارزميات + صورة القناع */
-        #hacker-canvas { position: fixed; top: 0; left: 0; z-index: 1; opacity: 0.5; }
-        
-        .ghostface-bg {
+        /* طبقة الخلفية: الصورة المنقطة */
+        .ascii-bg {
             position: fixed;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            width: 500px; /* حجم القناع */
-            height: auto;
-            z-index: 2;
-            opacity: 0.2; /* خفيف عشان ما يخرب على قراءة الخطط */
-            filter: drop-shadow(0 0 20px #e61e2a);
+            color: #300000; /* أحمر داكن جداً للمنقط */
+            font-size: 10px;
+            line-height: 8px;
+            white-space: pre;
+            z-index: 1;
+            opacity: 0.6;
             pointer-events: none;
+            text-align: center;
         }
 
+        /* طبقة الخوارزميات المنهمرة */
+        #hacker-canvas { position: fixed; top: 0; left: 0; z-index: 2; opacity: 0.5; }
+
         /* شاشة الدخول */
-        #auth-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 9999; display: flex; justify-content: center; align-items: center; }
-        .auth-container { background: #050505; border: 2px solid #e61e2a; padding: 30px; border-radius: 5px; width: 320px; text-align: center; box-shadow: 0 0 30px #e61e2a; }
+        #auth-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 9999; display: flex; justify-content: center; align-items: center; }
+        .auth-container { background: #050505; border: 2px solid #e61e2a; padding: 30px; border-radius: 5px; width: 320px; text-align: center; box-shadow: 0 0 30px #e61e2a; position: relative; z-index: 10000; }
         .auth-btn { width: 100%; background: #e61e2a; color: white; border: none; padding: 12px; cursor: pointer; font-weight: bold; letter-spacing: 2px; }
 
-        /* المتجر */
-        #store-content { display: none; width: 95%; max-width: 1200px; z-index: 10; flex-direction: column; align-items: center; position: relative; }
-        .live-stats { color: #e61e2a; font-size: 0.85rem; margin-bottom: 5px; font-weight: bold; letter-spacing: 2px; text-shadow: 0 0 5px #e61e2a; }
-        .header-title { color: #e61e2a; font-size: 2.8rem; font-weight: 900; letter-spacing: 12px; margin-bottom: 15px; text-shadow: 0 0 20px #e61e2a; }
+        /* المتجر المركزي */
+        #store-content { display: none; width: 95%; max-width: 1150px; z-index: 10; flex-direction: column; align-items: center; position: relative; }
+        .live-stats { color: #e61e2a; font-size: 0.8rem; margin-bottom: 5px; font-weight: bold; letter-spacing: 2px; background: rgba(0,0,0,0.7); padding: 2px 10px; border-radius: 10px; }
+        .header-title { color: #e61e2a; font-size: 2.5rem; font-weight: 900; letter-spacing: 10px; margin-bottom: 20px; text-shadow: 0 0 20px #e61e2a; }
 
+        /* توزيع البطاقات */
         .plans-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; width: 100%; margin-bottom: 15px; }
-        .card { background: rgba(5, 5, 5, 0.85); border: 1px solid #333; padding: 15px; border-radius: 4px; display: flex; flex-direction: column; text-align: left; transition: 0.3s; backdrop-filter: blur(5px); }
-        .card:hover { border-color: #e61e2a; box-shadow: 0 0 15px rgba(230, 30, 42, 0.5); }
-        .plan-name { color: #e61e2a; font-size: 0.95rem; font-weight: bold; text-align: center; border-bottom: 1px solid #222; margin-bottom: 10px; padding-bottom: 5px; }
-        .price { font-size: 1.8rem; font-weight: 900; text-align: center; margin-bottom: 10px; color: #fff; }
-        .features { font-size: 0.72rem; color: #aaa; list-style: none; padding: 0; margin: 0 0 15px 0; line-height: 1.6; }
-        .features li::before { content: "• "; color: #e61e2a; font-weight: bold; }
+        .card { background: rgba(5, 5, 5, 0.9); border: 1px solid #333; padding: 15px; border-radius: 4px; display: flex; flex-direction: column; transition: 0.3s; backdrop-filter: blur(3px); }
+        .card:hover { border-color: #e61e2a; transform: translateY(-3px); }
+        .plan-name { color: #e61e2a; font-size: 0.9rem; font-weight: bold; text-align: center; border-bottom: 1px solid #222; margin-bottom: 10px; padding-bottom: 5px; }
+        .price { font-size: 1.6rem; font-weight: 900; text-align: center; margin-bottom: 10px; }
+        .features { font-size: 0.7rem; color: #aaa; list-style: none; padding: 0; margin-bottom: 15px; line-height: 1.6; }
+        .features li::before { content: "» "; color: #e61e2a; }
 
-        .addons-bar { width: 100%; background: rgba(10, 10, 10, 0.9); border: 1px solid #e61e2a; padding: 10px; border-radius: 4px; display: flex; flex-wrap: wrap; justify-content: center; gap: 20px; margin-bottom: 10px; }
+        /* الإضافات والفوتر */
+        .addons-bar { width: 100%; background: rgba(10, 10, 10, 0.95); border: 1px solid #e61e2a; padding: 10px; border-radius: 4px; display: flex; justify-content: center; gap: 20px; margin-bottom: 15px; }
         .addon-item { font-size: 0.75rem; color: #bbb; }
         .addon-item b { color: #e61e2a; }
 
         .btn-group { display: flex; flex-direction: column; gap: 4px; margin-top: auto; }
-        .buy-btn { background: #e61e2a; color: #fff; text-decoration: none; padding: 8px; border-radius: 3px; font-size: 0.8rem; font-weight: bold; text-align: center; }
-        .ask-btn { background: transparent; color: #555; border: 1px solid #222; text-decoration: none; padding: 5px; border-radius: 3px; font-size: 0.65rem; text-align: center; }
+        .buy-btn { background: #e61e2a; color: #fff; text-decoration: none; padding: 7px; border-radius: 2px; font-size: 0.8rem; font-weight: bold; text-align: center; }
+        .buy-btn:hover { background: #fff; color: #000; }
 
-        .footer-vip { margin-top: 15px; text-align: center; padding: 10px; border-top: 1px solid #1a1a1a; width: 100%; }
-        .dev-tag { font-size: 1.1rem; color: #fff; letter-spacing: 4px; }
-        .dev-tag span { color: #e61e2a; font-weight: 900; text-shadow: 0 0 15px #e61e2a; }
+        .footer { margin-top: 10px; text-align: center; width: 100%; }
+        .dev-tag { font-size: 1.1rem; color: #fff; letter-spacing: 3px; }
+        .dev-tag b { color: #e61e2a; text-shadow: 0 0 10px #e61e2a; }
 
+        /* الإشعارات */
         #notify-box { position: fixed; bottom: 20px; left: 20px; z-index: 10000; }
-        .notification { background: #050505; border-left: 5px solid #e61e2a; color: white; padding: 12px; margin-top: 10px; border-radius: 2px; font-size: 0.75rem; animation: slide 0.4s ease; }
+        .notification { background: #050505; border-left: 4px solid #e61e2a; color: white; padding: 10px 15px; margin-top: 8px; font-size: 0.7rem; box-shadow: 0 5px 15px rgba(0,0,0,0.8); animation: slide 0.5s ease; }
         @keyframes slide { from { transform: translateX(-110%); } to { transform: translateX(0); } }
     </style>
 </head>
 <body>
 
+    <div class="ascii-bg">
+⣿⣿⣿⣿⣿⣿⣿⣿⠿⠛⠋⠉⠁⠄⠄⠈⠙⠻⣿⣿⣿⣿
+⣿⣿⣿⣿⣿⣿⠟⠁⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠙⢿⣿
+⣿⣿⣿⣿⡿⠃⠄⠄⠄⢀⣀⣀⡀⠄⠄⠄⠄⠄⠄⠄⠈⢿
+⣿⣿⣿⡟⠄⠄⠄⠄⠐⢻⣿⣿⣿⣷⡄⠄⠄⠄⠄⠄⠄⠈
+⣿⣿⣿⠃⠄⠄⠄⢀⠴⠛⠙⣿⣿⡿⣿⣦⠄⠄⠄⠄⠄⠄
+⣿⣿⠃⠄⢠⡖⠉⠄⠄⠄⣠⣿⡏⠄⢹⣿⠄⠄⠄⠄⠄⢠
+⣿⠃⠄⠄⢸⣧⣤⣤⣤⢾⣿⣿⡇⠄⠈⢻⡆⠄⠄⠄⠄⣾
+⠁⠄⠄⠄⠈⠉⠛⢿⡟⠉⠉⣿⣷⣀⠄⠄⣿⡆⠄⠄⢠⣿
+⠄⠄⠄⠄⠄⠄⢠⡿⠿⢿⣷⣿⣿⣿⣿⣿⠿⠃⠄⠄⣸⣿
+⠄⠄⠄⠄⠄⢀⡞⠄⠄⠄⠈⣿⣿⣿⡟⠁⠄⠄⠄⠄⣿⣿
+⠄⠄⠄⠄⠄⢸⠄⠄⠄⠄⢀⣿⣿⡟⠄⠄⠄⠄⠄⢠⣿⣿
+⠄⠄⠄⠄⠄⠘⠄⠄⠄⢀⡼⠛⠉⠄⠄⠄⠄⠄⠄⣼⣿⣿
+⠄⠄⠄⠄⠄⡇⠄⠄⢀⠎⠄⠄⠄⠄ TEAM  ⠙⢿⣿
+⠄⠄⠄⠄⢰⠃⠄⢀⠎⠄⠄⠄  REMEMBER   ⠙
+    </div>
+
     <canvas id="hacker-canvas"></canvas>
-    
-    <img src="https://i.pinimg.com/originals/91/92/47/9192476b7971752174c865f6c8c679e3.png" class="ghostface-bg" alt="Ghostface Red">
 
     <div id="auth-screen">
         <div class="auth-container">
-            <h2 style="color:#e61e2a; letter-spacing:5px; margin-bottom:20px;">SYSTEM ACCESS</h2>
-            <button class="auth-btn" onclick="login()">INITIALIZE SESSION</button>
+            <h2 style="color:#e61e2a; letter-spacing:4px;">TEAM REMEMBER</h2>
+            <p style="font-size: 0.7rem; color: #444;">SECURED ACCESS ONLY</p>
+            <button class="auth-btn" onclick="login()">ENTER TERMINAL</button>
         </div>
     </div>
 
     <div id="store-content">
-        <div class="live-stats">LIVE SESSIONS: <span id="view-count">1,842</span></div>
+        <div class="live-stats">LIVE USERS: <span id="view-count">2,410</span></div>
         <h1 class="header-title">REMEMBER STORE</h1>
 
         <div class="plans-grid">
             <div class="card">
-                <span class="plan-name">[ BASIC PLAN ]</span>
+                <span class="plan-name">[ BASIC ]</span>
                 <span class="price">$14</span>
                 <ul class="features">
                     <li>1 Concurrents</li>
-                    <li>60 Seconds Boot Time</li>
-                    <li>45 Seconds Cooldown Time</li>
-                    <li>Access To Default Methods</li>
+                    <li>60s Boot Time</li>
+                    <li>45s Cooldown</li>
+                    <li>Default Methods</li>
                 </ul>
                 <div class="btn-group">
-                    <a href="https://discord.gg/RMB" target="_blank" class="buy-btn">PURCHASE</a>
-                    <a href="https://discord.gg/RMB" target="_blank" class="ask-btn">INQUIRY</a>
+                    <a href="https://discord.gg/RMB" class="buy-btn">PURCHASE</a>
                 </div>
             </div>
             <div class="card">
-                <span class="plan-name">[ GOLD PLAN ]</span>
+                <span class="plan-name">[ GOLD ]</span>
                 <span class="price">$17</span>
                 <ul class="features">
                     <li>1 Concurrents</li>
-                    <li>120 Seconds Boot Time</li>
-                    <li>30 Seconds Cooldown Time</li>
-                    <li>Access To Default Methods</li>
+                    <li>120s Boot Time</li>
+                    <li>30s Cooldown</li>
+                    <li>Default Methods</li>
                 </ul>
                 <div class="btn-group">
-                    <a href="https://discord.gg/RMB" target="_blank" class="buy-btn">PURCHASE</a>
-                    <a href="https://discord.gg/RMB" target="_blank" class="ask-btn">INQUIRY</a>
+                    <a href="https://discord.gg/RMB" class="buy-btn">PURCHASE</a>
                 </div>
             </div>
             <div class="card" style="border-color:#e61e2a;">
-                <span class="plan-name">[ DIAMOND PLAN ]</span>
+                <span class="plan-name">[ DIAMOND ]</span>
                 <span class="price">$22</span>
                 <ul class="features">
                     <li>2 Concurrents</li>
-                    <li>120 Seconds Boot Time</li>
-                    <li>20 Seconds Cooldown Time</li>
-                    <li>Access To Vip Methods</li>
+                    <li>120s Boot Time</li>
+                    <li>20s Cooldown</li>
+                    <li>Vip Methods</li>
                 </ul>
                 <div class="btn-group">
-                    <a href="https://discord.gg/RMB" target="_blank" class="buy-btn">PURCHASE</a>
-                    <a href="https://discord.gg/RMB" target="_blank" class="ask-btn">INQUIRY</a>
+                    <a href="https://discord.gg/RMB" class="buy-btn">PURCHASE</a>
                 </div>
             </div>
             <div class="card">
-                <span class="plan-name">[ CHAMPION PLAN ]</span>
-                <span class="price">$45 <small style="font-size:0.5rem;">/ $150</small></span>
+                <span class="plan-name">[ CHAMPION ]</span>
+                <span class="price">$45 / $150</span>
                 <ul class="features">
                     <li>3 Concurrents</li>
-                    <li>120 Seconds Boot Time</li>
-                    <li>15 Seconds Cooldown Time</li>
-                    <li>Access To Vip Methods</li>
+                    <li>120s Boot Time</li>
+                    <li>15s Cooldown</li>
+                    <li>Vip Methods</li>
                 </ul>
                 <div class="btn-group">
-                    <a href="https://discord.gg/RMB" target="_blank" class="buy-btn">PURCHASE</a>
-                    <a href="https://discord.gg/RMB" target="_blank" class="ask-btn">INQUIRY</a>
+                    <a href="https://discord.gg/RMB" class="buy-btn">PURCHASE</a>
                 </div>
             </div>
         </div>
 
         <div class="addons-bar">
-            <div class="addon-item">1+ Concur: <b>15$</b></div>
+            <div class="addon-item">+1 Concur: <b>15$</b></div>
             <div class="addon-item">+60s Boot: <b>10$</b></div>
             <div class="addon-item">API Access: <b>20$</b></div>
             <div class="addon-item">VIP Methods: <b>15$</b></div>
-            <div class="addon-item">0 Cooldown: <b>10$</b></div>
         </div>
 
-        <div class="footer-vip">
-            <div class="dev-tag">Designed & Programmed by <span>Abu saad</span></div>
-            <div style="font-size:0.8rem; color:#444; margin-top:5px;">DISCORD: <b style="color:#e61e2a;">e65e</b></div>
+        <div class="footer">
+            <div class="dev-tag">Developed by <b>Abu saad</b> | <span>e65e</span></div>
         </div>
     </div>
 
     <div id="notify-box"></div>
 
     <script>
-        // Matrix Canvas
+        // Matrix Effect
         const canvas = document.getElementById('hacker-canvas');
         const ctx = canvas.getContext('2d');
         canvas.width = window.innerWidth; canvas.height = window.innerHeight;
-        const codes = "01REMEMBERSTORESYSTEM";
-        const drops = Array(Math.floor(canvas.width/14)).fill(1);
+        const codes = "01REMEMBERTEAM";
+        const drops = Array(Math.floor(canvas.width/15)).fill(1);
         function draw() {
             ctx.fillStyle = "rgba(0,0,0,0.1)"; ctx.fillRect(0,0,canvas.width,canvas.height);
-            ctx.fillStyle = "#e61e2a"; ctx.font = "14px monospace";
+            ctx.fillStyle = "#e61e2a"; ctx.font = "15px monospace";
             drops.forEach((y,i) => {
-                ctx.fillText(codes[Math.floor(Math.random()*codes.length)], i*14, y*14);
-                if(y*14 > canvas.height && Math.random() > 0.975) drops[i] = 0;
+                ctx.fillText(codes[Math.floor(Math.random()*codes.length)], i*15, y*15);
+                if(y*15 > canvas.height && Math.random() > 0.975) drops[i] = 0;
                 drops[i]++;
             });
         }
         setInterval(draw, 50);
 
-        // Stats & Notify
-        let views = 1842;
-        setInterval(() => { views += Math.floor(Math.random()*15)-7; document.getElementById('view-count').innerText = views.toLocaleString(); }, 2500);
+        // Fake Stats
+        let v = 2410;
+        setInterval(() => { v += Math.floor(Math.random()*21)-10; document.getElementById('view-count').innerText = v.toLocaleString(); }, 2000);
 
-        const names = ["عبدالله العتيبي", "Alex Smith", "سلطان الحربي", "محمد القحطاني", "James Walker", "فهد المطيري", "خالد الشمري"];
-        function spawnNotify() {
+        const names = ["عبدالله العتيبي", "سلطان الحربي", "Alex_VIP", "قحطاني_هكر", "Shadow_User", "مطيري_99"];
+        function spawn() {
             const box = document.getElementById('notify-box');
             const n = document.createElement('div');
             n.className = 'notification';
-            const user = names[Math.floor(Math.random()*names.length)];
-            n.innerHTML = `🛒 <b style="color:#e61e2a;">${user}</b> has just purchased a plan!`;
+            n.innerHTML = `✅ <b>${names[Math.floor(Math.random()*names.length)]}</b> purchased a plan!`;
             box.appendChild(n);
-            setTimeout(() => { n.style.opacity='0'; setTimeout(()=>n.remove(),500); }, 5000);
+            setTimeout(() => { n.style.opacity='0'; setTimeout(()=>n.remove(),500); }, 4000);
         }
-        setInterval(spawnNotify, 7000);
+        setInterval(spawn, 6000);
 
         function login() { document.getElementById('auth-screen').style.display='none'; document.getElementById('store-content').style.display='flex'; }
     </script>
