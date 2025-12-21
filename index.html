@@ -8,23 +8,28 @@
         * { box-sizing: border-box; cursor: default; }
         body { margin: 0; padding: 0; background: #000; color: white; font-family: 'Consolas', monospace; overflow: hidden; height: 100vh; display: flex; align-items: center; justify-content: center; }
         
-        /* طبقة الرسم المنقط البرمجي */
-        .ascii-background {
+        /* طبقة الرسم المنقط - تم تحسين الظهور */
+        .ascii-container {
             position: fixed;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            color: rgba(230, 30, 42, 0.15); /* لون أحمر خافت جداً ليظهر كخلفية */
-            font-size: 12px;
-            line-height: 10px;
-            white-space: pre;
             z-index: 1;
-            pointer-events: none;
             text-align: center;
+            pointer-events: none;
             user-select: none;
         }
 
-        /* طبقة الخوارزميات (Matrix) */
+        .ascii-art {
+            color: #e61e2a;
+            font-size: 14px; /* كبرت الخط عشان يوضح */
+            line-height: 12px;
+            white-space: pre;
+            opacity: 0.3; /* جعلته شفاف قليلاً ليعطي عمق */
+            text-shadow: 0 0 10px #e61e2a; /* توهج أحمر لضمان الرؤية */
+        }
+
+        /* طبقة الخوارزميات */
         #hacker-canvas { position: fixed; top: 0; left: 0; z-index: 2; opacity: 0.5; }
 
         /* حاوية المتجر */
@@ -41,7 +46,7 @@
         .header-title { color: #e61e2a; font-size: 2.8rem; font-weight: 900; letter-spacing: 10px; margin-bottom: 5px; text-shadow: 0 0 20px #e61e2a; }
         .team-tag { font-size: 0.8rem; color: #fff; letter-spacing: 4px; margin-bottom: 25px; }
 
-        /* توزيع البطاقات */
+        /* البطاقات */
         .plans-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; width: 100%; margin-bottom: 20px; }
         .card { background: rgba(5, 5, 5, 0.9); border: 1px solid #333; padding: 15px; border-radius: 4px; transition: 0.3s; backdrop-filter: blur(5px); display: flex; flex-direction: column; }
         .card:hover { border-color: #e61e2a; box-shadow: 0 0 15px rgba(230, 30, 42, 0.4); }
@@ -50,7 +55,7 @@
         .features { font-size: 0.72rem; color: #aaa; list-style: none; padding: 0; margin-bottom: 15px; text-align: left; line-height: 1.6; }
         .features li::before { content: "› "; color: #e61e2a; font-weight: bold; }
 
-        .buy-btn { background: #e61e2a; color: white; text-decoration: none; padding: 10px; border-radius: 3px; font-weight: bold; font-size: 0.8rem; text-align: center; transition: 0.3s; }
+        .buy-btn { background: #e61e2a; color: white; text-decoration: none; padding: 10px; border-radius: 3px; font-weight: bold; font-size: 0.8rem; text-align: center; transition: 0.3s; border: none; }
         .buy-btn:hover { background: #fff; color: #000; }
 
         /* فوتر أبو سعد */
@@ -64,7 +69,8 @@
 </head>
 <body>
 
-    <div class="ascii-background">
+    <div class="ascii-container">
+        <div class="ascii-art">
 ⣿⣿⣿⣿⣿⣿⣿⣿⠿⠛⠋⠉⠁⠄⠄⠈⠙⠻⣿⣿⣿⣿
 ⣿⣿⣿⣿⣿⣿⠟⠁⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠙⢿⣿
 ⣿⣿⣿⣿⡿⠃⠄⠄⠄⢀⣀⣀⡀⠄⠄⠄⠄⠄⠄⠄⠈⢿
@@ -79,14 +85,15 @@
 ⠄⠄⠄⠄⠄⠘⠄⠄⠄⢀⡼⠛⠉⠄⠄⠄⠄⠄⠄⣼⣿⣿
 ⠄⠄⠄⠄⠄⡇⠄⠄⢀⠎⠄⠄⠄⠄ HAPPY  ⠙⢿⣿
 ⠄⠄⠄⠄⢰⠃⠄⢀⠎⠄⠄⠄  REMEMBER   ⠙
+        </div>
     </div>
 
     <canvas id="hacker-canvas"></canvas>
 
     <div id="auth-screen">
-        <div style="text-align: center;">
+        <div style="text-align: center; position: relative; z-index: 10000;">
             <h2 style="color:#e61e2a; letter-spacing:5px;">TEAM REMEMBER</h2>
-            <button class="buy-btn" style="width: 180px; cursor: pointer; border: none;" onclick="start()">ENTER SYSTEM</button>
+            <button class="buy-btn" style="width: 180px; cursor: pointer;" onclick="start()">ENTER SYSTEM</button>
         </div>
     </div>
 
@@ -95,50 +102,10 @@
         <div class="team-tag">BY TEAM REMEMBER</div>
 
         <div class="plans-grid">
-            <div class="card">
-                <span class="plan-name">BASIC PLAN</span>
-                <span class="price">$14</span>
-                <ul class="features">
-                    <li>1 Concurrents</li>
-                    <li>60 Seconds Boot</li>
-                    <li>45 Seconds Cooldown</li>
-                    <li>Default Methods</li>
-                </ul>
-                <a href="https://discord.gg/RMB" class="buy-btn">PURCHASE</a>
-            </div>
-            <div class="card">
-                <span class="plan-name">GOLD PLAN</span>
-                <span class="price">$17</span>
-                <ul class="features">
-                    <li>1 Concurrents</li>
-                    <li>120 Seconds Boot</li>
-                    <li>30 Seconds Cooldown</li>
-                    <li>Default Methods</li>
-                </ul>
-                <a href="https://discord.gg/RMB" class="buy-btn">PURCHASE</a>
-            </div>
-            <div class="card" style="border-color:#e61e2a;">
-                <span class="plan-name">DIAMOND PLAN</span>
-                <span class="price">$22</span>
-                <ul class="features">
-                    <li>2 Concurrents</li>
-                    <li>120 Seconds Boot</li>
-                    <li>20 Seconds Cooldown</li>
-                    <li>Vip Methods</li>
-                </ul>
-                <a href="https://discord.gg/RMB" class="buy-btn">PURCHASE</a>
-            </div>
-            <div class="card">
-                <span class="plan-name">CHAMPION PLAN</span>
-                <span class="price">$45 / $150</span>
-                <ul class="features">
-                    <li>3 Concurrents</li>
-                    <li>120 Seconds Boot</li>
-                    <li>15 Seconds Cooldown</li>
-                    <li>Vip Methods</li>
-                </ul>
-                <a href="https://discord.gg/RMB" class="buy-btn">PURCHASE</a>
-            </div>
+            <div class="card"><span class="plan-name">BASIC</span><span class="price">$14</span><ul class="features"><li>1 Concurrents</li><li>60s Boot</li><li>45s Cooldown</li></ul><a href="#" class="buy-btn">PURCHASE</a></div>
+            <div class="card"><span class="plan-name">GOLD</span><span class="price">$17</span><ul class="features"><li>1 Concurrents</li><li>120s Boot</li><li>30s Cooldown</li></ul><a href="#" class="buy-btn">PURCHASE</a></div>
+            <div class="card" style="border-color:#e61e2a;"><span class="plan-name">DIAMOND</span><span class="price">$22</span><ul class="features"><li>2 Concurrents</li><li>120s Boot</li><li>20s Cooldown</li></ul><a href="#" class="buy-btn">PURCHASE</a></div>
+            <div class="card"><span class="plan-name">CHAMPION</span><span class="price">$45 / $150</span><ul class="features"><li>3 Concurrents</li><li>120s Boot</li><li>15s Cooldown</li></ul><a href="#" class="buy-btn">PURCHASE</a></div>
         </div>
 
         <div class="footer-credits">
@@ -153,7 +120,7 @@
         canvas.width = window.innerWidth;
         canvas.height = window.innerHeight;
 
-        const alphabet = "01REMEMBERTEAMSYSTEM";
+        const alphabet = "01REMEMBER";
         const fontSize = 16;
         const columns = canvas.width / fontSize;
         const rainDrops = Array.from({ length: columns }).fill(1);
@@ -163,13 +130,10 @@
             ctx.fillRect(0, 0, canvas.width, canvas.height);
             ctx.fillStyle = "#e61e2a";
             ctx.font = fontSize + "px monospace";
-
             for (let i = 0; i < rainDrops.length; i++) {
                 const text = alphabet.charAt(Math.floor(Math.random() * alphabet.length));
                 ctx.fillText(text, i * fontSize, rainDrops[i] * fontSize);
-                if (rainDrops[i] * fontSize > canvas.height && Math.random() > 0.975) {
-                    rainDrops[i] = 0;
-                }
+                if (rainDrops[i] * fontSize > canvas.height && Math.random() > 0.975) rainDrops[i] = 0;
                 rainDrops[i]++;
             }
         }
