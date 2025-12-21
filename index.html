@@ -9,12 +9,25 @@
         body { margin: 0; padding: 0; background: #000; color: white; font-family: 'Consolas', monospace; overflow: hidden; height: 100vh; display: flex; align-items: center; justify-content: center; }
         #hacker-canvas { position: fixed; top: 0; left: 0; z-index: 1; opacity: 0.7; }
 
-        /* Login Layer */
-        #auth-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 9999; display: flex; justify-content: center; align-items: center; }
-        .auth-container { background: #050505; border: 2px solid #e61e2a; padding: 30px; border-radius: 5px; width: 320px; text-align: center; box-shadow: 0 0 30px #e61e2a; }
-        .auth-btn { width: 100%; background: #e61e2a; color: white; border: none; padding: 12px; cursor: pointer; font-weight: bold; letter-spacing: 2px; }
+        /* Auth System Styling */
+        #auth-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.98); z-index: 9999; display: flex; justify-content: center; align-items: center; }
+        .auth-container { background: #050505; border: 2px solid #e61e2a; padding: 30px; border-radius: 5px; width: 350px; text-align: center; box-shadow: 0 0 30px #e61e2a; }
+        
+        .auth-tabs { display: flex; margin-bottom: 20px; border-bottom: 1px solid #333; }
+        .tab { flex: 1; padding: 10px; cursor: pointer; color: #666; transition: 0.3s; font-size: 0.8rem; letter-spacing: 1px; }
+        .tab.active { color: #e61e2a; border-bottom: 2px solid #e61e2a; font-weight: bold; }
 
-        /* Main Dashboard */
+        .auth-form { display: none; flex-direction: column; gap: 12px; }
+        .auth-form.active { display: flex; }
+
+        input { background: #111; border: 1px solid #333; padding: 12px; color: white; font-family: 'Consolas', monospace; outline: none; border-radius: 3px; font-size: 0.85rem; }
+        input:focus { border-color: #e61e2a; }
+        
+        .auth-btn { width: 100%; background: #e61e2a; color: white; border: none; padding: 12px; cursor: pointer; font-weight: bold; letter-spacing: 2px; margin-top: 10px; transition: 0.3s; }
+        .auth-btn:hover { background: #fff; color: #000; }
+        .error-msg { color: #e61e2a; font-size: 0.7rem; margin-top: 5px; display: none; }
+
+        /* Store Content */
         #store-content { display: none; width: 95%; max-width: 1200px; z-index: 10; flex-direction: column; align-items: center; }
         .live-stats { color: #e61e2a; font-size: 0.85rem; margin-bottom: 5px; font-weight: bold; letter-spacing: 2px; text-shadow: 0 0 5px #e61e2a; }
         .header-title { color: #e61e2a; font-size: 2.8rem; font-weight: 900; letter-spacing: 12px; margin-bottom: 15px; text-shadow: 0 0 20px #e61e2a; }
@@ -28,44 +41,19 @@
         .features { font-size: 0.72rem; color: #aaa; list-style: none; padding: 0; margin: 0 0 15px 0; line-height: 1.6; }
         .features li::before { content: "• "; color: #e61e2a; font-weight: bold; }
 
-        /* Addons Bar */
-        .addons-bar { width: 100%; background: rgba(10, 10, 10, 0.98); border: 1px solid #e61e2a; padding: 10px; border-radius: 4px; display: flex; flex-wrap: wrap; justify-content: center; gap: 20px; margin-bottom: 10px; }
-        .addon-item { font-size: 0.75rem; color: #bbb; }
-        .addon-item b { color: #e61e2a; }
-
         /* Buttons */
         .btn-group { display: flex; flex-direction: column; gap: 6px; margin-top: auto; }
         .buy-btn { background: #e61e2a; color: #fff; text-decoration: none; padding: 10px; border-radius: 3px; font-size: 0.8rem; font-weight: bold; text-align: center; transition: 0.3s; border: 1px solid #e61e2a; }
-        .buy-btn:hover { background: #fff; color: #000; border-color: #fff; }
+        .ask-btn { background: transparent; color: #fff; border: 1px solid #fff; text-decoration: none; padding: 8px; border-radius: 3px; font-size: 0.75rem; font-weight: bold; text-align: center; transition: 0.3s; }
+        .ask-btn:hover { background: #e61e2a; border-color: #e61e2a; }
 
-        /* الدعم المعدل - ابيض وعند الماوس احمر */
-        .ask-btn { 
-            background: transparent; 
-            color: #fff; 
-            border: 1px solid #fff; 
-            text-decoration: none; 
-            padding: 8px; 
-            border-radius: 3px; 
-            font-size: 0.75rem; 
-            font-weight: bold;
-            text-align: center; 
-            transition: 0.3s;
-        }
-        .ask-btn:hover { 
-            background: #e61e2a; 
-            color: #fff; 
-            border-color: #e61e2a; 
-            box-shadow: 0 0 10px #e61e2a;
-        }
-
-        /* Credits */
+        .addons-bar { width: 100%; background: rgba(10, 10, 10, 0.98); border: 1px solid #e61e2a; padding: 10px; border-radius: 4px; display: flex; flex-wrap: wrap; justify-content: center; gap: 20px; margin-bottom: 10px; }
+        .addon-item { font-size: 0.75rem; color: #bbb; }
         .credits { margin-top: 15px; text-align: center; padding: 10px; border-top: 1px solid #1a1a1a; width: 100%; }
-        .dev-tag { font-size: 1.1rem; color: #fff; letter-spacing: 4px; text-transform: uppercase; }
-        .dev-tag span { color: #e61e2a; font-weight: 900; text-shadow: 0 0 15px #e61e2a; }
+        .dev-tag span { color: #e61e2a; font-weight: 900; }
 
-        /* Notifications */
         #notify-box { position: fixed; bottom: 20px; left: 20px; z-index: 10000; }
-        .notification { background: #050505; border-left: 5px solid #e61e2a; color: white; padding: 12px; margin-top: 10px; border-radius: 2px; font-size: 0.75rem; box-shadow: 0 10px 20px rgba(0,0,0,0.8); animation: slide 0.4s ease; }
+        .notification { background: #050505; border-left: 5px solid #e61e2a; color: white; padding: 12px; margin-top: 10px; border-radius: 2px; font-size: 0.75rem; animation: slide 0.4s ease; }
         @keyframes slide { from { transform: translateX(-110%); } to { transform: translateX(0); } }
     </style>
 </head>
@@ -76,13 +64,30 @@
 
     <div id="auth-screen">
         <div class="auth-container">
-            <h2 style="color:#e61e2a; letter-spacing:5px; margin-bottom:20px;">SYSTEM ACCESS</h2>
-            <button class="auth-btn" onclick="login()">INITIALIZE SESSION</button>
+            <div class="auth-tabs">
+                <div class="tab active" onclick="switchTab('login')">LOGIN</div>
+                <div class="tab" onclick="switchTab('register')">REGISTER</div>
+            </div>
+
+            <div id="login-form" class="auth-form active">
+                <input type="text" id="login-user" placeholder="USERNAME">
+                <input type="password" id="login-pass" placeholder="PASSWORD">
+                <div id="login-error" class="error-msg">Invalid credentials!</div>
+                <button class="auth-btn" onclick="handleLogin()">ACCESS SYSTEM</button>
+            </div>
+
+            <div id="register-form" class="auth-form">
+                <input type="text" id="reg-user" placeholder="CHOOSE USERNAME">
+                <input type="password" id="reg-pass" placeholder="PASSWORD">
+                <input type="password" id="reg-confirm" placeholder="CONFIRM PASSWORD">
+                <div id="reg-error" class="error-msg">Passwords don't match!</div>
+                <button class="auth-btn" onclick="handleRegister()">CREATE IDENTITY</button>
+            </div>
         </div>
     </div>
 
     <div id="store-content">
-        <div class="live-stats">LIVE SESSIONS: <span id="view-count">1,842</span></div>
+        <div class="live-stats">WELCOME, <span id="user-display" style="color: #fff;">GUEST</span> | LIVE: <span id="view-count">1,842</span></div>
         <h1 class="header-title">REMEMBER STORE</h1>
 
         <div class="plans-grid">
@@ -91,83 +96,138 @@
                 <span class="price">$14</span>
                 <ul class="features">
                     <li>1 Concurrents</li>
-                    <li>60 Seconds Boot Time</li>
+                    <li>60 Seconds Boot</li>
                     <li>45 Seconds Cooldown</li>
                     <li>Default Methods</li>
                 </ul>
                 <div class="btn-group">
-                    <a href="https://discord.gg/RMB" target="_blank" class="buy-btn">PURCHASE</a>
-                    <a href="https://discord.gg/RMB" target="_blank" class="ask-btn">INQUIRY</a>
+                    <a href="#" class="buy-btn">PURCHASE</a>
+                    <a href="#" class="ask-btn">INQUIRY</a>
                 </div>
             </div>
-
             <div class="card">
                 <span class="plan-name">[ GOLD PLAN ]</span>
                 <span class="price">$17</span>
                 <ul class="features">
                     <li>1 Concurrents</li>
-                    <li>120 Seconds Boot Time</li>
+                    <li>120 Seconds Boot</li>
                     <li>30 Seconds Cooldown</li>
                     <li>Default Methods</li>
                 </ul>
                 <div class="btn-group">
-                    <a href="https://discord.gg/RMB" target="_blank" class="buy-btn">PURCHASE</a>
-                    <a href="https://discord.gg/RMB" target="_blank" class="ask-btn">INQUIRY</a>
+                    <a href="#" class="buy-btn">PURCHASE</a>
+                    <a href="#" class="ask-btn">INQUIRY</a>
                 </div>
             </div>
-
             <div class="card" style="border-color:#e61e2a;">
                 <span class="plan-name">[ DIAMOND PLAN ]</span>
                 <span class="price">$22</span>
                 <ul class="features">
                     <li>2 Concurrents</li>
-                    <li>120 Seconds Boot Time</li>
+                    <li>120 Seconds Boot</li>
                     <li>20 Seconds Cooldown</li>
                     <li>VIP Methods</li>
                 </ul>
                 <div class="btn-group">
-                    <a href="https://discord.gg/RMB" target="_blank" class="buy-btn">PURCHASE</a>
-                    <a href="https://discord.gg/RMB" target="_blank" class="ask-btn">INQUIRY</a>
+                    <a href="#" class="buy-btn">PURCHASE</a>
+                    <a href="#" class="ask-btn">INQUIRY</a>
                 </div>
             </div>
-
             <div class="card" style="background:rgba(230,30,42,0.05);">
                 <span class="plan-name">[ CHAMPION PLAN ]</span>
-                <span class="price">$45 <small style="font-size:0.6rem;">/ $150</small></span>
+                <span class="price">$45</span>
                 <ul class="features">
                     <li>3 Concurrents</li>
-                    <li>120 Seconds Boot Time</li>
+                    <li>120 Seconds Boot</li>
                     <li>15 Seconds Cooldown</li>
                     <li>VIP Methods</li>
                 </ul>
                 <div class="btn-group">
-                    <a href="https://discord.gg/RMB" target="_blank" class="buy-btn">PURCHASE</a>
-                    <a href="https://discord.gg/RMB" target="_blank" class="ask-btn">INQUIRY</a>
+                    <a href="#" class="buy-btn">PURCHASE</a>
+                    <a href="#" class="ask-btn">INQUIRY</a>
                 </div>
             </div>
         </div>
 
         <div class="addons-bar">
-            <span style="color:#e61e2a; font-weight:bold; margin-right:15px;">ADDONS:</span>
             <div class="addon-item">1+ Concur: <b>15$</b></div>
-            <div class="addon-item">+60s Boot: <b>10$</b></div>
             <div class="addon-item">API Access: <b>20$</b></div>
             <div class="addon-item">VIP Methods: <b>15$</b></div>
-            <div class="addon-item">0 Cooldown: <b>10$</b></div>
         </div>
 
         <div class="credits">
             <div class="dev-tag">Designed & Programmed by <span>Abu saad</span></div>
-            <div style="font-size:0.8rem; color:#666; margin-top:5px; letter-spacing:2px;">DISCORD: <b style="color:#e61e2a;">e65e</b></div>
+            <button onclick="logout()" style="background:none; border:none; color:#e61e2a; cursor:pointer; font-size:0.7rem; margin-top:10px;">[ TERMINATE SESSION ]</button>
         </div>
     </div>
 
     <script>
-        // Matrix Canvas
+        // --- AUTH LOGIC ---
+        function switchTab(type) {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.auth-form').forEach(f => f.classList.remove('active'));
+            
+            if(type === 'login') {
+                document.querySelectorAll('.tab')[0].classList.add('active');
+                document.getElementById('login-form').classList.add('active');
+            } else {
+                document.querySelectorAll('.tab')[1].classList.add('active');
+                document.getElementById('register-form').classList.add('active');
+            }
+        }
+
+        function handleRegister() {
+            const user = document.getElementById('reg-user').value;
+            const pass = document.getElementById('reg-pass').value;
+            const confirm = document.getElementById('reg-confirm').value;
+            const error = document.getElementById('reg-error');
+
+            if(!user || !pass) { error.innerText = "Fill all fields!"; error.style.display = "block"; return; }
+            if(pass !== confirm) { error.innerText = "Passwords don't match!"; error.style.display = "block"; return; }
+
+            // Save to LocalStorage
+            localStorage.setItem('user_' + user, pass);
+            alert("Identity Created! Please Login.");
+            switchTab('login');
+        }
+
+        function handleLogin() {
+            const user = document.getElementById('login-user').value;
+            const pass = document.getElementById('login-pass').value;
+            const error = document.getElementById('login-error');
+
+            const storedPass = localStorage.getItem('user_' + user);
+
+            if(storedPass && storedPass === pass) {
+                sessionStorage.setItem('activeUser', user);
+                enterSystem(user);
+            } else {
+                error.style.display = "block";
+            }
+        }
+
+        function enterSystem(username) {
+            document.getElementById('auth-screen').style.display = 'none';
+            document.getElementById('store-content').style.display = 'flex';
+            document.getElementById('user-display').innerText = username.toUpperCase();
+        }
+
+        function logout() {
+            sessionStorage.clear();
+            location.reload();
+        }
+
+        // Auto-login if session exists
+        window.onload = () => {
+            const active = sessionStorage.getItem('activeUser');
+            if(active) enterSystem(active);
+        };
+
+        // --- MATRIX BACKGROUND ---
         const canvas = document.getElementById('hacker-canvas');
         const ctx = canvas.getContext('2d');
         canvas.width = window.innerWidth; canvas.height = window.innerHeight;
-        const codes = "01REMEMBERSTORESYSTEM";
+        const codes = "01REMEMBER";
         const drops = Array(Math.floor(canvas.width/14)).fill(1);
         function draw() {
             ctx.fillStyle = "rgba(0,0,0,0.1)"; ctx.fillRect(0,0,canvas.width,canvas.height);
@@ -179,27 +239,6 @@
             });
         }
         setInterval(draw, 50);
-
-        // Session Logic
-        function login() {
-            document.getElementById('auth-screen').style.display='none';
-            document.getElementById('store-content').style.display='flex';
-        }
-
-        // Fake Notifications
-        const names = ["عبدالله العتيبي", "محمد القحطاني", "سلطان الحربي", "James Walker", "Alex Smith", "فهد المطيري"];
-        const b_plans = ["Champion Plan", "Diamond Plan", "Gold Plan", "VIP Methods"];
-        function spawnNotify() {
-            const box = document.getElementById('notify-box');
-            const n = document.createElement('div');
-            n.className = 'notification';
-            const user = names[Math.floor(Math.random()*names.length)];
-            const plan = b_plans[Math.floor(Math.random()*b_plans.length)];
-            n.innerHTML = `🛒 <b style="color:#e61e2a;">${user}</b> has just purchased <b>${plan}</b>!`;
-            box.appendChild(n);
-            setTimeout(() => { n.style.opacity='0'; setTimeout(()=>n.remove(),500); }, 5000);
-        }
-        setInterval(spawnNotify, 8000);
     </script>
 </body>
 </html>
