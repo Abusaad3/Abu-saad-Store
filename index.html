@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>REMEMBER STORE | PERSISTENT ACCESS</title>
+    <title>REMEMBER STORE | FINAL ELITE</title>
     <style>
         * { box-sizing: border-box; cursor: none; }
         body {
@@ -11,7 +11,7 @@
             font-family: 'Consolas', monospace; overflow: hidden; height: 100vh;
         }
 
-        /* الماوس */
+        /* الماوس المخصص */
         #custom-cursor {
             position: fixed; width: 12px; height: 12px; background: #e61e2a;
             border-radius: 50%; pointer-events: none; z-index: 10000; box-shadow: 0 0 15px #e61e2a;
@@ -42,28 +42,42 @@
         #store-content { display: none; opacity: 0; transition: 1s ease; padding: 20px; }
         
         .user-header {
-            width: 100%; max-width: 1150px; margin: 0 auto 20px auto;
+            width: 100%; max-width: 1150px; margin: 0 auto 15px auto;
             display: flex; justify-content: space-between; align-items: center;
             padding: 10px 20px; background: rgba(230, 30, 42, 0.1);
             border: 1px solid #e61e2a; border-radius: 10px;
         }
-        .user-info b { color: #e61e2a; font-size: 1.2rem; }
+        .user-info b { color: #e61e2a; font-size: 1.1rem; }
         .logout-btn { color: #888; cursor: pointer; font-size: 0.7rem; text-decoration: underline; }
 
         /* العناصر البصرية */
         #matrix-canvas { position: fixed; top: 0; left: 0; z-index: -2; opacity: 0.2; }
         .blood-moon { position: fixed; top: 30px; right: 40px; width: 100px; height: 100px; background: radial-gradient(circle, #f00 0%, #400 100%); border-radius: 50%; box-shadow: 0 0 50px #f00; z-index: -1; }
-        .wrapper { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 70vh; }
-        .glitch { font-size: 3rem; color: #e61e2a; text-shadow: 2px 2px #fff; margin-bottom: 20px; }
+        .wrapper { display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; }
+        .glitch { font-size: 3rem; color: #e61e2a; text-shadow: 2px 2px #fff; margin-bottom: 15px; font-weight: bold; }
 
-        .cards-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; width: 100%; max-width: 1150px; }
-        .card { background: rgba(10,10,10,0.9); border: 1px solid #222; border-radius: 10px; padding: 20px; text-align: center; }
-        .price { font-size: 1.6rem; color: #e61e2a; font-weight: bold; }
-        .btn-buy { display: block; background: #e61e2a; color: white; text-decoration: none; padding: 10px; margin-top: 15px; border-radius: 5px; }
+        .cards-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; width: 100%; max-width: 1100px; margin-bottom: 15px; }
+        .card { background: rgba(10,10,10,0.9); border: 1px solid #222; border-radius: 10px; padding: 15px; text-align: center; }
+        .price { font-size: 1.5rem; color: #e61e2a; font-weight: bold; }
+        .details { list-style: none; padding: 0; margin: 10px 0; font-size: 0.75rem; color: #aaa; text-align: right; }
+        .details li::before { content: "> "; color: #e61e2a; }
+        .btn-buy { display: block; background: #e61e2a; color: white; text-decoration: none; padding: 8px; margin-top: 10px; border-radius: 5px; font-weight: bold; font-size: 0.8rem; }
+
+        /* قسم الإضافات (Remember Addons) */
+        .addons-section {
+            background: rgba(15, 0, 0, 0.5); border: 1px solid #e61e2a;
+            border-radius: 10px; padding: 12px; width: 100%; max-width: 900px;
+            display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px;
+        }
+        .addons-header { grid-column: 1 / -1; color: #e61e2a; font-size: 1.1rem; font-weight: bold; margin-bottom: 5px; border-bottom: 1px solid #e61e2a; padding-bottom: 5px;}
+        .addon-item { border-bottom: 1px dashed #333; padding: 4px; font-size: 0.8rem; display: flex; justify-content: space-between; }
+        .addon-p { color: #e61e2a; font-weight: bold; }
 
         #notification-box { position: fixed; bottom: 20px; left: 20px; z-index: 1000; }
-        .notif { background: rgba(10,10,10,0.95); border-right: 4px solid #e61e2a; padding: 12px; margin-top: 10px; font-size: 0.8rem; width: 320px; }
-        .credits { position: fixed; bottom: 15px; right: 20px; text-align: right; font-size: 0.75rem; }
+        .notif { background: rgba(10,10,10,0.95); border-right: 4px solid #e61e2a; padding: 12px; margin-top: 10px; font-size: 0.8rem; width: 320px; box-shadow: 0 5px 15px rgba(0,0,0,0.5); animation: slideIn 0.5s forwards; }
+        @keyframes slideIn { from { transform: translateX(-110%); } to { transform: translateX(0); } }
+
+        .credits { position: fixed; bottom: 15px; right: 20px; text-align: right; font-size: 0.7rem; }
     </style>
 </head>
 <body>
@@ -73,49 +87,56 @@
 
     <div id="auth-screen">
         <div class="auth-container">
-            <h2 style="color:#e61e2a; letter-spacing:5px;">TERMINAL LOGIN</h2>
+            <h2 style="color:#e61e2a; letter-spacing:5px;">TERMINAL ACCESS</h2>
             <input type="text" class="auth-input" id="username" placeholder="اسم المستخدم">
             <input type="password" class="auth-input" placeholder="كلمة المرور">
-            <button class="auth-btn" onclick="handleLogin()">ACCESS STORE</button>
+            <button class="auth-btn" onclick="handleLogin()">ENTER STORE</button>
         </div>
     </div>
 
     <div id="store-content">
         <div class="blood-moon"></div>
         <div class="user-header">
-            <div class="user-info">Welcome, <b id="display-name">User</b></div>
-            <div class="logout-btn" onclick="handleLogout()">Logout & Reset Session</div>
+            <div class="user-info">Logged in as: <b id="display-name">User</b></div>
+            <div class="logout-btn" onclick="handleLogout()">End Session (Logout)</div>
         </div>
 
         <div class="wrapper">
             <div class="glitch">REMEMBER STORE</div>
+
             <div class="cards-grid">
-                <div class="card"><span class="price">$14</span><p>1 Concur / 60s</p><a href="#" class="btn-buy">PURCHASE</a></div>
-                <div class="card"><span class="price">$17</span><p>1 Concur / 120s</p><a href="#" class="btn-buy">PURCHASE</a></div>
-                <div class="card"><span class="price">$22</span><p>2 Concur / 120s</p><a href="#" class="btn-buy">PURCHASE</a></div>
-                <div class="card" style="border-color:#e61e2a"><span class="price">$45+</span><p>3 Concur / 150s</p><a href="#" class="btn-buy">PURCHASE</a></div>
+                <div class="card"><span class="price">$14</span><ul class="details"><li>1 Concur</li><li>60s Boot</li><li>45s Cool</li></ul><a href="#" class="btn-buy">PURCHASE</a></div>
+                <div class="card"><span class="price">$17</span><ul class="details"><li>1 Concur</li><li>120s Boot</li><li>30s Cool</li></ul><a href="#" class="btn-buy">PURCHASE</a></div>
+                <div class="card"><span class="price">$22</span><ul class="details"><li>2 Concur</li><li>120s Boot</li><li>20s Cool</li></ul><a href="#" class="btn-buy">PURCHASE</a></div>
+                <div class="card" style="border-color:#e61e2a"><span class="price">$45+</span><ul class="details"><li>3 Concur</li><li>150s Boot</li><li>10s Cool</li></ul><a href="#" class="btn-buy">PURCHASE</a></div>
+            </div>
+
+            <div class="addons-section">
+                <div class="addons-header">Remember Addons</div>
+                <div class="addon-item"><span>+1 Concur</span><span class="addon-p">15$</span></div>
+                <div class="addon-item"><span>+60s Boot</span><span class="addon-p">10$</span></div>
+                <div class="addon-item"><span>API Access</span><span class="addon-p">20$</span></div>
+                <div class="addon-item"><span>VIP Methods</span><span class="addon-p">15$</span></div>
+                <div class="addon-item"><span>0 Cooldown</span><span class="addon-p">10$</span></div>
+                <div class="addon-item"><span>Special Support</span><span class="addon-p">FREE</span></div>
             </div>
         </div>
+
         <div id="notification-box"></div>
         <div class="credits">Designed & Programmed by <b style="color:#e61e2a">Abu saad</b> | Discord: e65e</div>
     </div>
 
     <script>
-        // التحقق من الجلسة السابقة عند فتح الصفحة
+        // التحقق من الجلسة
         window.onload = function() {
             const savedUser = localStorage.getItem("remember_user");
-            if (savedUser) {
-                showStore(savedUser);
-            } else {
-                document.getElementById('auth-screen').style.display = 'flex';
-            }
+            if (savedUser) { showStore(savedUser); } 
+            else { document.getElementById('auth-screen').style.display = 'flex'; }
         };
 
         function handleLogin() {
             const user = document.getElementById('username').value;
-            if(user.length < 2) { alert("أدخل اسمك أولاً"); return; }
-            
-            // حفظ الاسم في ذاكرة المتصفح
+            if(user.length < 2) { alert("أدخل اسم المستخدم"); return; }
             localStorage.setItem("remember_user", user);
             showStore(user);
         }
@@ -125,31 +146,37 @@
             document.getElementById('auth-screen').style.display = 'none';
             document.getElementById('store-content').style.display = 'block';
             setTimeout(() => { document.getElementById('store-content').style.opacity = '1'; }, 50);
-            setInterval(showNotif, 7000);
+            setInterval(showNotif, 5000); // تنبيهات كل 5 ثواني
         }
 
         function handleLogout() {
             localStorage.removeItem("remember_user");
-            location.reload(); // إعادة تحميل الصفحة للعودة لشاشة الدخول
+            location.reload();
         }
 
-        // الماوس و Matrix والتنبيهات (نفس الأكواد السابقة)
+        // الماوس
         const cursor = document.getElementById('custom-cursor');
         window.addEventListener('mousemove', (e) => {
             cursor.style.left = e.clientX + 'px'; cursor.style.top = e.clientY + 'px';
         });
 
+        // خوارزمية الأسماء للتنبيهات
+        const fNames = ["صقر", "بندر", "خالد", "Shadow", "Ghost", "Dark", "Sniper", "أبو_فهد", "Vortex", "Elite"];
+        const lNames = ["الشمري", "العنزي", "Killer", "Master", "DDoS", "707", "505", "X"];
+
         function showNotif() {
             const box = document.getElementById('notification-box');
             const n = document.createElement('div'); n.className = 'notif';
-            n.innerHTML = `مستخدم جديد انضم للمتجر الآن..`;
+            const name = fNames[Math.floor(Math.random()*fNames.length)] + "_" + lNames[Math.floor(Math.random()*lNames.length)];
+            n.innerHTML = `المستخدم <b>${name}</b> قام بترقية حسابه الآن!`;
             box.appendChild(n);
-            setTimeout(() => n.remove(), 4000);
+            setTimeout(() => { n.style.opacity='0'; setTimeout(()=>n.remove(), 500); }, 4000);
         }
 
+        // Matrix
         const canvas = document.getElementById('matrix-canvas'), ctx = canvas.getContext('2d');
         canvas.width = window.innerWidth; canvas.height = window.innerHeight;
-        const letters = "10", fontSize = 16, columns = canvas.width/fontSize, drops = Array(Math.floor(columns)).fill(1);
+        const letters = "01", fontSize = 16, columns = canvas.width/fontSize, drops = Array(Math.floor(columns)).fill(1);
         function draw() {
             ctx.fillStyle = "rgba(0,0,0,0.1)"; ctx.fillRect(0,0,canvas.width,canvas.height);
             ctx.fillStyle = "#e61e2a"; ctx.font = fontSize+"px monospace";
