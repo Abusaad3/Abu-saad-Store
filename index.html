@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <title>REMEMBER STORE | أبو سعد</title>
     <style>
+        /* الأساسيات */
         body {
             margin: 0; padding: 0;
             background-color: #000;
@@ -11,31 +12,47 @@
             font-family: 'Segoe UI', Tahoma, sans-serif;
             overflow: hidden;
             height: 100vh;
-            display: flex; align-items: center; justify-content: center;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
         }
 
         /* خلفية الأكواد المتحركة (Matrix) */
         #matrix-canvas {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             z-index: -2; opacity: 0.15;
+            transition: opacity 0.5s ease-in-out; /* لتلاشي الأكواد عند الجليتش */
         }
 
         /* صورة القوست فيس المتحركة */
         .ghostface {
             position: fixed;
-            left: -150px; /* مختفي جهة اليسار */
+            left: -300px; /* مختفي جداً ليعطي تأثير الفتح */
             bottom: 0;
-            width: 400px;
-            z-index: -1;
-            opacity: 0.6;
-            filter: drop-shadow(0 0 20px #e61e2a);
-            animation: ghostMove 8s infinite ease-in-out;
+            width: 500px; /* حجم أكبر */
+            z-index: 100; /* ليظهر فوق كل شيء */
+            opacity: 0; /* يبدأ مخفياً */
+            filter: drop-shadow(0 0 25px rgba(230, 30, 42, 0.8));
+            transition: all 0.5s ease-out; /* حركة سلسة */
             pointer-events: none;
         }
 
-        @keyframes ghostMove {
-            0%, 100% { transform: translateX(0) scale(1); }
-            50% { transform: translateX(180px) scale(1.05); } /* يخرج للشاشة ويرجع */
+        /* تأثير الجليتش (Glitch Effect) */
+        .glitch-active .ghostface {
+            left: -100px; /* يظهر بشكل مفاجئ */
+            opacity: 0.9;
+        }
+        .glitch-active .content {
+            animation: glitchEffect 0.3s infinite alternate; /* تأثير اهتزاز المحتوى */
+        }
+        .glitch-active #matrix-canvas {
+            opacity: 0.05; /* تخفيف الأكواد عند الجليتش */
+        }
+        
+        @keyframes glitchEffect {
+            0% { transform: translate(-2px, 2px) skewX(2deg); }
+            25% { transform: translate(2px, -2px) skewX(-2deg); }
+            50% { transform: translate(-1px, 1px) skewX(1deg); }
+            75% { transform: translate(1px, -1px) skewX(-1deg); }
+            100% { transform: translate(0, 0) skewX(0); }
         }
 
         /* الهالة الحمراء للماوس */
@@ -44,61 +61,34 @@
             background: radial-gradient(circle, rgba(230, 30, 42, 0.15) 0%, rgba(0,0,0,0) 70%);
             border-radius: 50%; pointer-events: none;
             transform: translate(-50%, -50%); z-index: 0;
+            transition: transform 0.08s ease-out; /* حركة الماوس السريعة */
         }
 
-        .content { position: relative; z-index: 10; text-align: center; }
+        .content {
+            position: relative; z-index: 10; text-align: center;
+            transition: transform 0.3s, opacity 0.3s;
+        }
 
         h1 {
-            font-size: 70px; color: #e61e2a; margin: 0;
-            text-shadow: 0 0 20px rgba(230, 30, 42, 0.8);
-            letter-spacing: 3px;
+            font-size: clamp(60px, 8vw, 80px); color: #e61e2a; margin: 0;
+            text-shadow: 0 0 25px rgba(230, 30, 42, 1);
+            letter-spacing: 5px; text-transform: uppercase;
+            animation: pulseGlow 3s infinite ease-in-out;
+        }
+
+        @keyframes pulseGlow {
+            0%, 100% { transform: scale(1); filter: brightness(1); text-shadow: 0 0 25px rgba(230, 30, 42, 1); }
+            50% { transform: scale(1.02); filter: brightness(1.2); text-shadow: 0 0 40px rgba(230, 30, 42, 1.2); }
         }
 
         p {
-            font-size: 22px; color: #ccc; max-width: 600px; line-height: 1.6;
+            font-size: clamp(18px, 2.5vw, 22px); color: #ccc; max-width: 700px; line-height: 1.6;
+            margin-bottom: 40px;
         }
 
         .btn-discord {
             display: inline-block; background: #e61e2a; color: white;
-            padding: 18px 50px; border-radius: 5px;
-            text-decoration: none; font-weight: bold; font-size: 20px;
-            box-shadow: 0 0 20px rgba(230, 30, 42, 0.5);
-            transition: 0.3s; border: 1px solid transparent;
-        }
-
-        .btn-discord:hover {
-            background: transparent; border-color: #e61e2a;
-            box-shadow: 0 0 40px #e61e2a; transform: scale(1.1);
-        }
-
-        .particle {
-            position: absolute; background: #e61e2a;
-            border-radius: 50%; pointer-events: none;
-        }
-
-        footer { position: fixed; bottom: 15px; opacity: 0.3; font-size: 11px; }
-    </style>
-</head>
-<body>
-
-    <canvas id="matrix-canvas"></canvas>
-
-    <img src="https://www.pngarts.com/files/10/Ghostface-Scream-PNG-High-Quality-Image.png" class="ghostface" alt="Ghostface">
-
-    <div id="cursor-glow"></div>
-
-    <div class="content">
-        <h1>REMEMBER STORE</h1>
-        <p>مرحباً بكم في عالم Remember المتخصص في السيرفرات و ddos</p>
-        <br>
-        <a href="https://discord.gg/RMB" class="btn-discord">الانضمام إلى Discord</a>
-    </div>
-
-    <footer>البرمجة والتصميم بواسطة أبو سعد</footer>
-
-    <script>
-        // --- كود مصفوفة الأكواد (Matrix) ---
-        const canvas = document.getElementById('matrix-canvas');
-        const ctx = canvas.getContext('2d');
-        canvas.width = window.innerWidth;
-        canvas.height = window.
+            padding: 20px 60px; border-radius: 5px;
+            text-decoration: none; font-weight: bold; font-size: 24px;
+            box-shadow: 0 0 30px rgba(230, 30, 42, 0.6);
+            transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55); /* حركة زن
