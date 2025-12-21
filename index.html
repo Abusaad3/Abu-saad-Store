@@ -3,36 +3,35 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>REMEMBER STORE | FAST ACCESS</title>
+    <title>REMEMBER STORE | SYSTEM</title>
     <style>
         * { box-sizing: border-box; cursor: none; }
         body { margin: 0; padding: 0; background: #000; color: white; font-family: 'Consolas', monospace; overflow: hidden; height: 100vh; }
 
-        /* شاشة التحميل */
-        #loading-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #e61e2a; z-index: 10000; display: flex; justify-content: center; align-items: center; }
+        #loading-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #e61e2a; z-index: 10000; display: flex; justify-content: center; align-items: center; transition: 1s ease; }
         .loader-text { font-size: 2rem; font-weight: bold; letter-spacing: 5px; animation: blink 0.8s infinite; }
         @keyframes blink { 50% { opacity: 0; } }
 
         #custom-cursor { position: fixed; width: 10px; height: 10px; background: #e61e2a; border-radius: 50%; pointer-events: none; z-index: 10001; box-shadow: 0 0 10px #e61e2a; }
 
-        /* شاشة الدخول المباشر */
+        /* حاوية النماذج */
         #auth-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 999; display: flex; justify-content: center; align-items: center; }
-        .auth-container { background: rgba(10, 10, 10, 0.95); border: 1px solid #e61e2a; padding: 40px; border-radius: 15px; width: 400px; text-align: center; box-shadow: 0 0 30px #e61e2a44; }
-        .auth-input { width: 100%; background: #050505; border: 1px solid #333; padding: 15px; margin-bottom: 20px; color: white; border-radius: 5px; text-align: center; font-size: 1rem; outline: none; }
+        .auth-container { background: rgba(10, 10, 10, 0.95); border: 1px solid #e61e2a; padding: 30px; border-radius: 15px; width: 380px; text-align: center; box-shadow: 0 0 30px #e61e2a44; }
+        .auth-input { width: 100%; background: #050505; border: 1px solid #333; padding: 12px; margin-bottom: 15px; color: white; border-radius: 5px; text-align: center; outline: none; }
         .auth-input:focus { border-color: #e61e2a; }
-        .auth-btn { width: 100%; background: #e61e2a; color: white; border: none; padding: 15px; border-radius: 5px; font-weight: bold; cursor: pointer; font-size: 1.1rem; }
+        .auth-btn { width: 100%; background: #e61e2a; color: white; border: none; padding: 12px; border-radius: 5px; font-weight: bold; cursor: pointer; margin-top: 10px; }
+        
+        .switch-text { margin-top: 20px; font-size: 0.85rem; color: #888; }
+        .switch-link { color: #e61e2a; cursor: pointer; text-decoration: underline; }
 
-        /* محتوى المتجر */
+        /* المتجر */
         #store-content { display: none; opacity: 0; transition: 1s ease; padding: 20px; position: relative; z-index: 10; }
         .user-header { width: 100%; max-width: 1100px; margin: 0 auto 15px auto; display: flex; justify-content: space-between; padding: 10px 20px; background: #e61e2a1a; border: 1px solid #e61e2a; border-radius: 8px; }
         .glitch { font-size: 3rem; color: #e61e2a; font-weight: bold; text-align: center; margin-bottom: 20px; text-shadow: 2px 2px #fff; }
         
         .cards-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; width: 100%; max-width: 1100px; margin: 0 auto 20px auto; }
         .card { background: rgba(10,10,10,0.9); border: 1px solid #222; border-radius: 10px; padding: 20px; text-align: center; }
-        .price { font-size: 1.8rem; color: #e61e2a; font-weight: bold; display: block; margin-bottom: 5px; }
-        
-        .addons-section { background: rgba(20, 0, 0, 0.4); border: 1px solid #e61e2a; border-radius: 10px; padding: 15px; width: 100%; max-width: 900px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin: 0 auto; }
-        .addon-item { border-bottom: 1px dashed #333; padding: 8px; font-size: 0.9rem; display: flex; justify-content: space-between; }
+        .price { font-size: 1.8rem; color: #e61e2a; font-weight: bold; }
         
         #matrix-canvas { position: fixed; top: 0; left: 0; z-index: -1; opacity: 0.15; }
     </style>
@@ -44,73 +43,105 @@
     <canvas id="matrix-canvas"></canvas>
 
     <div id="auth-screen">
-        <div class="auth-container">
-            <h2 style="color:#e61e2a; margin-bottom:20px; letter-spacing:2px;">SYSTEM ACCESS</h2>
-            <input type="text" class="auth-input" id="username" placeholder="أدخل اسم المستخدم للدخول">
-            <button class="auth-btn" onclick="enterStore()">دخول النظام</button>
+        <div class="auth-container" id="login-box">
+            <h2 style="color:#e61e2a; margin-bottom:20px;">SYSTEM LOGIN</h2>
+            <input type="text" class="auth-input" id="login-user" placeholder="اسم المستخدم">
+            <input type="password" class="auth-input" id="login-pass" placeholder="كلمة المرور">
+            <button class="auth-btn" onclick="handleLogin()">دخول</button>
+            <p class="switch-text">ليس لديك حساب؟ <span class="switch-link" onclick="toggleAuth()">إنشاء حساب جديد</span></p>
+        </div>
+
+        <div class="auth-container" id="signup-box" style="display:none;">
+            <h2 style="color:#e61e2a; margin-bottom:20px;">CREATE ACCOUNT</h2>
+            <input type="text" class="auth-input" id="reg-user" placeholder="اختر اسم مستخدم">
+            <input type="password" class="auth-input" id="reg-pass" placeholder="كلمة المرور">
+            <input type="password" class="auth-input" id="reg-pass-confirm" placeholder="تأكيد كلمة المرور">
+            <button class="auth-btn" onclick="handleSignup()">إنشاء وحفظ</button>
+            <p class="switch-text">لديك حساب بالفعل؟ <span class="switch-link" onclick="toggleAuth()">تسجيل الدخول</span></p>
         </div>
     </div>
 
     <div id="store-content">
         <div class="user-header">
-            <div>USER: <b id="display-name" style="color:#e61e2a; text-transform: uppercase;"></b></div>
-            <div style="color:#0f0; font-size:0.75rem; font-weight:bold;">● SESSION ACTIVE</div>
+            <div>USER: <b id="display-name" style="color:#e61e2a;"></b></div>
+            <button onclick="logout()" style="background:none; border:1px solid #e61e2a; color:#fff; cursor:pointer; font-size:0.7rem; padding:2px 10px;">خروج</button>
         </div>
-        
         <div class="glitch">REMEMBER STORE</div>
-
         <div class="cards-grid">
             <div class="card"><span class="price">$14</span><p>1 Concur / 60s</p></div>
             <div class="card"><span class="price">$17</span><p>1 Concur / 120s</p></div>
             <div class="card"><span class="price">$22</span><p>2 Concur / 120s</p></div>
             <div class="card" style="border-color:#e61e2a;"><span class="price">$45+</span><p>3 Concur / 150s</p></div>
         </div>
-
-        <div class="addons-section">
-            <div style="grid-column: 1/-1; color:#e61e2a; font-weight:bold; font-size:1.1rem; border-bottom:1px solid #e61e2a; padding-bottom:5px;">Remember Addons</div>
-            <div class="addon-item"><span>+1 Concur</span><span style="color:#e61e2a">15$</span></div>
-            <div class="addon-item"><span>+60s Boot</span><span style="color:#e61e2a">10$</span></div>
-            <div class="addon-item"><span>API Access</span><span style="color:#e61e2a">20$</span></div>
-            <div class="addon-item"><span>VIP Methods</span><span style="color:#e61e2a">15$</span></div>
-            <div class="addon-item"><span>0 Cooldown</span><span style="color:#e61e2a">10$</span></div>
-            <div class="addon-item"><span>Support</span><span style="color:#0f0">FREE</span></div>
-        </div>
     </div>
 
     <script>
-        // إخفاء شاشة التحميل عند البدء
+        // التحقق من وجود مستخدم مسجل مسبقاً
         window.onload = () => {
-            setTimeout(() => {
-                document.getElementById('loading-overlay').style.display = 'none';
-            }, 2000);
+            setTimeout(() => { document.getElementById('loading-overlay').style.display = 'none'; }, 1500);
+            const loggedIn = localStorage.getItem("current_session");
+            if (loggedIn) { showStore(loggedIn); }
         };
 
-        // وظيفة الدخول المباشر
-        function enterStore() {
-            const user = document.getElementById('username').value;
-            if(user.trim() === "") {
-                alert("يرجى كتابة اسم المستخدم أولاً");
-                return;
+        function toggleAuth() {
+            const lBox = document.getElementById('login-box');
+            const sBox = document.getElementById('signup-box');
+            if(lBox.style.display === "none") {
+                lBox.style.display = "block"; sBox.style.display = "none";
+            } else {
+                lBox.style.display = "none"; sBox.style.display = "block";
             }
-            
-            // تفعيل واجهة المتجر
-            document.getElementById('display-name').innerText = user;
+        }
+
+        // إنشاء حساب وحفظه
+        function handleSignup() {
+            const user = document.getElementById('reg-user').value.trim();
+            const pass = document.getElementById('reg-pass').value;
+            const confirm = document.getElementById('reg-pass-confirm').value;
+
+            if(!user || !pass) { alert("أكمل البيانات!"); return; }
+            if(pass !== confirm) { alert("كلمة المرور غير متطابقة!"); return; }
+
+            // حفظ في LocalStorage (اسم المستخدم كـ مفتاح)
+            localStorage.setItem("user_" + user, pass);
+            alert("تم إنشاء الحساب بنجاح! يمكنك الدخول الآن.");
+            toggleAuth();
+        }
+
+        // تسجيل الدخول
+        function handleLogin() {
+            const user = document.getElementById('login-user').value.trim();
+            const pass = document.getElementById('login-pass').value;
+
+            const savedPass = localStorage.getItem("user_" + user);
+
+            if(savedPass && savedPass === pass) {
+                localStorage.setItem("current_session", user);
+                showStore(user);
+            } else {
+                alert("خطأ في اسم المستخدم أو كلمة المرور!");
+            }
+        }
+
+        function showStore(name) {
+            document.getElementById('display-name').innerText = name;
             document.getElementById('auth-screen').style.display = 'none';
             document.getElementById('store-content').style.display = 'block';
             setTimeout(() => document.getElementById('store-content').style.opacity = '1', 50);
-            
-            // بدء تأثير الماتريكس
             startMatrix();
         }
 
-        // تحريك المؤشر المخصص
-        const cursor = document.getElementById('custom-cursor');
+        function logout() {
+            localStorage.removeItem("current_session");
+            location.reload();
+        }
+
+        // تأثيرات الماوس والماتريكس
         window.addEventListener('mousemove', (e) => {
-            cursor.style.left = e.clientX + 'px';
-            cursor.style.top = e.clientY + 'px';
+            const c = document.getElementById('custom-cursor');
+            c.style.left = e.clientX + 'px'; c.style.top = e.clientY + 'px';
         });
 
-        // تأثير Matrix الخلفي
         function startMatrix() {
             const c = document.getElementById('matrix-canvas'), ctx = c.getContext('2d');
             c.width = window.innerWidth; c.height = window.innerHeight;
