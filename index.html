@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>REMEMBER STORE | DASHBOARD</title>
+    <title>REMEMBER STORE | PERSISTENT ACCESS</title>
     <style>
         * { box-sizing: border-box; cursor: none; }
         body {
@@ -20,8 +20,7 @@
         /* شاشة الدخول */
         #auth-screen {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: #000; z-index: 999; display: flex; justify-content: center; align-items: center;
-            transition: 1s cubic-bezier(0.7, 0, 0.3, 1);
+            background: #000; z-index: 999; display: none; justify-content: center; align-items: center;
         }
         .auth-container {
             background: rgba(10, 10, 10, 0.95); border: 1px solid #e61e2a;
@@ -40,9 +39,8 @@
         }
 
         /* المتجر */
-        #store-content { opacity: 0; visibility: hidden; transition: 1.5s ease; padding: 20px; }
+        #store-content { display: none; opacity: 0; transition: 1s ease; padding: 20px; }
         
-        /* شريط الترحيب العلوي */
         .user-header {
             width: 100%; max-width: 1150px; margin: 0 auto 20px auto;
             display: flex; justify-content: space-between; align-items: center;
@@ -50,25 +48,21 @@
             border: 1px solid #e61e2a; border-radius: 10px;
         }
         .user-info b { color: #e61e2a; font-size: 1.2rem; }
-        .status-badge { background: #00ff00; color: black; padding: 2px 8px; border-radius: 4px; font-size: 0.7rem; font-weight: bold; }
+        .logout-btn { color: #888; cursor: pointer; font-size: 0.7rem; text-decoration: underline; }
 
-        /* استايلات العناصر */
+        /* العناصر البصرية */
         #matrix-canvas { position: fixed; top: 0; left: 0; z-index: -2; opacity: 0.2; }
         .blood-moon { position: fixed; top: 30px; right: 40px; width: 100px; height: 100px; background: radial-gradient(circle, #f00 0%, #400 100%); border-radius: 50%; box-shadow: 0 0 50px #f00; z-index: -1; }
-        .wrapper { display: flex; flex-direction: column; align-items: center; justify-content: center; }
-        .glitch { font-size: 3rem; color: #e61e2a; text-shadow: 2px 2px #fff; margin-bottom: 20px; animation: glitch 1s infinite; }
-        @keyframes glitch { 0% { transform:translate(0); } 20% { transform:translate(-2px,2px); } 40% { transform:translate(2px,-2px); } 100% { transform:translate(0); } }
+        .wrapper { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 70vh; }
+        .glitch { font-size: 3rem; color: #e61e2a; text-shadow: 2px 2px #fff; margin-bottom: 20px; }
 
         .cards-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; width: 100%; max-width: 1150px; }
-        .card { background: rgba(10,10,10,0.9); border: 1px solid #222; border-radius: 10px; padding: 20px; text-align: center; transition: 0.3s; }
-        .card:hover { border-color: #e61e2a; transform: translateY(-5px); }
+        .card { background: rgba(10,10,10,0.9); border: 1px solid #222; border-radius: 10px; padding: 20px; text-align: center; }
         .price { font-size: 1.6rem; color: #e61e2a; font-weight: bold; }
-        .btn-buy { display: block; background: #e61e2a; color: white; text-decoration: none; padding: 10px; margin-top: 15px; border-radius: 5px; font-weight: bold; }
+        .btn-buy { display: block; background: #e61e2a; color: white; text-decoration: none; padding: 10px; margin-top: 15px; border-radius: 5px; }
 
         #notification-box { position: fixed; bottom: 20px; left: 20px; z-index: 1000; }
-        .notif { background: rgba(10,10,10,0.95); border-right: 4px solid #e61e2a; padding: 12px; margin-top: 10px; font-size: 0.8rem; width: 320px; animation: slide 0.5s forwards; }
-        @keyframes slide { from { transform: translateX(-100%); } to { transform: translateX(0); } }
-
+        .notif { background: rgba(10,10,10,0.95); border-right: 4px solid #e61e2a; padding: 12px; margin-top: 10px; font-size: 0.8rem; width: 320px; }
         .credits { position: fixed; bottom: 15px; right: 20px; text-align: right; font-size: 0.75rem; }
     </style>
 </head>
@@ -79,20 +73,18 @@
 
     <div id="auth-screen">
         <div class="auth-container">
-            <h2 style="color:#e61e2a; letter-spacing:5px;">ACCESS SYSTEM</h2>
-            <input type="email" class="auth-input" id="email" placeholder="البريد الإلكتروني">
+            <h2 style="color:#e61e2a; letter-spacing:5px;">TERMINAL LOGIN</h2>
             <input type="text" class="auth-input" id="username" placeholder="اسم المستخدم">
-            <input type="password" class="auth-input" id="password" placeholder="كلمة المرور">
-            <button class="auth-btn" onclick="login()">LOGIN TO TERMINAL</button>
+            <input type="password" class="auth-input" placeholder="كلمة المرور">
+            <button class="auth-btn" onclick="handleLogin()">ACCESS STORE</button>
         </div>
     </div>
 
     <div id="store-content">
         <div class="blood-moon"></div>
-        
         <div class="user-header">
-            <div class="user-info">Welcome back, <b id="display-name">User</b></div>
-            <div>Status: <span class="status-badge">ACTIVE SESSION</span></div>
+            <div class="user-info">Welcome, <b id="display-name">User</b></div>
+            <div class="logout-btn" onclick="handleLogout()">Logout & Reset Session</div>
         </div>
 
         <div class="wrapper">
@@ -104,63 +96,65 @@
                 <div class="card" style="border-color:#e61e2a"><span class="price">$45+</span><p>3 Concur / 150s</p><a href="#" class="btn-buy">PURCHASE</a></div>
             </div>
         </div>
-
         <div id="notification-box"></div>
-
-        <div class="credits">
-            Designed & Programmed by<br>
-            <b style="color:#e61e2a">Abu saad</b><br>
-            Discord: e65e
-        </div>
+        <div class="credits">Designed & Programmed by <b style="color:#e61e2a">Abu saad</b> | Discord: e65e</div>
     </div>
 
     <script>
-        // مصفوفة الأسماء لتوليد 100,000 اسم عشوائي (عرب وأجانب)
-        const fNames = ["صقر", "بندر", "خالد", "سيف", "Vortex", "Shadow", "Ghost", "Dark", "Sniper", "أبو_فهد"];
-        const lNames = ["الشمري", "العنزي", "Master", "Killer", "DDoS", "X", "707", "505"];
+        // التحقق من الجلسة السابقة عند فتح الصفحة
+        window.onload = function() {
+            const savedUser = localStorage.getItem("remember_user");
+            if (savedUser) {
+                showStore(savedUser);
+            } else {
+                document.getElementById('auth-screen').style.display = 'flex';
+            }
+        };
 
-        // الماوس المخصص
+        function handleLogin() {
+            const user = document.getElementById('username').value;
+            if(user.length < 2) { alert("أدخل اسمك أولاً"); return; }
+            
+            // حفظ الاسم في ذاكرة المتصفح
+            localStorage.setItem("remember_user", user);
+            showStore(user);
+        }
+
+        function showStore(userName) {
+            document.getElementById('display-name').innerText = userName;
+            document.getElementById('auth-screen').style.display = 'none';
+            document.getElementById('store-content').style.display = 'block';
+            setTimeout(() => { document.getElementById('store-content').style.opacity = '1'; }, 50);
+            setInterval(showNotif, 7000);
+        }
+
+        function handleLogout() {
+            localStorage.removeItem("remember_user");
+            location.reload(); // إعادة تحميل الصفحة للعودة لشاشة الدخول
+        }
+
+        // الماوس و Matrix والتنبيهات (نفس الأكواد السابقة)
         const cursor = document.getElementById('custom-cursor');
         window.addEventListener('mousemove', (e) => {
             cursor.style.left = e.clientX + 'px'; cursor.style.top = e.clientY + 'px';
         });
 
-        // وظيفة الدخول والترحيب بالاسم
-        function login() {
-            const user = document.getElementById('username').value;
-            if(user.length < 2) { alert("الرجاء إدخال اسمك أولاً"); return; }
-            
-            // تعيين الاسم في لوحة التحكم
-            document.getElementById('display-name').innerText = user;
-            
-            // إخفاء شاشة الدخول وإظهار المتجر
-            document.getElementById('auth-screen').style.transform = 'translateY(-100%)';
-            document.getElementById('store-content').style.opacity = '1';
-            document.getElementById('store-content').style.visibility = 'visible';
-            
-            // بدء التنبيهات العشوائية
-            setInterval(showNotif, 6000);
-        }
-
-        // نظام التنبيهات الذكي
         function showNotif() {
             const box = document.getElementById('notification-box');
             const n = document.createElement('div'); n.className = 'notif';
-            const name = fNames[Math.floor(Math.random()*fNames.length)] + "_" + lNames[Math.floor(Math.random()*lNames.length)];
-            n.innerHTML = `المستخدم <b>${name}</b> اشترى خطة بقيمة <b>$${[14,17,22,45][Math.floor(Math.random()*4)]}</b>`;
+            n.innerHTML = `مستخدم جديد انضم للمتجر الآن..`;
             box.appendChild(n);
-            setTimeout(() => { n.style.opacity='0'; setTimeout(()=>n.remove(), 500); }, 4000);
+            setTimeout(() => n.remove(), 4000);
         }
 
-        // تأثير Matrix
         const canvas = document.getElementById('matrix-canvas'), ctx = canvas.getContext('2d');
         canvas.width = window.innerWidth; canvas.height = window.innerHeight;
-        const letters = "REMEMBER01", fontSize = 16, columns = canvas.width/fontSize, drops = Array(Math.floor(columns)).fill(1);
+        const letters = "10", fontSize = 16, columns = canvas.width/fontSize, drops = Array(Math.floor(columns)).fill(1);
         function draw() {
             ctx.fillStyle = "rgba(0,0,0,0.1)"; ctx.fillRect(0,0,canvas.width,canvas.height);
             ctx.fillStyle = "#e61e2a"; ctx.font = fontSize+"px monospace";
             drops.forEach((y,i) => {
-                ctx.fillText(letters[Math.floor(Math.random()*letters.length)], i*fontSize, y*fontSize);
+                ctx.fillText(letters[Math.floor(Math.random()*2)], i*fontSize, y*fontSize);
                 if(y*fontSize > canvas.height && Math.random() > 0.975) drops[i]=0; drops[i]++;
             });
         }
