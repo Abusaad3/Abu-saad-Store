@@ -6,51 +6,44 @@
     <title>REMEMBER STORE | ELITE EDITION</title>
     <style>
         * { box-sizing: border-box; cursor: default; }
-        body { margin: 0; padding: 0; background: #000; color: white; font-family: 'Consolas', monospace; overflow: hidden; height: 100vh; display: flex; align-items: center; justify-content: center; }
-        #hacker-canvas { position: fixed; top: 0; left: 0; z-index: 1; opacity: 0.7; }
+        body { margin: 0; padding: 0; background: #000; color: white; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; overflow: hidden; height: 100vh; display: flex; align-items: center; justify-content: center; }
+        #hacker-canvas { position: fixed; top: 0; left: 0; z-index: 1; opacity: 0.5; }
 
-        /* Auth System Styling */
-        #auth-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.98); z-index: 9999; display: flex; justify-content: center; align-items: center; }
-        .auth-container { background: #050505; border: 2px solid #e61e2a; padding: 30px; border-radius: 5px; width: 350px; text-align: center; box-shadow: 0 0 30px #e61e2a; }
+        /* Auth Container - Instagram Style */
+        #auth-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 9999; display: flex; flex-direction: column; justify-content: center; align-items: center; }
         
-        .auth-tabs { display: flex; margin-bottom: 20px; border-bottom: 1px solid #333; }
-        .tab { flex: 1; padding: 10px; cursor: pointer; color: #666; transition: 0.3s; font-size: 0.8rem; letter-spacing: 1px; }
-        .tab.active { color: #e61e2a; border-bottom: 2px solid #e61e2a; font-weight: bold; }
+        .insta-box { background: #000; border: 1px solid #262626; padding: 40px 20px; width: 350px; text-align: center; margin-bottom: 10px; z-index: 10; }
+        .insta-logo { color: #e61e2a; font-size: 2.2rem; font-weight: 900; letter-spacing: 2px; margin-bottom: 30px; text-shadow: 0 0 10px rgba(230, 30, 42, 0.3); font-family: 'Consolas', monospace; }
 
-        .auth-form { display: none; flex-direction: column; gap: 12px; }
+        .auth-form { display: none; flex-direction: column; gap: 8px; }
         .auth-form.active { display: flex; }
 
-        input { background: #111; border: 1px solid #333; padding: 12px; color: white; font-family: 'Consolas', monospace; outline: none; border-radius: 3px; font-size: 0.85rem; }
-        input:focus { border-color: #e61e2a; }
+        /* Instagram Styled Inputs */
+        input { background: #121212; border: 1px solid #363636; padding: 10px 12px; color: white; font-size: 0.75rem; border-radius: 3px; outline: none; width: 100%; transition: 0.2s; }
+        input:focus { border-color: #a8a8a8; }
         
-        .auth-btn { width: 100%; background: #e61e2a; color: white; border: none; padding: 12px; cursor: pointer; font-weight: bold; letter-spacing: 2px; margin-top: 10px; transition: 0.3s; }
-        .auth-btn:hover { background: #fff; color: #000; }
+        .insta-btn { background: #e61e2a; color: white; border: none; padding: 8px; border-radius: 8px; font-weight: bold; font-size: 0.9rem; cursor: pointer; margin-top: 10px; transition: 0.3s; }
+        .insta-btn:hover { background: #c01822; }
+        .insta-btn:disabled { opacity: 0.5; cursor: not-allowed; }
 
-        /* رسائل الخطأ والنجاح المدمجة */
-        .status-msg { font-size: 0.75rem; margin-top: 10px; padding: 8px; border-radius: 3px; display: none; border: 1px solid transparent; }
-        .status-error { color: #ff4d4d; border-color: rgba(255, 77, 77, 0.3); background: rgba(255, 77, 77, 0.05); }
-        .status-success { color: #4dff88; border-color: rgba(77, 255, 136, 0.3); background: rgba(77, 255, 136, 0.05); }
+        /* Error/Success Messages */
+        .status-msg { font-size: 0.8rem; margin: 15px 0; display: none; line-height: 1.4; }
+        .status-error { color: #ed4956; }
+        .status-success { color: #4dff88; }
 
-        /* Store Content */
+        /* Switch Box (The bottom one) */
+        .switch-box { background: #000; border: 1px solid #262626; padding: 20px; width: 350px; text-align: center; font-size: 0.9rem; z-index: 10; }
+        .switch-link { color: #e61e2a; font-weight: bold; cursor: pointer; text-decoration: none; margin-left: 5px; }
+
+        /* Main Dashboard (Hidden initially) */
         #store-content { display: none; width: 95%; max-width: 1200px; z-index: 10; flex-direction: column; align-items: center; }
-        .live-stats { color: #e61e2a; font-size: 0.85rem; margin-bottom: 5px; font-weight: bold; letter-spacing: 2px; text-shadow: 0 0 5px #e61e2a; }
-        .header-title { color: #e61e2a; font-size: 2.8rem; font-weight: 900; letter-spacing: 12px; margin-bottom: 15px; text-shadow: 0 0 20px #e61e2a; }
+        .header-title { color: #e61e2a; font-size: 2.5rem; font-weight: 900; letter-spacing: 8px; text-shadow: 0 0 20px #e61e2a; margin-bottom: 20px; }
 
-        .plans-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; width: 100%; margin-bottom: 15px; }
-        .card { background: rgba(5, 5, 5, 0.98); border: 1px solid #333; padding: 15px; border-radius: 4px; display: flex; flex-direction: column; text-align: left; transition: 0.3s; }
-        .card:hover { border-color: #e61e2a; box-shadow: 0 0 15px rgba(230, 30, 42, 0.5); }
-        .plan-name { color: #e61e2a; font-size: 0.95rem; font-weight: bold; text-align: center; border-bottom: 1px solid #222; margin-bottom: 10px; padding-bottom: 5px; }
-        .price { font-size: 1.8rem; font-weight: 900; text-align: center; margin-bottom: 10px; color: #fff; }
-        .features { font-size: 0.72rem; color: #aaa; list-style: none; padding: 0; margin: 0 0 15px 0; line-height: 1.6; }
-        .features li::before { content: "• "; color: #e61e2a; font-weight: bold; }
-
-        .btn-group { display: flex; flex-direction: column; gap: 6px; margin-top: auto; }
-        .buy-btn { background: #e61e2a; color: #fff; text-decoration: none; padding: 10px; border-radius: 3px; font-size: 0.8rem; font-weight: bold; text-align: center; transition: 0.3s; border: 1px solid #e61e2a; }
-        .ask-btn { background: transparent; color: #fff; border: 1px solid #fff; text-decoration: none; padding: 8px; border-radius: 3px; font-size: 0.75rem; font-weight: bold; text-align: center; transition: 0.3s; }
-        .ask-btn:hover { background: #e61e2a; border-color: #e61e2a; }
-
-        .credits { margin-top: 15px; text-align: center; padding: 10px; border-top: 1px solid #1a1a1a; width: 100%; }
-        .dev-tag span { color: #e61e2a; font-weight: 900; }
+        /* Simple Card Grid */
+        .plans-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; width: 100%; }
+        .card { background: #050505; border: 1px solid #262626; padding: 20px; border-radius: 8px; text-align: center; }
+        .buy-btn { display: block; background: #e61e2a; color: white; text-decoration: none; padding: 10px; border-radius: 5px; font-weight: bold; margin-top: 10px; }
+        .logout-btn { color: #ed4956; background: none; border: none; cursor: pointer; margin-top: 20px; font-size: 0.8rem; }
     </style>
 </head>
 <body>
@@ -58,131 +51,130 @@
     <canvas id="hacker-canvas"></canvas>
 
     <div id="auth-screen">
-        <div class="auth-container">
-            <div class="auth-tabs">
-                <div class="tab active" onclick="switchTab('login')">LOGIN</div>
-                <div class="tab" onclick="switchTab('register')">REGISTER</div>
-            </div>
-
+        <div class="insta-box">
+            <div class="insta-logo">REMEMBER</div>
+            
             <div id="login-form" class="auth-form active">
-                <input type="text" id="login-user" placeholder="USERNAME">
-                <input type="password" id="login-pass" placeholder="PASSWORD">
+                <input type="text" id="login-user" placeholder="Username">
+                <input type="password" id="login-pass" placeholder="Password">
                 <div id="login-status" class="status-msg status-error"></div>
-                <button class="auth-btn" onclick="handleLogin()">ACCESS SYSTEM</button>
+                <button class="insta-btn" onclick="handleLogin()">Log in</button>
             </div>
 
             <div id="register-form" class="auth-form">
-                <input type="text" id="reg-user" placeholder="CHOOSE USERNAME">
-                <input type="password" id="reg-pass" placeholder="PASSWORD">
-                <input type="password" id="reg-confirm" placeholder="CONFIRM PASSWORD">
+                <input type="text" id="reg-user" placeholder="Username">
+                <input type="password" id="reg-pass" placeholder="Password">
+                <input type="password" id="reg-confirm" placeholder="Confirm Password">
                 <div id="reg-status" class="status-msg"></div>
-                <button class="auth-btn" onclick="handleRegister()">CREATE IDENTITY</button>
+                <button class="insta-btn" onclick="handleRegister()">Sign up</button>
             </div>
+        </div>
+
+        <div class="switch-box">
+            <span id="switch-text">Don't have an account?</span>
+            <span class="switch-link" id="switch-action" onclick="toggleAuth()">Sign up</span>
         </div>
     </div>
 
     <div id="store-content">
-        <div class="live-stats">WELCOME, <span id="user-display" style="color: #fff;">GUEST</span> | SESSION ACTIVE</div>
         <h1 class="header-title">REMEMBER STORE</h1>
-
+        <div style="margin-bottom: 20px;">Welcome back, <b id="display-user"></b></div>
+        
         <div class="plans-grid">
             <div class="card">
-                <span class="plan-name">[ BASIC PLAN ]</span>
-                <span class="price">$14</span>
-                <ul class="features">
-                    <li>1 Concurrents</li>
-                    <li>60 Seconds Boot</li>
-                    <li>45 Seconds Cooldown</li>
-                    <li>Default Methods</li>
-                </ul>
-                <div class="btn-group">
-                    <a href="#" class="buy-btn">PURCHASE</a>
-                    <a href="#" class="ask-btn">INQUIRY</a>
-                </div>
+                <h3>BASIC</h3>
+                <p>$14</p>
+                <a href="#" class="buy-btn">Purchase</a>
             </div>
-            <div class="card" style="border-color:#e61e2a;">
-                <span class="plan-name">[ DIAMOND PLAN ]</span>
-                <span class="price">$22</span>
-                <ul class="features">
-                    <li>2 Concurrents</li>
-                    <li>120 Seconds Boot</li>
-                    <li>20 Seconds Cooldown</li>
-                    <li>VIP Methods</li>
-                </ul>
-                <div class="btn-group">
-                    <a href="#" class="buy-btn">PURCHASE</a>
-                    <a href="#" class="ask-btn">INQUIRY</a>
-                </div>
+            <div class="card">
+                <h3>GOLD</h3>
+                <p>$17</p>
+                <a href="#" class="buy-btn">Purchase</a>
+            </div>
+            <div class="card">
+                <h3>DIAMOND</h3>
+                <p>$22</p>
+                <a href="#" class="buy-btn">Purchase</a>
+            </div>
+            <div class="card">
+                <h3>CHAMPION</h3>
+                <p>$45</p>
+                <a href="#" class="buy-btn">Purchase</a>
             </div>
         </div>
 
-        <div class="credits">
-            <div class="dev-tag">Designed & Programmed by <span>Abu saad</span></div>
-            <button onclick="logout()" style="background:none; border:none; color:#e61e2a; cursor:pointer; font-size:0.7rem; margin-top:10px;">[ TERMINATE SESSION ]</button>
-        </div>
+        <button class="logout-btn" onclick="logout()">Log out</button>
     </div>
 
     <script>
-        // --- AUTH LOGIC ---
-        function showStatus(elementId, message, type) {
-            const el = document.getElementById(elementId);
-            el.innerText = message;
+        // --- UI TOGGLE ---
+        let currentMode = 'login';
+        function toggleAuth() {
+            const loginForm = document.getElementById('login-form');
+            const regForm = document.getElementById('register-form');
+            const switchText = document.getElementById('switch-text');
+            const switchAction = document.getElementById('switch-action');
+            
+            // Clear status messages
+            document.querySelectorAll('.status-msg').forEach(s => s.style.display = 'none');
+
+            if (currentMode === 'login') {
+                loginForm.classList.remove('active');
+                regForm.classList.add('active');
+                switchText.innerText = "Have an account?";
+                switchAction.innerText = "Log in";
+                currentMode = 'register';
+            } else {
+                regForm.classList.remove('active');
+                loginForm.classList.add('active');
+                switchText.innerText = "Don't have an account?";
+                switchAction.innerText = "Sign up";
+                currentMode = 'login';
+            }
+        }
+
+        function showStatus(id, msg, type) {
+            const el = document.getElementById(id);
+            el.innerText = msg;
             el.className = 'status-msg ' + (type === 'error' ? 'status-error' : 'status-success');
             el.style.display = 'block';
         }
 
-        function switchTab(type) {
-            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-            document.querySelectorAll('.auth-form').forEach(f => f.classList.remove('active'));
-            document.querySelectorAll('.status-msg').forEach(s => s.style.display = 'none');
-            
-            if(type === 'login') {
-                document.querySelectorAll('.tab')[0].classList.add('active');
-                document.getElementById('login-form').classList.add('active');
-            } else {
-                document.querySelectorAll('.tab')[1].classList.add('active');
-                document.getElementById('register-form').classList.add('active');
-            }
-        }
-
+        // --- AUTH LOGIC ---
         function handleRegister() {
             const user = document.getElementById('reg-user').value.trim();
             const pass = document.getElementById('reg-pass').value;
             const confirm = document.getElementById('reg-confirm').value;
-            const status = 'reg-status';
 
-            if(!user || !pass) { showStatus(status, "❌ Missing fields!", "error"); return; }
-            if(pass !== confirm) { showStatus(status, "❌ Passwords mismatch!", "error"); return; }
-            if(localStorage.getItem('user_' + user)) { showStatus(status, "❌ User already exists!", "error"); return; }
+            if(!user || !pass) { showStatus('reg-status', "Please fill in all fields.", "error"); return; }
+            if(pass !== confirm) { showStatus('reg-status', "Passwords do not match.", "error"); return; }
+            if(localStorage.getItem('user_' + user)) { showStatus('reg-status', "Username already taken.", "error"); return; }
 
             localStorage.setItem('user_' + user, pass);
-            showStatus(status, "✅ Identity Created! Please login.", "success");
+            showStatus('reg-status', "Account created! You can now log in.", "success");
             
-            // تنظيف الحقول بعد النجاح
-            document.getElementById('reg-user').value = "";
-            document.getElementById('reg-pass').value = "";
-            document.getElementById('reg-confirm').value = "";
+            // Auto switch to login after 1.5s
+            setTimeout(toggleAuth, 1500);
         }
 
         function handleLogin() {
             const user = document.getElementById('login-user').value.trim();
             const pass = document.getElementById('login-pass').value;
-            const status = 'login-status';
 
             const storedPass = localStorage.getItem('user_' + user);
 
             if(storedPass && storedPass === pass) {
                 sessionStorage.setItem('activeUser', user);
-                enterSystem(user);
+                enterApp(user);
             } else {
-                showStatus(status, "❌ Access Denied: Invalid Credentials", "error");
+                showStatus('login-status', "Sorry, your password was incorrect.", "error");
             }
         }
 
-        function enterSystem(username) {
+        function enterApp(name) {
             document.getElementById('auth-screen').style.display = 'none';
             document.getElementById('store-content').style.display = 'flex';
-            document.getElementById('user-display').innerText = username.toUpperCase();
+            document.getElementById('display-user').innerText = name;
         }
 
         function logout() {
@@ -192,20 +184,19 @@
 
         window.onload = () => {
             const active = sessionStorage.getItem('activeUser');
-            if(active) enterSystem(active);
+            if(active) enterApp(active);
         };
 
-        // Matrix Background
+        // --- MATRIX BACKGROUND ---
         const canvas = document.getElementById('hacker-canvas');
         const ctx = canvas.getContext('2d');
         canvas.width = window.innerWidth; canvas.height = window.innerHeight;
-        const codes = "01REMEMBER";
         const drops = Array(Math.floor(canvas.width/14)).fill(1);
         function draw() {
-            ctx.fillStyle = "rgba(0,0,0,0.1)"; ctx.fillRect(0,0,canvas.width,canvas.height);
+            ctx.fillStyle = "rgba(0,0,0,0.05)"; ctx.fillRect(0,0,canvas.width,canvas.height);
             ctx.fillStyle = "#e61e2a"; ctx.font = "14px monospace";
             drops.forEach((y,i) => {
-                ctx.fillText(codes[Math.floor(Math.random()*codes.length)], i*14, y*14);
+                ctx.fillText("01", i*14, y*14);
                 if(y*14 > canvas.height && Math.random() > 0.975) drops[i] = 0;
                 drops[i]++;
             });
