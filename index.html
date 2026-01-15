@@ -3,161 +3,200 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RED SYSTEM | SECURE ACCESS</title>
+    <title>REMEMBER STORE | ELITE EDITION</title>
     <style>
-        /* التنسيق الأساسي */
+        /* التنسيق العام - فخامة اللون الأحمر والأسود */
         * { box-sizing: border-box; cursor: crosshair; }
         body { 
-            margin: 0; padding: 0; background: #000; color: #ff0000; 
-            font-family: 'Consolas', monospace; overflow: hidden; height: 100vh;
+            margin: 0; padding: 0; background: #000; color: #fff; 
+            font-family: 'Consolas', 'Courier New', monospace; overflow-x: hidden;
         }
 
-        /* خلفية الماتريكس المتحركة */
-        #bg-canvas { position: fixed; top: 0; left: 0; z-index: -1; opacity: 0.2; }
+        /* خلفية الماتريكس الحمراء */
+        #hacker-canvas { position: fixed; top: 0; left: 0; z-index: -1; opacity: 0.1; }
 
-        /* شاشة الدخول (Login) */
-        #login-screen {
+        /* شاشة الدخول وإنشاء الحساب */
+        #auth-screen {
             position: fixed; inset: 0; background: rgba(0,0,0,0.95);
             display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 1000;
         }
-
-        .login-card {
-            background: #000; border: 2px solid #600; padding: 40px;
-            width: 380px; border-radius: 8px; text-align: center;
-            box-shadow: 0 0 30px rgba(255, 0, 0, 0.2);
+        .auth-box {
+            background: #000; border: 1px solid #600; padding: 40px;
+            width: 380px; text-align: center; box-shadow: 0 0 20px rgba(255, 0, 0, 0.2);
         }
-
-        .admin-icon { font-size: 3rem; margin-bottom: 15px; color: #f00; text-shadow: 0 0 10px #f00; }
-
+        .logo-title { color: #f00; font-size: 2.5rem; font-weight: 900; letter-spacing: 5px; text-shadow: 0 0 15px #f00; margin-bottom: 20px; }
+        
         input {
-            width: 100%; padding: 15px; margin: 15px 0; background: #0a0a0a;
-            border: 1px solid #400; color: #fff; text-align: center; font-size: 1.1rem;
-            outline: none; transition: 0.3s;
+            width: 100%; padding: 12px; margin: 10px 0; background: #0a0a0a;
+            border: 1px solid #300; color: #fff; text-align: center; outline: none; transition: 0.3s;
         }
         input:focus { border-color: #f00; box-shadow: 0 0 10px #f00; }
-
-        .btn-access {
-            width: 100%; padding: 15px; background: #800; color: #fff;
-            border: none; font-weight: bold; cursor: pointer; transition: 0.4s;
-            letter-spacing: 2px; text-transform: uppercase;
+        
+        .btn-main {
+            width: 100%; padding: 12px; background: #800; color: #fff; border: none;
+            font-weight: bold; cursor: pointer; transition: 0.4s; margin-top: 10px;
         }
-        .btn-access:hover { background: #f00; box-shadow: 0 0 20px #f00; color: #000; }
+        .btn-main:hover { background: #f00; box-shadow: 0 0 15px #f00; color: #000; }
 
-        #error-msg { color: #ff4d4d; font-size: 0.8rem; margin-top: 10px; display: none; }
+        /* لوحة التحكم والباقات */
+        #main-content { display: none; padding: 40px 20px; max-width: 1200px; margin: 0 auto; }
+        .header-section { text-align: center; margin-bottom: 50px; }
+        .header-section h1 { color: #f00; font-size: 3rem; letter-spacing: 10px; text-shadow: 0 0 20px #f00; }
 
-        /* لوحة التحكم (Dashboard) */
-        #admin-panel {
-            display: none; padding: 50px; width: 100%; height: 100vh; overflow-y: auto;
+        /* تصميم الباقات بناءً على الصورة المرفقة */
+        .plans-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; }
+        .plan-card {
+            background: #050505; border: 1px solid #400; padding: 25px; border-radius: 5px;
+            text-align: center; transition: 0.3s; position: relative; overflow: hidden;
         }
+        .plan-card:hover { border-color: #f00; transform: translateY(-5px); box-shadow: 0 0 20px rgba(255,0,0,0.15); }
+        .plan-name { font-size: 1.5rem; color: #f00; font-weight: bold; margin-bottom: 10px; border-bottom: 1px solid #300; padding-bottom: 10px;}
+        .plan-price { font-size: 1.2rem; color: #fff; margin-bottom: 20px; }
+        .features-list { list-style: none; padding: 0; text-align: right; font-size: 0.9rem; color: #ccc; line-height: 1.8; }
+        .features-list li::before { content: "» "; color: #f00; }
 
-        .panel-header { border-bottom: 2px solid #600; padding-bottom: 20px; margin-bottom: 30px; text-align: center; }
-        .panel-header h1 { font-size: 3.5rem; letter-spacing: 10px; text-shadow: 0 0 20px #f00; margin: 0; }
+        /* لوحة الأدمن السرية */
+        #admin-panel { display: none; background: #0a0000; border: 2px dashed #f00; padding: 20px; margin-top: 30px; }
 
-        .status-box {
-            display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px;
-        }
-        .card {
-            background: rgba(20, 0, 0, 0.8); border: 1px solid #400; padding: 20px;
-            border-radius: 5px; text-align: center;
-        }
-        .card h3 { color: #888; font-size: 0.9rem; text-transform: uppercase; }
-        .card p { font-size: 2rem; font-weight: bold; margin: 10px 0; color: #fff; }
-
+        /* التذييل والحقوق */
+        footer { margin-top: 50px; padding: 20px; border-top: 1px solid #300; text-align: center; font-size: 0.8rem; color: #666; }
+        .social-link { color: #f00; text-decoration: none; font-weight: bold; margin: 0 10px; }
     </style>
 </head>
 <body>
 
-    <canvas id="bg-canvas"></canvas>
+    <canvas id="hacker-canvas"></canvas>
 
-    <div id="login-screen">
-        <div class="login-card">
-            <div class="admin-icon">⚠</div>
-            <h2 style="letter-spacing: 3px;">ADMIN ACCESS</h2>
-            <p style="color: #666; font-size: 0.8rem;">ENTER SECURITY KEY TO PROCEED</p>
-            
-            <input type="password" id="access-key" placeholder="••••••••••••">
-            <button class="btn-access" onclick="checkAccess()">Initialize Login</button>
-            <div id="error-msg">ACCESS DENIED: INVALID KEY</div>
+    <div id="auth-screen">
+        <div class="auth-box">
+            <div class="logo-title">REMEMBER</div>
+            <div id="auth-forms">
+                <input type="text" id="username" placeholder="إسم المستخدم">
+                <input type="password" id="password" placeholder="كلمة المرور">
+                <button class="btn-main" onclick="handleAuth()">دخول / إنشاء حساب</button>
+            </div>
+            <p id="msg" style="font-size: 0.8rem; margin-top: 15px; color: #600;"></p>
         </div>
     </div>
 
-    <div id="admin-panel">
-        <div class="panel-header">
-            <h1>SYSTEM ONLINE</h1>
-            <p>Welcome, Admin [abusaad]</p>
+    <div id="main-content">
+        <div class="header-section">
+            <h1>DDoS PROTECTION SERVICES</h1>
+            <p style="color: #888;">نظام التحكم الكامل - مرحبا بك في النخبة</p>
         </div>
 
-        <div class="status-box">
-            <div class="card">
-                <h3>Server Status</h3>
-                <p style="color: #0f0;">ACTIVE</p>
-            </div>
-            <div class="card">
-                <h3>Encryption</h3>
-                <p>AES-256</p>
-            </div>
-            <div class="card">
-                <h3>Connected Nodes</h3>
-                <p>14</p>
+        <div id="admin-panel">
+            <h2 style="color: #f00;">[ لوحة تحكم الأدمن - مرحبا abusaad ]</h2>
+            <div style="display: flex; justify-content: space-around;">
+                <div>المسجلين اليوم: <span style="color: #fff;">14</span></div>
+                <div>إجمالي المبيعات: <span style="color: #fff;">$1,420</span></div>
+                <div>حالة السيرفر: <span style="color: #0f0;">ONLINE</span></div>
             </div>
         </div>
 
-        <div style="margin-top: 40px; background: #050505; border: 1px solid #300; padding: 20px; font-size: 0.9rem; color: #600;">
-            <p>> root@system:~# INITIALIZING_DATABASE...</p>
-            <p>> DECRYPTING_FILES... [OK]</p>
-            <p>> ACCESSING_CORE_PROTOCOL... [GRANTED]</p>
+        <div class="plans-grid">
+            <div class="plan-card">
+                <div class="plan-name">[ Basic Plan ]</div>
+                <div class="plan-price">Month $14</div>
+                <ul class="features-list">
+                    <li>1 Concurrents</li>
+                    <li>60 Seconds Boot Time</li>
+                    <li>45 Seconds Cooldown</li>
+                    <li>Access To Default Methods</li>
+                </ul>
+                <button class="btn-main" onclick="buy()">شراء الآن</button>
+            </div>
+            <div class="plan-card">
+                <div class="plan-name">[ Gold Plan ]</div>
+                <div class="plan-price">Month $17</div>
+                <ul class="features-list">
+                    <li>2 Concurrents</li>
+                    <li>60 Seconds Boot Time</li>
+                    <li>20 Seconds Cooldown</li>
+                    <li>Access To Default Methods</li>
+                </ul>
+                <button class="btn-main" onclick="buy()">شراء الآن</button>
+            </div>
+            <div class="plan-card">
+                <div class="plan-name">[ Diamond Plan ]</div>
+                <div class="plan-price">Month $22</div>
+                <ul class="features-list">
+                    <li>3 Concurrents</li>
+                    <li>60 Seconds Boot Time</li>
+                    <li>15 Seconds Cooldown</li>
+                    <li>Access To VIP Methods</li>
+                </ul>
+                <button class="btn-main" onclick="buy()">شراء الآن</button>
+            </div>
+            <div class="plan-card">
+                <div class="plan-name">[ Champion Plan ]</div>
+                <div class="plan-price">$45 ~ Lifetime $150</div>
+                <ul class="features-list">
+                    <li>4 Concurrents</li>
+                    <li>60 Seconds Boot Time</li>
+                    <li>0 Seconds Cooldown</li>
+                    <li>Access To VIP Methods</li>
+                </ul>
+                <button class="btn-main" onclick="buy()">شراء الآن</button>
+            </div>
         </div>
+
+        <footer>
+            <p>جميع الحقوق محفوظة لـ 02l_ & e75t © 2024</p>
+            <p>
+                Instagram: <a href="#" class="social-link">02l_</a> | 
+                Discord: <a href="#" class="social-link">e75t</a>
+            </p>
+        </footer>
     </div>
 
     <script>
-        // الرمز الخاص الذي حددته
-        const SECRET_KEY = "abusaad452107216";
+        const ADMIN_USER = "Admin";
+        const ADMIN_PASS = "abusaad452107216";
+        const DISCORD_LINK = "https://discord.gg/rmb";
 
-        function checkAccess() {
-            const inputKey = document.getElementById('access-key').value;
-            const errorMsg = document.getElementById('error-msg');
+        function handleAuth() {
+            const user = document.getElementById('username').value;
+            const pass = document.getElementById('password').value;
 
-            if (inputKey === SECRET_KEY) {
-                // دخول ناجح
-                document.getElementById('login-screen').style.display = 'none';
+            if(user === ADMIN_USER && pass === ADMIN_PASS) {
+                // دخول الأدمن
+                document.getElementById('auth-screen').style.display = 'none';
+                document.getElementById('main-content').style.display = 'block';
                 document.getElementById('admin-panel').style.display = 'block';
+            } else if(user !== "" && pass !== "") {
+                // دخول مستخدم عادي (تجريبي)
+                document.getElementById('auth-screen').style.display = 'none';
+                document.getElementById('main-content').style.display = 'block';
+                document.getElementById('admin-panel').style.display = 'none';
             } else {
-                // فشل الدخول
-                errorMsg.style.display = 'block';
-                document.getElementById('access-key').style.borderColor = '#f00';
-                // هز الشاشة عند الخطأ
-                document.querySelector('.login-card').animate([
-                    { transform: 'translateX(0px)' },
-                    { transform: 'translateX(10px)' },
-                    { transform: 'translateX(-10px)' },
-                    { transform: 'translateX(0px)' }
-                ], { duration: 200 });
+                document.getElementById('msg').innerText = "خطأ: يرجى إدخال البيانات كاملة";
             }
         }
 
-        // كود تأثير الخلفية (ماتريكس أحمر)
-        const canvas = document.getElementById('bg-canvas');
+        function buy() {
+            window.location.href = DISCORD_LINK;
+        }
+
+        // تأثير الماتريكس الأحمر للحلفية
+        const canvas = document.getElementById('hacker-canvas');
         const ctx = canvas.getContext('2d');
         canvas.height = window.innerHeight;
         canvas.width = window.innerWidth;
-        const characters = "0123456789ABCDEF";
-        const fontSize = 14;
-        const columns = canvas.width / fontSize;
+        const columns = canvas.width / 20;
         const drops = Array(Math.floor(columns)).fill(1);
 
         function draw() {
             ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
             ctx.fillRect(0, 0, canvas.width, canvas.height);
-            ctx.fillStyle = "#300"; 
-            ctx.font = fontSize + "px monospace";
+            ctx.fillStyle = "#300";
             for (let i = 0; i < drops.length; i++) {
-                const text = characters.charAt(Math.floor(Math.random() * characters.length));
-                ctx.fillText(text, i * fontSize, drops[i] * fontSize);
-                if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) drops[i] = 0;
+                ctx.fillText(Math.floor(Math.random()*2), i*20, drops[i]*20);
+                if (drops[i]*20 > canvas.height && Math.random() > 0.975) drops[i] = 0;
                 drops[i]++;
             }
         }
-        setInterval(draw, 35);
+        setInterval(draw, 50);
     </script>
 </body>
 </html>
