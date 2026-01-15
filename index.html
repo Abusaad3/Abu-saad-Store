@@ -1,293 +1,163 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>REMEMBER STORE | ELITE EDITION</title>
+    <title>RED SYSTEM | SECURE ACCESS</title>
     <style>
-        * { box-sizing: border-box; cursor: default; }
-        body { margin: 0; padding: 0; background: #000; color: white; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; overflow-x: hidden; min-height: 100vh; display: flex; align-items: center; justify-content: center; }
-        #hacker-canvas { position: fixed; top: 0; left: 0; z-index: 1; opacity: 0.4; }
+        /* التنسيق الأساسي */
+        * { box-sizing: border-box; cursor: crosshair; }
+        body { 
+            margin: 0; padding: 0; background: #000; color: #ff0000; 
+            font-family: 'Consolas', monospace; overflow: hidden; height: 100vh;
+        }
 
-        /* Auth Screen (Instagram Style) */
-        #auth-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 9999; display: flex; flex-direction: column; justify-content: center; align-items: center; }
-        .insta-box { background: #000; border: 1px solid #262626; padding: 40px 20px; width: 350px; text-align: center; margin-bottom: 10px; z-index: 10; border-radius: 2px; }
-        .insta-logo { color: #e61e2a; font-size: 2.5rem; font-weight: 900; letter-spacing: 5px; margin-bottom: 30px; text-shadow: 0 0 15px rgba(230, 30, 42, 0.4); font-family: 'Consolas', monospace; }
-        .auth-form { display: none; flex-direction: column; gap: 10px; }
-        .auth-form.active { display: flex; }
-        input { background: #121212; border: 1px solid #363636; padding: 12px; color: white; font-size: 0.8rem; border-radius: 3px; outline: none; width: 100%; transition: 0.2s; }
-        input:focus { border-color: #e61e2a; }
-        .insta-btn { background: #e61e2a; color: white; border: none; padding: 10px; border-radius: 8px; font-weight: bold; font-size: 0.9rem; cursor: pointer; margin-top: 10px; transition: 0.3s; }
-        .insta-btn:hover { background: #fff; color: #000; }
-        .status-msg { font-size: 0.8rem; margin: 15px 0; display: none; }
-        .status-error { color: #ed4956; }
-        .status-success { color: #4dff88; }
-        .switch-box { background: #000; border: 1px solid #262626; padding: 20px; width: 350px; text-align: center; font-size: 0.9rem; z-index: 10; }
-        .switch-link { color: #e61e2a; font-weight: bold; cursor: pointer; margin-left: 5px; }
+        /* خلفية الماتريكس المتحركة */
+        #bg-canvas { position: fixed; top: 0; left: 0; z-index: -1; opacity: 0.2; }
 
-        /* Dashboard Content */
-        #store-content { display: none; width: 95%; max-width: 1300px; z-index: 10; flex-direction: column; align-items: center; padding: 40px 0; }
-        .header-section { text-align: center; margin-bottom: 50px; }
-        .header-title { color: #e61e2a; font-size: 3.5rem; font-weight: 900; letter-spacing: 15px; text-shadow: 0 0 30px #e61e2a; margin: 0; font-family: 'Consolas', monospace; }
-        .live-counter { font-size: 0.8rem; color: #e61e2a; letter-spacing: 2px; margin-top: 15px; font-weight: bold; text-transform: uppercase; }
+        /* شاشة الدخول (Login) */
+        #login-screen {
+            position: fixed; inset: 0; background: rgba(0,0,0,0.95);
+            display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 1000;
+        }
 
-        /* Pricing Grid */
-        .plans-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; width: 100%; margin-bottom: 40px; }
-        .card { background: rgba(5, 5, 5, 0.9); border: 1px solid #222; padding: 30px 20px; border-radius: 4px; transition: 0.4s; position: relative; overflow: hidden; }
-        .card:hover { border-color: #e61e2a; transform: translateY(-5px); box-shadow: 0 10px 30px rgba(230, 30, 42, 0.2); }
-        .plan-header { border-bottom: 1px solid #1a1a1a; margin-bottom: 20px; padding-bottom: 15px; }
-        .plan-name { color: #e61e2a; font-size: 1.1rem; font-weight: bold; display: block; margin-bottom: 10px; }
-        .plan-price { font-size: 1.8rem; font-weight: 900; color: #fff; }
-        .plan-price span { font-size: 0.8rem; color: #666; font-weight: normal; }
-        
-        .features-list { list-style: none; padding: 0; margin: 0 0 25px 0; text-align: left; }
-        .features-list li { font-size: 0.85rem; color: #aaa; padding: 8px 0; border-bottom: 1px solid #111; }
-        .features-list li::before { content: "» "; color: #e61e2a; font-weight: bold; }
+        .login-card {
+            background: #000; border: 2px solid #600; padding: 40px;
+            width: 380px; border-radius: 8px; text-align: center;
+            box-shadow: 0 0 30px rgba(255, 0, 0, 0.2);
+        }
 
-        /* Addons Section */
-        .addons-container { width: 100%; background: #050505; border: 1px solid #e61e2a; padding: 30px; border-radius: 4px; margin-bottom: 40px; }
-        .addons-title { color: #e61e2a; font-weight: bold; font-size: 1.2rem; letter-spacing: 3px; margin-bottom: 20px; display: block; text-align: center; }
-        .addons-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; }
-        .addon-item { background: #0a0a0a; border: 1px solid #1a1a1a; padding: 15px; display: flex; justify-content: space-between; align-items: center; font-size: 0.85rem; }
-        .addon-item b { color: #e61e2a; font-size: 1rem; }
+        .admin-icon { font-size: 3rem; margin-bottom: 15px; color: #f00; text-shadow: 0 0 10px #f00; }
 
-        /* Fake Purchase Notifications */
-        #notification-toast { position: fixed; bottom: 20px; left: 20px; background: #050505; border-left: 4px solid #e61e2a; padding: 15px 25px; border-radius: 4px; font-size: 0.8rem; z-index: 10000; box-shadow: 0 10px 30px rgba(0,0,0,0.8); display: none; animation: slideIn 0.5s ease; }
-        @keyframes slideIn { from { transform: translateX(-100%); } to { transform: translateX(0); } }
+        input {
+            width: 100%; padding: 15px; margin: 15px 0; background: #0a0a0a;
+            border: 1px solid #400; color: #fff; text-align: center; font-size: 1.1rem;
+            outline: none; transition: 0.3s;
+        }
+        input:focus { border-color: #f00; box-shadow: 0 0 10px #f00; }
 
-        .footer { text-align: center; border-top: 1px solid #1a1a1a; width: 100%; padding-top: 30px; margin-top: 20px; }
-        .dev-info { font-size: 0.9rem; color: #fff; }
-        .dev-info span { color: #e61e2a; font-weight: bold; }
-        .discord-tag { color: #5865F2; font-weight: bold; margin-top: 10px; display: block; }
-        
-        .buy-btn { display: block; background: #e61e2a; color: white; text-decoration: none; padding: 12px; border-radius: 4px; font-weight: bold; font-size: 0.8rem; text-align: center; transition: 0.3s; }
-        .buy-btn:hover { background: #fff; color: #000; }
-        .logout-link { color: #666; background: none; border: none; cursor: pointer; font-size: 0.75rem; margin-top: 20px; text-decoration: underline; }
+        .btn-access {
+            width: 100%; padding: 15px; background: #800; color: #fff;
+            border: none; font-weight: bold; cursor: pointer; transition: 0.4s;
+            letter-spacing: 2px; text-transform: uppercase;
+        }
+        .btn-access:hover { background: #f00; box-shadow: 0 0 20px #f00; color: #000; }
+
+        #error-msg { color: #ff4d4d; font-size: 0.8rem; margin-top: 10px; display: none; }
+
+        /* لوحة التحكم (Dashboard) */
+        #admin-panel {
+            display: none; padding: 50px; width: 100%; height: 100vh; overflow-y: auto;
+        }
+
+        .panel-header { border-bottom: 2px solid #600; padding-bottom: 20px; margin-bottom: 30px; text-align: center; }
+        .panel-header h1 { font-size: 3.5rem; letter-spacing: 10px; text-shadow: 0 0 20px #f00; margin: 0; }
+
+        .status-box {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px;
+        }
+        .card {
+            background: rgba(20, 0, 0, 0.8); border: 1px solid #400; padding: 20px;
+            border-radius: 5px; text-align: center;
+        }
+        .card h3 { color: #888; font-size: 0.9rem; text-transform: uppercase; }
+        .card p { font-size: 2rem; font-weight: bold; margin: 10px 0; color: #fff; }
+
     </style>
 </head>
 <body>
 
-    <canvas id="hacker-canvas"></canvas>
-    <div id="notification-toast"></div>
+    <canvas id="bg-canvas"></canvas>
 
-    <div id="auth-screen">
-        <div class="insta-box">
-            <div class="insta-logo">REMEMBER</div>
-            <div id="login-form" class="auth-form active">
-                <input type="text" id="login-user" placeholder="Username">
-                <input type="password" id="login-pass" placeholder="Password">
-                <div id="login-status" class="status-msg status-error"></div>
-                <button class="insta-btn" onclick="handleLogin()">Log in</button>
-            </div>
-            <div id="register-form" class="auth-form">
-                <input type="text" id="reg-user" placeholder="Username">
-                <input type="password" id="reg-pass" placeholder="Password">
-                <input type="password" id="reg-confirm" placeholder="Confirm Password">
-                <div id="reg-status" class="status-msg"></div>
-                <button class="insta-btn" onclick="handleRegister()">Sign up</button>
-            </div>
-        </div>
-        <div class="switch-box">
-            <span id="switch-text">Don't have an account?</span>
-            <span class="switch-link" id="switch-action" onclick="toggleAuth()">Sign up</span>
+    <div id="login-screen">
+        <div class="login-card">
+            <div class="admin-icon">⚠</div>
+            <h2 style="letter-spacing: 3px;">ADMIN ACCESS</h2>
+            <p style="color: #666; font-size: 0.8rem;">ENTER SECURITY KEY TO PROCEED</p>
+            
+            <input type="password" id="access-key" placeholder="••••••••••••">
+            <button class="btn-access" onclick="checkAccess()">Initialize Login</button>
+            <div id="error-msg">ACCESS DENIED: INVALID KEY</div>
         </div>
     </div>
 
-    <div id="store-content">
-        <div class="header-section">
-            <h1 class="header-title">REMEMBER STORE</h1>
-            <div class="live-counter">LIVE USERS: <span id="user-count">4,281</span></div>
+    <div id="admin-panel">
+        <div class="panel-header">
+            <h1>SYSTEM ONLINE</h1>
+            <p>Welcome, Admin [abusaad]</p>
         </div>
 
-        <div class="plans-grid">
+        <div class="status-box">
             <div class="card">
-                <div class="plan-header">
-                    <span class="plan-name">[ Basic Plan ]</span>
-                    <div class="plan-price">$14 <span>/ Month</span></div>
-                </div>
-                <ul class="features-list">
-                    <li>1 Concurrents</li>
-                    <li>60 Seconds Boot Time</li>
-                    <li>45 Seconds Cooldown Time</li>
-                    <li>Access To Default Methods</li>
-                </ul>
-                <a href="https://discord.gg/RMB" class="buy-btn">PURCHASE NOW</a>
+                <h3>Server Status</h3>
+                <p style="color: #0f0;">ACTIVE</p>
             </div>
-
             <div class="card">
-                <div class="plan-header">
-                    <span class="plan-name">[ Gold Plan ]</span>
-                    <div class="plan-price">$17 <span>/ Month</span></div>
-                </div>
-                <ul class="features-list">
-                    <li>1 Concurrents</li>
-                    <li>120 Seconds Boot Time</li>
-                    <li>30 Seconds Cooldown Time</li>
-                    <li>Access To Default Methods</li>
-                </ul>
-                <a href="https://discord.gg/RMB" class="buy-btn">PURCHASE NOW</a>
+                <h3>Encryption</h3>
+                <p>AES-256</p>
             </div>
-
-            <div class="card" style="border-color: #e61e2a;">
-                <div class="plan-header">
-                    <span class="plan-name">[ Diamond Plan ]</span>
-                    <div class="plan-price">$22 <span>/ Month</span></div>
-                </div>
-                <ul class="features-list">
-                    <li>2 Concurrents</li>
-                    <li>120 Seconds Boot Time</li>
-                    <li>20 Seconds Cooldown Time</li>
-                    <li>Access To Vip Methods</li>
-                </ul>
-                <a href="https://discord.gg/RMB" class="buy-btn">PURCHASE NOW</a>
-            </div>
-
             <div class="card">
-                <div class="plan-header">
-                    <span class="plan-name">[ Champion Plan ]</span>
-                    <div class="plan-price">$45 <span>/ Month</span></div>
-                    <div style="font-size:0.7rem; color:#e61e2a; margin-top:5px;">Lifetime: $150</div>
-                </div>
-                <ul class="features-list">
-                    <li>3 Concurrents</li>
-                    <li>120 Seconds Boot Time</li>
-                    <li>15 Seconds Cooldown Time</li>
-                    <li>Access To Vip Methods</li>
-                </ul>
-                <a href="https://discord.gg/RMB" class="buy-btn">PURCHASE NOW</a>
+                <h3>Connected Nodes</h3>
+                <p>14</p>
             </div>
         </div>
 
-        <div class="addons-container">
-            <span class="addons-title">-------- [ Remember Addons ] --------</span>
-            <div class="addons-grid">
-                <div class="addon-item">1+ Concurrents <b>[ 15$ ]</b></div>
-                <div class="addon-item">+60 Seconds Boot <b>[ 10$ ]</b></div>
-                <div class="addon-item">API Access <b>[ 20$ ]</b></div>
-                <div class="addon-item">Vip Methods <b>[ 15$ ]</b></div>
-                <div class="addon-item">0 Cooldown <b>[ 10$ ]</b></div>
-            </div>
-        </div>
-
-        <div class="footer">
-            <div class="dev-info">Designed & Programmed by <span>Abu saad</span></div>
-            <div class="discord-tag">DISCORD: e65e</div>
-            <button class="logout-link" onclick="logout()">Terminate Session</button>
+        <div style="margin-top: 40px; background: #050505; border: 1px solid #300; padding: 20px; font-size: 0.9rem; color: #600;">
+            <p>> root@system:~# INITIALIZING_DATABASE...</p>
+            <p>> DECRYPTING_FILES... [OK]</p>
+            <p>> ACCESSING_CORE_PROTOCOL... [GRANTED]</p>
         </div>
     </div>
 
     <script>
-        // --- LIVE DATA ARRAYS ---
-        const names = [
-            "Al-Otaibi", "Al-Shammari", "Al-Harbi", "Al-Qahtani", "Al-Mutairi", "Al-Anzi", "Al-Dawsari", "Al-Subaie", "Al-Ghamdi", "Al-Zahrani",
-            "Smith", "Johnson", "Williams", "Brown", "Jones", "Garcia", "Miller", "Davis", "Rodriguez", "Martinez", "Hernandez", "Lopez",
-            "Fahad", "Sultan", "Mohammed", "Abdullah", "James", "Alex", "Tyler", "Shadow", "Ghost", "Root", "Admin", "User_88", "Sniper", "Wolf"
-        ];
-        const plans = ["Basic Plan", "Gold Plan", "Diamond Plan", "Champion Plan", "VIP Addon", "API Access"];
+        // الرمز الخاص الذي حددته
+        const SECRET_KEY = "abusaad452107216";
 
-        // --- COUNTER & NOTIFICATION LOGIC ---
-        function updateCounter() {
-            const countEl = document.getElementById('user-count');
-            let current = parseInt(countEl.innerText.replace(',', ''));
-            let change = Math.floor(Math.random() * 10) - 4; // عشوائي بين -4 و +5
-            countEl.innerText = (current + change).toLocaleString();
-        }
-        setInterval(updateCounter, 3000);
+        function checkAccess() {
+            const inputKey = document.getElementById('access-key').value;
+            const errorMsg = document.getElementById('error-msg');
 
-        function showFakePurchase() {
-            const toast = document.getElementById('notification-toast');
-            const name = names[Math.floor(Math.random() * names.length)];
-            const plan = plans[Math.floor(Math.random() * plans.length)];
-            
-            toast.innerHTML = `🛒 <b style="color:#e61e2a">${name}</b> just purchased <b>${plan}</b>!`;
-            toast.style.display = 'block';
-            
-            setTimeout(() => { toast.style.display = 'none'; }, 4000);
-        }
-        // تظهر إشعار شراء كل 8 إلى 15 ثانية
-        setInterval(showFakePurchase, Math.random() * (15000 - 8000) + 8000);
-
-        // --- AUTH & UI LOGIC ---
-        let currentMode = 'login';
-        function toggleAuth() {
-            const loginForm = document.getElementById('login-form');
-            const regForm = document.getElementById('register-form');
-            const switchText = document.getElementById('switch-text');
-            const switchAction = document.getElementById('switch-action');
-            document.querySelectorAll('.status-msg').forEach(s => s.style.display = 'none');
-
-            if (currentMode === 'login') {
-                loginForm.classList.remove('active'); regForm.classList.add('active');
-                switchText.innerText = "Have an account?"; switchAction.innerText = "Log in";
-                currentMode = 'register';
+            if (inputKey === SECRET_KEY) {
+                // دخول ناجح
+                document.getElementById('login-screen').style.display = 'none';
+                document.getElementById('admin-panel').style.display = 'block';
             } else {
-                regForm.classList.remove('active'); loginForm.classList.add('active');
-                switchText.innerText = "Don't have an account?"; switchAction.innerText = "Sign up";
-                currentMode = 'login';
+                // فشل الدخول
+                errorMsg.style.display = 'block';
+                document.getElementById('access-key').style.borderColor = '#f00';
+                // هز الشاشة عند الخطأ
+                document.querySelector('.login-card').animate([
+                    { transform: 'translateX(0px)' },
+                    { transform: 'translateX(10px)' },
+                    { transform: 'translateX(-10px)' },
+                    { transform: 'translateX(0px)' }
+                ], { duration: 200 });
             }
         }
 
-        function showStatus(id, msg, type) {
-            const el = document.getElementById(id);
-            el.innerText = msg;
-            el.className = 'status-msg ' + (type === 'error' ? 'status-error' : 'status-success');
-            el.style.display = 'block';
-        }
-
-        function handleRegister() {
-            const user = document.getElementById('reg-user').value.trim();
-            const pass = document.getElementById('reg-pass').value;
-            const confirm = document.getElementById('reg-confirm').value;
-
-            if(!user || !pass) { showStatus('reg-status', "Please fill all fields.", "error"); return; }
-            if(pass !== confirm) { showStatus('reg-status', "Passwords mismatch.", "error"); return; }
-            if(localStorage.getItem('user_'+user)) { showStatus('reg-status', "Username exists.", "error"); return; }
-
-            localStorage.setItem('user_' + user, pass);
-            showStatus('reg-status', "Identity Created! Redirecting...", "success");
-            setTimeout(toggleAuth, 1500);
-        }
-
-        function handleLogin() {
-            const user = document.getElementById('login-user').value.trim();
-            const pass = document.getElementById('login-pass').value;
-            const storedPass = localStorage.getItem('user_' + user);
-
-            if(storedPass && storedPass === pass) {
-                sessionStorage.setItem('activeUser', user);
-                enterApp(user);
-            } else {
-                showStatus('login-status', "Incorrect identity credentials.", "error");
-            }
-        }
-
-        function enterApp(name) {
-            document.getElementById('auth-screen').style.display = 'none';
-            document.getElementById('store-content').style.display = 'flex';
-        }
-
-        function logout() { sessionStorage.clear(); location.reload(); }
-
-        window.onload = () => {
-            const active = sessionStorage.getItem('activeUser');
-            if(active) enterApp(active);
-        };
-
-        // Canvas Effect
-        const canvas = document.getElementById('hacker-canvas');
+        // كود تأثير الخلفية (ماتريكس أحمر)
+        const canvas = document.getElementById('bg-canvas');
         const ctx = canvas.getContext('2d');
-        canvas.width = window.innerWidth; canvas.height = window.innerHeight;
-        const drops = Array(Math.floor(canvas.width/14)).fill(1);
+        canvas.height = window.innerHeight;
+        canvas.width = window.innerWidth;
+        const characters = "0123456789ABCDEF";
+        const fontSize = 14;
+        const columns = canvas.width / fontSize;
+        const drops = Array(Math.floor(columns)).fill(1);
+
         function draw() {
-            ctx.fillStyle = "rgba(0,0,0,0.05)"; ctx.fillRect(0,0,canvas.width,canvas.height);
-            ctx.fillStyle = "#e61e2a"; ctx.font = "14px monospace";
-            drops.forEach((y,i) => {
-                ctx.fillText("01", i*14, y*14);
-                if(y*14 > canvas.height && Math.random() > 0.975) drops[i] = 0;
+            ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = "#300"; 
+            ctx.font = fontSize + "px monospace";
+            for (let i = 0; i < drops.length; i++) {
+                const text = characters.charAt(Math.floor(Math.random() * characters.length));
+                ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+                if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) drops[i] = 0;
                 drops[i]++;
-            });
+            }
         }
-        setInterval(draw, 50);
+        setInterval(draw, 35);
     </script>
 </body>
 </html>
