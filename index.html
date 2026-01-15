@@ -3,200 +3,183 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>REMEMBER STORE | ELITE EDITION</title>
+    <title>RED OPS | ELITE TERMINAL</title>
+    <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        /* التنسيق العام - فخامة اللون الأحمر والأسود */
-        * { box-sizing: border-box; cursor: crosshair; }
-        body { 
-            margin: 0; padding: 0; background: #000; color: #fff; 
-            font-family: 'Consolas', 'Courier New', monospace; overflow-x: hidden;
-        }
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;900&display=swap');
 
-        /* خلفية الماتريكس الحمراء */
-        #hacker-canvas { position: fixed; top: 0; left: 0; z-index: -1; opacity: 0.1; }
+        :root { --primary-red: #ff0000; --dark-red: #450000; }
+        * { cursor: crosshair; font-family: 'Orbitron', 'Courier New', monospace; }
+        body { background: #000; color: white; overflow: hidden; margin: 0; }
 
-        /* شاشة الدخول وإنشاء الحساب */
-        #auth-screen {
-            position: fixed; inset: 0; background: rgba(0,0,0,0.95);
-            display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 1000;
-        }
-        .auth-box {
-            background: #000; border: 1px solid #600; padding: 40px;
-            width: 380px; text-align: center; box-shadow: 0 0 20px rgba(255, 0, 0, 0.2);
-        }
-        .logo-title { color: #f00; font-size: 2.5rem; font-weight: 900; letter-spacing: 5px; text-shadow: 0 0 15px #f00; margin-bottom: 20px; }
-        
-        input {
-            width: 100%; padding: 12px; margin: 10px 0; background: #0a0a0a;
-            border: 1px solid #300; color: #fff; text-align: center; outline: none; transition: 0.3s;
-        }
-        input:focus { border-color: #f00; box-shadow: 0 0 10px #f00; }
-        
-        .btn-main {
-            width: 100%; padding: 12px; background: #800; color: #fff; border: none;
-            font-weight: bold; cursor: pointer; transition: 0.4s; margin-top: 10px;
-        }
-        .btn-main:hover { background: #f00; box-shadow: 0 0 15px #f00; color: #000; }
+        /* تأثير التشويش (Glitch) */
+        .glitch { text-shadow: 2px 0 #f00, -2px 0 #0ff; animation: glitch 2s infinite linear alternate-reverse; }
+        @keyframes glitch { 0% { opacity: 1; } 50% { opacity: 0.8; } 100% { opacity: 1; } }
 
-        /* لوحة التحكم والباقات */
-        #main-content { display: none; padding: 40px 20px; max-width: 1200px; margin: 0 auto; }
-        .header-section { text-align: center; margin-bottom: 50px; }
-        .header-section h1 { color: #f00; font-size: 3rem; letter-spacing: 10px; text-shadow: 0 0 20px #f00; }
-
-        /* تصميم الباقات بناءً على الصورة المرفقة */
-        .plans-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; }
-        .plan-card {
-            background: #050505; border: 1px solid #400; padding: 25px; border-radius: 5px;
-            text-align: center; transition: 0.3s; position: relative; overflow: hidden;
+        /* انتقالات الصفحات */
+        .page { 
+            position: absolute; width: 100%; height: 100vh; 
+            transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1); 
+            opacity: 0; transform: scale(1.1); pointer-events: none;
         }
-        .plan-card:hover { border-color: #f00; transform: translateY(-5px); box-shadow: 0 0 20px rgba(255,0,0,0.15); }
-        .plan-name { font-size: 1.5rem; color: #f00; font-weight: bold; margin-bottom: 10px; border-bottom: 1px solid #300; padding-bottom: 10px;}
-        .plan-price { font-size: 1.2rem; color: #fff; margin-bottom: 20px; }
-        .features-list { list-style: none; padding: 0; text-align: right; font-size: 0.9rem; color: #ccc; line-height: 1.8; }
-        .features-list li::before { content: "» "; color: #f00; }
+        .page.active { opacity: 1; transform: scale(1); pointer-events: all; }
 
-        /* لوحة الأدمن السرية */
-        #admin-panel { display: none; background: #0a0000; border: 2px dashed #f00; padding: 20px; margin-top: 30px; }
+        /* تصميم الكروت الفخم */
+        .glass-card {
+            background: rgba(10, 0, 0, 0.8);
+            border: 1px solid var(--dark-red);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 0 20px rgba(255, 0, 0, 0.1);
+            transition: 0.4s;
+        }
+        .glass-card:hover { border-color: var(--primary-red); box-shadow: 0 0 30px rgba(255, 0, 0, 0.3); }
 
-        /* التذييل والحقوق */
-        footer { margin-top: 50px; padding: 20px; border-top: 1px solid #300; text-align: center; font-size: 0.8rem; color: #666; }
-        .social-link { color: #f00; text-decoration: none; font-weight: bold; margin: 0 10px; }
+        /* زر النيون */
+        .neon-btn {
+            background: transparent; border: 1px solid var(--primary-red);
+            color: var(--primary-red); transition: 0.3s;
+            text-shadow: 0 0 5px var(--primary-red);
+        }
+        .neon-btn:hover { background: var(--primary-red); color: black; box-shadow: 0 0 20px var(--primary-red); }
+
+        /* العدادات */
+        .scanline { width: 100%; height: 2px; background: rgba(255, 0, 0, 0.1); position: absolute; z-index: 50; animation: scan 3s infinite; }
+        @keyframes scan { 0% { top: 0; } 100% { top: 100%; } }
     </style>
 </head>
 <body>
 
-    <canvas id="hacker-canvas"></canvas>
+<div class="scanline"></div>
+<canvas id="matrix" class="fixed inset-0 opacity-20"></canvas>
 
-    <div id="auth-screen">
-        <div class="auth-box">
-            <div class="logo-title">REMEMBER</div>
-            <div id="auth-forms">
-                <input type="text" id="username" placeholder="إسم المستخدم">
-                <input type="password" id="password" placeholder="كلمة المرور">
-                <button class="btn-main" onclick="handleAuth()">دخول / إنشاء حساب</button>
-            </div>
-            <p id="msg" style="font-size: 0.8rem; margin-top: 15px; color: #600;"></p>
-        </div>
+<section id="login-page" class="page active flex items-center justify-center">
+    <div class="glass-card p-10 w-96 text-center rounded-lg border-t-4 border-red-600">
+        <h1 class="text-4xl font-black text-red-600 mb-8 glitch">ACCESS KEY</h1>
+        <input type="password" id="key" placeholder="••••••••••••" class="w-full bg-black border border-red-900 p-3 text-center mb-4 focus:border-red-600 outline-none">
+        <button onclick="login()" class="neon-btn w-full py-3 font-bold">INITIALIZE CORE</button>
+        <p id="err" class="text-red-500 text-xs mt-4 opacity-0">ACCESS DENIED - RETRY</p>
     </div>
+</section>
 
-    <div id="main-content">
-        <div class="header-section">
-            <h1>DDoS PROTECTION SERVICES</h1>
-            <p style="color: #888;">نظام التحكم الكامل - مرحبا بك في النخبة</p>
-        </div>
-
-        <div id="admin-panel">
-            <h2 style="color: #f00;">[ لوحة تحكم الأدمن - مرحبا abusaad ]</h2>
-            <div style="display: flex; justify-content: space-around;">
-                <div>المسجلين اليوم: <span style="color: #fff;">14</span></div>
-                <div>إجمالي المبيعات: <span style="color: #fff;">$1,420</span></div>
-                <div>حالة السيرفر: <span style="color: #0f0;">ONLINE</span></div>
+<section id="main-page" class="page flex flex-col items-center justify-center p-10">
+    <div class="w-full max-w-6xl">
+        <div class="flex justify-between items-end mb-10 border-b border-red-900 pb-5">
+            <div>
+                <h2 class="text-red-600 text-5xl font-black italic">REMEMBER</h2>
+                <p class="text-gray-500 tracking-widest text-sm">OPERATOR: ABUSAAD | STATUS: ADMIN</p>
             </div>
-        </div>
-
-        <div class="plans-grid">
-            <div class="plan-card">
-                <div class="plan-name">[ Basic Plan ]</div>
-                <div class="plan-price">Month $14</div>
-                <ul class="features-list">
-                    <li>1 Concurrents</li>
-                    <li>60 Seconds Boot Time</li>
-                    <li>45 Seconds Cooldown</li>
-                    <li>Access To Default Methods</li>
-                </ul>
-                <button class="btn-main" onclick="buy()">شراء الآن</button>
-            </div>
-            <div class="plan-card">
-                <div class="plan-name">[ Gold Plan ]</div>
-                <div class="plan-price">Month $17</div>
-                <ul class="features-list">
-                    <li>2 Concurrents</li>
-                    <li>60 Seconds Boot Time</li>
-                    <li>20 Seconds Cooldown</li>
-                    <li>Access To Default Methods</li>
-                </ul>
-                <button class="btn-main" onclick="buy()">شراء الآن</button>
-            </div>
-            <div class="plan-card">
-                <div class="plan-name">[ Diamond Plan ]</div>
-                <div class="plan-price">Month $22</div>
-                <ul class="features-list">
-                    <li>3 Concurrents</li>
-                    <li>60 Seconds Boot Time</li>
-                    <li>15 Seconds Cooldown</li>
-                    <li>Access To VIP Methods</li>
-                </ul>
-                <button class="btn-main" onclick="buy()">شراء الآن</button>
-            </div>
-            <div class="plan-card">
-                <div class="plan-name">[ Champion Plan ]</div>
-                <div class="plan-price">$45 ~ Lifetime $150</div>
-                <ul class="features-list">
-                    <li>4 Concurrents</li>
-                    <li>60 Seconds Boot Time</li>
-                    <li>0 Seconds Cooldown</li>
-                    <li>Access To VIP Methods</li>
-                </ul>
-                <button class="btn-main" onclick="buy()">شراء الآن</button>
+            <div class="text-right">
+                <p class="text-xs text-red-500">SYSTEM TIME</p>
+                <p id="clock" class="text-xl">00:00:00</p>
             </div>
         </div>
 
-        <footer>
-            <p>جميع الحقوق محفوظة لـ 02l_ & e75t © 2024</p>
-            <p>
-                Instagram: <a href="#" class="social-link">02l_</a> | 
-                Discord: <a href="#" class="social-link">e75t</a>
-            </p>
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+            <div class="glass-card p-6 flex flex-col justify-between h-96">
+                <div>
+                    <h3 class="text-red-600 font-bold text-xl mb-4 border-b border-red-900">[ BASIC ]</h3>
+                    <ul class="text-xs space-y-3 text-gray-400">
+                        <li>- 1 CONCURRENT</li>
+                        <li>- 60s BOOT TIME</li>
+                        <li>- 45s COOLDOWN</li>
+                        <li>- DEFAULT METHODS</li>
+                    </ul>
+                </div>
+                <div>
+                    <div class="text-2xl font-bold mb-4">$14 <span class="text-xs text-gray-600">/MO</span></div>
+                    <button onclick="buy()" class="neon-btn w-full py-2 text-xs">ACQUIRE</button>
+                </div>
+            </div>
+
+            <div class="glass-card p-6 flex flex-col justify-between h-96 border-red-600 shadow-lg shadow-red-900/20">
+                <div class="bg-red-600 text-black text-[10px] absolute top-0 right-0 px-2 font-bold">VIP</div>
+                <div>
+                    <h3 class="text-red-600 font-bold text-xl mb-4 border-b border-red-900">[ DIAMOND ]</h3>
+                    <ul class="text-xs space-y-3 text-gray-400">
+                        <li>- 3 CONCURRENT</li>
+                        <li>- 60s BOOT TIME</li>
+                        <li>- 15s COOLDOWN</li>
+                        <li>- VIP METHODS</li>
+                    </ul>
+                </div>
+                <div>
+                    <div class="text-2xl font-bold mb-4">$22 <span class="text-xs text-gray-600">/MO</span></div>
+                    <button onclick="buy()" class="neon-btn w-full py-2 text-xs bg-red-600 text-black font-bold">ACQUIRE VIP</button>
+                </div>
+            </div>
+
+            <div class="glass-card p-6 flex flex-col justify-between h-96">
+                <div>
+                    <h3 class="text-red-600 font-bold text-xl mb-4 border-b border-red-900">[ CHAMPION ]</h3>
+                    <ul class="text-xs space-y-3 text-gray-400">
+                        <li>- 4 CONCURRENT</li>
+                        <li>- 60s BOOT TIME</li>
+                        <li>- 0s COOLDOWN</li>
+                        <li>- VIP METHODS</li>
+                    </ul>
+                </div>
+                <div>
+                    <div class="text-2xl font-bold mb-4">$45 <span class="text-xs text-gray-600">/LIFETIME</span></div>
+                    <button onclick="buy()" class="neon-btn w-full py-2 text-xs">ACQUIRE</button>
+                </div>
+            </div>
+        </div>
+
+        <footer class="mt-20 flex justify-between text-[10px] text-gray-600">
+            <div>DEVELOPED BY: 02l_ | e75t</div>
+            <div class="space-x-4">
+                <span class="text-red-900 font-bold">ENCRYPTION: AES-256</span>
+                <span class="text-red-900 font-bold">NODE: SA-01</span>
+            </div>
         </footer>
     </div>
+</section>
 
-    <script>
-        const ADMIN_USER = "Admin";
-        const ADMIN_PASS = "abusaad452107216";
-        const DISCORD_LINK = "https://discord.gg/rmb";
-
-        function handleAuth() {
-            const user = document.getElementById('username').value;
-            const pass = document.getElementById('password').value;
-
-            if(user === ADMIN_USER && pass === ADMIN_PASS) {
-                // دخول الأدمن
-                document.getElementById('auth-screen').style.display = 'none';
-                document.getElementById('main-content').style.display = 'block';
-                document.getElementById('admin-panel').style.display = 'block';
-            } else if(user !== "" && pass !== "") {
-                // دخول مستخدم عادي (تجريبي)
-                document.getElementById('auth-screen').style.display = 'none';
-                document.getElementById('main-content').style.display = 'block';
-                document.getElementById('admin-panel').style.display = 'none';
-            } else {
-                document.getElementById('msg').innerText = "خطأ: يرجى إدخال البيانات كاملة";
-            }
+<script>
+    // نظام الدخول
+    function login() {
+        const key = document.getElementById('key').value;
+        if(key === "abusaad452107216") {
+            document.getElementById('login-page').classList.remove('active');
+            setTimeout(() => {
+                document.getElementById('main-page').classList.add('active');
+            }, 600);
+        } else {
+            const err = document.getElementById('err');
+            err.style.opacity = 1;
+            setTimeout(() => err.style.opacity = 0, 2000);
         }
+    }
 
-        function buy() {
-            window.location.href = DISCORD_LINK;
+    function buy() { window.location.href = "https://discord.gg/rmb"; }
+
+    // الساعة
+    setInterval(() => {
+        document.getElementById('clock').innerText = new Date().toLocaleTimeString();
+    }, 1000);
+
+    // تأثير الخلفية
+    const canvas = document.getElementById('matrix');
+    const ctx = canvas.getContext('2d');
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    const letters = "01010101RED_OPS_";
+    const fontSize = 10;
+    const columns = canvas.width / fontSize;
+    const drops = Array(Math.floor(columns)).fill(1);
+
+    function draw() {
+        ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.fillStyle = "#300";
+        for(let i=0; i<drops.length; i++) {
+            const text = letters[Math.floor(Math.random() * letters.length)];
+            ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+            if(drops[i] * fontSize > canvas.height && Math.random() > 0.975) drops[i] = 0;
+            drops[i]++;
         }
-
-        // تأثير الماتريكس الأحمر للحلفية
-        const canvas = document.getElementById('hacker-canvas');
-        const ctx = canvas.getContext('2d');
-        canvas.height = window.innerHeight;
-        canvas.width = window.innerWidth;
-        const columns = canvas.width / 20;
-        const drops = Array(Math.floor(columns)).fill(1);
-
-        function draw() {
-            ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-            ctx.fillStyle = "#300";
-            for (let i = 0; i < drops.length; i++) {
-                ctx.fillText(Math.floor(Math.random()*2), i*20, drops[i]*20);
-                if (drops[i]*20 > canvas.height && Math.random() > 0.975) drops[i] = 0;
-                drops[i]++;
-            }
-        }
-        setInterval(draw, 50);
-    </script>
+    }
+    setInterval(draw, 33);
+</script>
 </body>
 </html>
