@@ -6,182 +6,227 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap');
-        * { box-sizing: border-box; cursor: crosshair; font-family: 'Share Tech Mono', monospace; }
+        
+        /* إخفاء الماوس الافتراضي وتعيين الخط */
+        * { box-sizing: border-box; cursor: none !important; font-family: 'Share Tech Mono', monospace; }
+        
         body { background-color: #000; color: #ff0000; overflow: hidden; height: 100vh; margin: 0; }
-        .neon-box { border: 1px solid #ff0000; box-shadow: 0 0 20px rgba(255, 0, 0, 0.4); background: rgba(10, 0, 0, 0.95); }
+
+        /* الماوس المخصص المميز */
+        #custom-cursor {
+            position: fixed; width: 20px; height: 20px; border: 1px solid #f00;
+            border-radius: 50%; pointer-events: none; transform: translate(-50%, -50%);
+            z-index: 99999; transition: width 0.2s, height 0.2s;
+            box-shadow: 0 0 15px #f00;
+        }
+        #cursor-dot {
+            position: fixed; width: 4px; height: 4px; background: #fff;
+            border-radius: 50%; pointer-events: none; transform: translate(-50%, -50%);
+            z-index: 99999;
+        }
+
+        /* خلفية الماتريكس المتحركة */
+        #bg-canvas { position: fixed; top: 0; left: 0; z-index: -1; opacity: 0.15; }
+
+        .neon-box { border: 1px solid #ff0000; box-shadow: 0 0 25px rgba(255, 0, 0, 0.3); background: rgba(5, 0, 0, 0.96); }
         .hidden-screen { display: none !important; }
-        .edex-btn { border: 1px solid #ff0000; padding: 10px; transition: 0.3s; text-transform: uppercase; cursor: pointer; text-align: center; }
-        .edex-btn:hover { background: #ff0000; color: #000; box-shadow: 0 0 20px #ff0000; }
-        .info-panel { background: rgba(20, 0, 0, 0.9); border: 1px dashed #f00; padding: 15px; margin-top: 10px; display: none; font-size: 12px; }
-        #boot-loader { position: fixed; inset: 0; background: #000; z-index: 10000; padding: 40px; }
-        .boot-text { font-size: 14px; margin-bottom: 5px; opacity: 0.8; border-right: 2px solid red; white-space: nowrap; overflow: hidden; width: 0; animation: typing 1s forwards; }
+        
+        .edex-btn { border: 1px solid #ff0000; padding: 12px; transition: 0.3s; text-transform: uppercase; cursor: none !important; text-align: center; font-weight: bold; }
+        .edex-btn:hover { background: #ff0000; color: #000; box-shadow: 0 0 30px #ff0000; }
+
+        .info-panel { background: rgba(20, 0, 0, 0.98); border: 1px solid #f00; padding: 20px; margin-top: 15px; display: none; font-size: 13px; z-index: 100; box-shadow: 0 0 20px #000; }
+        
+        /* تأثير الكتابة في الإقلاع */
+        .boot-text { font-size: 14px; margin-bottom: 5px; color: #f00; border-right: 2px solid red; white-space: nowrap; overflow: hidden; width: 0; animation: typing 1s forwards; }
         @keyframes typing { from { width: 0 } to { width: 100% } }
     </style>
 </head>
 <body>
 
-<div id="boot-loader">
+<div id="custom-cursor"></div>
+<div id="cursor-dot"></div>
+
+<canvas id="bg-canvas"></canvas>
+
+<div id="boot-loader" class="fixed inset-0 bg-black z-[10000] p-10">
     <div id="boot-console"></div>
-    <div id="captcha-area" class="hidden-screen mt-10 p-6 neon-box w-96 mx-auto text-center">
-        <p class="mb-4 text-white">التحقق من الهوية البشرية [SEC_CHECK]</p>
-        <div class="flex items-center justify-center space-x-4 space-x-reverse mb-4">
-            <span id="captcha-num" class="text-2xl font-bold tracking-widest bg-red-950 px-4 py-2 border border-red-600 italic">8812</span>
-            <input type="text" id="captcha-input" placeholder="الرمز" class="w-24 bg-black border border-red-900 p-2 text-center text-red-500 outline-none">
+    <div id="captcha-area" class="hidden-screen mt-20 p-8 neon-box w-96 mx-auto text-center">
+        <p class="mb-6 text-white tracking-widest">HUMAN_IDENTITY_CONFIRMATION</p>
+        <div class="flex items-center justify-center space-x-4 space-x-reverse mb-6">
+            <span id="captcha-num" class="text-3xl font-black tracking-widest bg-red-950 px-6 py-3 border border-red-600 italic">8812</span>
+            <input type="text" id="captcha-input" placeholder="CODE" class="w-28 bg-black border border-red-900 p-3 text-center text-red-500 outline-none focus:border-red-500">
         </div>
-        <button onclick="verifyHuman()" class="edex-btn w-full">تأكيد الدخول</button>
+        <button onclick="verifyHuman()" class="edex-btn w-full">ACCESS SYSTEM</button>
     </div>
 </div>
 
-<div id="auth-screen" class="hidden-screen fixed inset-0 flex items-center justify-center bg-black">
-    <div class="neon-box p-10 w-96 text-center">
-        <h1 id="auth-title" class="text-2xl font-black mb-6 tracking-tighter">REMEMBER_OS_LOGIN</h1>
-        <div id="auth-form" class="space-y-4">
-            <input type="text" id="username" placeholder="USERNAME" class="w-full bg-black border border-red-900 p-3 text-red-500 outline-none">
-            <input type="password" id="password" placeholder="PASSWORD" class="w-full bg-black border border-red-900 p-3 text-red-500 outline-none">
-            <button id="main-auth-btn" onclick="handleAuth()" class="edex-btn w-full font-bold">تسجيل دخول</button>
-            <p onclick="toggleAuthMode()" id="auth-switch" class="text-[10px] text-gray-500 hover:text-red-500 cursor:pointer mt-2 underline">ليس لديك حساب؟ إنشاء حساب جديد</p>
+<div id="auth-screen" class="hidden-screen fixed inset-0 flex items-center justify-center">
+    <div class="neon-box p-12 w-[450px] text-center">
+        <h1 id="auth-title" class="text-3xl font-black mb-10 tracking-[10px] text-white">SYSTEM_LOGIN</h1>
+        <div class="space-y-6">
+            <input type="text" id="username" placeholder="IDENTIFIER" class="w-full bg-black border border-red-900 p-4 text-red-500 outline-none focus:border-red-600">
+            <input type="password" id="password" placeholder="ENCRYPTED_KEY" class="w-full bg-black border border-red-900 p-4 text-red-500 outline-none focus:border-red-600">
+            <button id="main-auth-btn" onclick="handleAuth()" class="edex-btn w-full text-xl">INITIALIZE</button>
+            <p onclick="toggleAuthMode()" id="auth-switch" class="text-[11px] text-gray-600 hover:text-red-500 cursor:none !important mt-4 underline decoration-red-900">NEW OPERATOR? REGISTER_ID</p>
         </div>
-        <p class="mt-4 text-[10px] opacity-40">ADMIN_KEY: abusaad452107216</p>
     </div>
 </div>
 
-<div id="main-site" class="hidden-screen h-screen p-4 flex flex-col">
-    <header class="border border-red-900 p-3 mb-4 bg-black">
-        <div class="flex justify-between items-center mb-2">
-            <span class="text-xl font-bold text-white">REMEMBER_STORE v4.0</span>
-            <div class="flex space-x-4 space-x-reverse">
-                <span class="text-[10px] text-gray-500">USER: <span id="current-user-display" class="text-red-500"></span></span>
-                <button onclick="logout()" class="text-[10px] text-red-800 hover:text-red-500 underline">[LOGOUT]</button>
-            </div>
+<div id="main-site" class="hidden-screen h-screen p-6 flex flex-col">
+    <header class="border border-red-900 p-4 mb-6 bg-black/80 flex justify-between items-center">
+        <div class="flex items-center space-x-8 space-x-reverse">
+            <span class="text-2xl font-black text-white tracking-tighter neon-text">REMEMBER_OS_V4</span>
+            <nav class="flex space-x-6 space-x-reverse text-sm">
+                <button onclick="showInfo('ddos')" class="hover:text-white transition-colors">[ DDoS_INFO ]</button>
+                <button onclick="showInfo('methods')" class="hover:text-white transition-colors">[ ATTACK_METHODS ]</button>
+                <button onclick="showInfo('shield')" class="hover:text-white transition-colors">[ PROTECTION ]</button>
+                <button onclick="showInfo('plans')" class="hover:text-white transition-colors text-red-500 font-bold">[ PREMIUM_PLANS ]</button>
+            </nav>
         </div>
-        <nav class="flex space-x-4 space-x-reverse text-[11px]">
-            <div class="relative group">
-                <button onclick="showInfo('ddos')" class="hover:text-white">[ ما هو DDoS؟ ]</button>
-                <div id="info-ddos" class="info-panel absolute top-full right-0 w-64 z-50">هجوم حجب الخدمة هو إغراق الموقع ببيانات ضخمة لتعطيله عن العمل تماماً.</div>
+        <div class="text-right flex items-center space-x-6 space-x-reverse">
+            <div class="text-[10px] text-gray-500">
+                INSTA: <span class="text-red-700">02l_</span> | DISCORD: <span class="text-red-700">e75t</span>
             </div>
-            <div class="relative group">
-                <button onclick="showInfo('methods')" class="hover:text-white">[ طرق الهجوم ]</button>
-                <div id="info-methods" class="info-panel absolute top-full right-0 w-64 z-50">نستخدم أحدث الأساليب (L4/L7) لتخطي أقوى الحمايات مثل Cloudflare و OVH.</div>
-            </div>
-            <div class="relative group">
-                <button onclick="showInfo('shield')" class="hover:text-white">[ حماية السيرفرات ]</button>
-                <div id="info-shield" class="info-panel absolute top-full right-0 w-64 z-50">نوفر جدران حماية ذكية لتنقية البيانات ومنع الهجمات قبل وصولها للسيرفر.</div>
-            </div>
-            <button onclick="showInfo('plans')" class="hover:text-white">[ أسعار الباقات ]</button>
-        </nav>
+            <button onclick="location.reload()" class="text-xs text-red-600 hover:text-white">[ SHUTDOWN ]</button>
+        </div>
     </header>
 
-    <div class="grid grid-cols-12 gap-4 flex-1 overflow-hidden">
+    <div id="info-ddos" class="info-panel mx-auto w-2/3 mb-4">هجوم DDoS هو عملية إغراق مستهدف لسيرفر بفيض من البيانات لتعطيله تماماً عن الخدمة.</div>
+    <div id="info-methods" class="info-panel mx-auto w-2/3 mb-4">نستخدم تقنيات متطورة مثل Layer 4 (UDP/TCP) و Layer 7 (HTTP Flood) لتجاوز أقوى الحمايات.</div>
+    <div id="info-shield" class="info-panel mx-auto w-2/3 mb-4">أنظمة الحماية لدينا تعتمد على تصفية الحركة المرورية (Traffic Filtering) جدار حماية ناري ذكي.</div>
+
+    <div class="grid grid-cols-12 gap-6 flex-1 overflow-hidden">
         <div class="col-span-2 space-y-4">
-            <div class="border border-red-900 p-3 bg-black/50 h-1/2 overflow-y-auto text-[10px]">
-                <p class="border-b border-red-900 mb-2">LIVE_SESSIONS</p>
-                <div id="logs"></div>
+            <div class="neon-box p-4 h-1/2 overflow-hidden text-[11px]">
+                <p class="border-b border-red-900 mb-3 text-white">UPTIME_MONITOR</p>
+                <div id="logs" class="opacity-70"></div>
             </div>
-            <div class="border border-red-900 p-3 bg-black/50 h-1/2 text-[10px]">
-                <p class="border-b border-red-900 mb-2">SYSTEM_STATS</p>
-                CPU: 24%<br>NODES: 128<br>STATUS: PROTECTED
+            <div class="neon-box p-4 h-1/2 text-[11px]">
+                <p class="border-b border-red-900 mb-3 text-white">HARDWARE_STATS</p>
+                <p>CPU_USAGE: 14.8%</p>
+                <p>NET_LOAD: 2.1 GB/s</p>
+                <p>ACTIVE_NODES: 128</p>
             </div>
         </div>
 
-        <div class="col-span-10 overflow-y-auto pr-2">
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                <div class="neon-box p-4 relative">
-                    <h2 class="text-xs font-bold border-b border-red-900 mb-4">[ Basic Plan ] Month $14</h2>
-                    <ul class="text-[10px] space-y-2 opacity-80">
-                        <li>1 Concurrents</li>
-                        <li>60s Boot Time</li>
-                        <li>45s Cooldown</li>
-                        <li>Default Methods</li>
+        <div class="col-span-10 overflow-y-auto">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <div class="neon-box p-6 hover:scale-105 transition-transform">
+                    <h2 class="text-lg font-bold border-b border-red-900 mb-4">[ BASIC ] $14</h2>
+                    <ul class="text-xs space-y-3 opacity-80">
+                        <li>- 1 Concurrents</li>
+                        <li>- 60s Boot Time</li>
+                        <li>- 45s Cooldown</li>
+                        <li>- Default Methods</li>
                     </ul>
-                    <button class="edex-btn mt-4 w-full text-[10px]">PURCHASE</button>
+                    <button onclick="window.location.href='https://discord.gg/rmb'" class="edex-btn mt-8 w-full">ACQUIRE</button>
                 </div>
-                <div class="neon-box p-4 border-white/40">
-                    <h2 class="text-xs font-bold border-b border-red-900 mb-4 text-white">[ Champion ] $45</h2>
-                    <ul class="text-[10px] space-y-2 text-white">
-                        <li>4 Concurrents</li>
-                        <li>0s Cooldown</li>
-                        <li>LifeTime $150</li>
-                        <li>VIP Methods</li>
+                <div class="neon-box p-6 border-red-500 scale-105 shadow-[0_0_30px_rgba(255,0,0,0.2)]">
+                    <div class="bg-red-600 text-black text-[9px] font-black absolute top-0 right-0 px-2 py-1">ELITE</div>
+                    <h2 class="text-lg font-bold border-b border-red-900 mb-4 text-white">[ CHAMPION ] $45</h2>
+                    <ul class="text-xs space-y-3 text-white">
+                        <li>- 4 Concurrents</li>
+                        <li>- 0s Cooldown</li>
+                        <li>- Lifetime $150</li>
+                        <li>- VIP Methods</li>
                     </ul>
-                    <button class="edex-btn mt-4 w-full text-[10px] bg-red-600 text-black">PURCHASE</button>
+                    <button onclick="window.location.href='https://discord.gg/rmb'" class="edex-btn mt-8 w-full bg-red-600 text-black">ACQUIRE</button>
                 </div>
-                </div>
-            
-            <div class="mt-4 p-4 border border-red-900 bg-red-950/10">
-                <p class="text-[10px] text-center mb-2">ADDONS: +1 Concurrent [$15] | API Access [$20] | 0 Cooldown [$10]</p>
-                <p class="text-[10px] text-center opacity-50">Accepting: Crypto, PayPal, Mastercard, Alrajhi Bank</p>
             </div>
         </div>
     </div>
 </div>
 
 <script>
-    // 1. نظام الإقلاع
-    const logsData = ["INITIALIZING SYSTEM...", "LOADING ENCRYPTION...", "BYPASSING FIREWALL...", "ESTABLISHING TUNNEL...", "READY FOR OPERATOR LOGIN."];
+    // نظام الماوس المخصص
+    const cursor = document.getElementById('custom-cursor');
+    const dot = document.getElementById('cursor-dot');
+    document.addEventListener('mousemove', (e) => {
+        cursor.style.left = e.clientX + 'px';
+        cursor.style.top = e.clientY + 'px';
+        dot.style.left = e.clientX + 'px';
+        dot.style.top = e.clientY + 'px';
+    });
+
+    // خلفية الماتريكس المتحركة
+    const canvas = document.getElementById('bg-canvas');
+    const ctx = canvas.getContext('2d');
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    const characters = "0101010101REMEMBER_ELITE_SYSTEM_";
+    const fontSize = 12;
+    const columns = canvas.width / fontSize;
+    const drops = Array(Math.floor(columns)).fill(1);
+
+    function drawMatrix() {
+        ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.fillStyle = "#400"; // أحمر داكن جداً
+        ctx.font = fontSize + "px Share Tech Mono";
+        for (let i = 0; i < drops.length; i++) {
+            const text = characters[Math.floor(Math.random() * characters.length)];
+            ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+            if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) drops[i] = 0;
+            drops[i]++;
+        }
+    }
+    setInterval(drawMatrix, 35);
+
+    // نظام الإقلاع
+    const bootData = ["INIT_CORE...", "ENCRYPTING_NODES...", "BYPASSING_PROTECTION...", "ESTABLISHING_UPLINK...", "SYSTEM_STABLE."];
     let bootIdx = 0;
     function runBoot() {
-        if(bootIdx < logsData.length) {
-            let div = document.createElement('div'); div.className = "boot-text"; div.innerText = `...${logsData[bootIdx]} <`;
-            document.getElementById('boot-console').appendChild(div); bootIdx++; setTimeout(runBoot, 700);
+        if(bootIdx < bootData.length) {
+            let div = document.createElement('div'); div.className = "boot-text"; div.innerText = `> ${bootData[bootIdx]}`;
+            document.getElementById('boot-console').appendChild(div); bootIdx++; setTimeout(runBoot, 600);
         } else { document.getElementById('captcha-area').classList.remove('hidden-screen'); }
     }
     runBoot();
 
-    // 2. التحقق البشري
     function verifyHuman() {
         if(document.getElementById('captcha-input').value === "8812") {
-            document.getElementById('boot-loader').classList.add('hidden-screen');
+            document.getElementById('boot-loader').style.display = 'none';
             document.getElementById('auth-screen').classList.remove('hidden-screen');
-        } else { alert("رمز التحقق غير صحيح"); }
+        } else { alert("ACCESS_DENIED"); }
     }
 
-    // 3. نظام الحسابات (LocalStorage)
-    let isLoginMode = true;
+    // نظام الحسابات
+    let isLogin = true;
     function toggleAuthMode() {
-        isLoginMode = !isLoginMode;
-        document.getElementById('auth-title').innerText = isLoginMode ? "REMEMBER_OS_LOGIN" : "CREATE_NEW_ACCOUNT";
-        document.getElementById('main-auth-btn').innerText = isLoginMode ? "تسجيل دخول" : "إنشاء حساب";
-        document.getElementById('auth-switch').innerText = isLoginMode ? "ليس لديك حساب؟ إنشاء حساب جديد" : "لديك حساب؟ سجل دخولك الآن";
+        isLogin = !isLogin;
+        document.getElementById('auth-title').innerText = isLogin ? "SYSTEM_LOGIN" : "REGISTER_NEW_ID";
+        document.getElementById('main-auth-btn').innerText = isLogin ? "INITIALIZE" : "CREATE_ID";
+        document.getElementById('auth-switch').innerText = isLogin ? "NEW OPERATOR? REGISTER_ID" : "ALREADY REGISTERED? LOGIN";
     }
 
     function handleAuth() {
         const u = document.getElementById('username').value;
         const p = document.getElementById('password').value;
-        if(!u || !p) return alert("يرجى ملء جميع الحقول");
-
-        if(isLoginMode) {
-            // التحقق من حساب الأدمن الخاص أو الحسابات المنشأة
-            const savedPass = localStorage.getItem('user_' + u);
-            if((u === "Admin" && p === "abusaad452107216") || savedPass === p) {
+        if(isLogin) {
+            const saved = localStorage.getItem('id_' + u);
+            if((u === "Admin" && p === "abusaad452107216") || saved === p) {
                 document.getElementById('auth-screen').classList.add('hidden-screen');
                 document.getElementById('main-site').classList.remove('hidden-screen');
-                document.getElementById('current-user-display').innerText = u;
                 startLogs();
-            } else { alert("اسم المستخدم أو كلمة المرور غير صحيحة"); }
+            } else { alert("AUTH_FAILURE"); }
         } else {
-            // إنشاء حساب جديد
-            localStorage.setItem('user_' + u, p);
-            alert("تم إنشاء الحساب بنجاح! يمكنك الآن تسجيل الدخول.");
+            localStorage.setItem('id_' + u, p);
+            alert("ID_CREATED_SUCCESSFULLY");
             toggleAuthMode();
         }
     }
 
-    function logout() { location.reload(); }
-
-    // 4. إظهار معلومات القائمة
     function showInfo(id) {
-        const allPanels = document.querySelectorAll('.info-panel');
-        allPanels.forEach(p => p.style.display = 'none');
-        const target = document.getElementById('info-' + id);
-        if(target) target.style.display = 'block';
+        document.querySelectorAll('.info-panel').forEach(p => p.style.display = 'none');
+        document.getElementById('info-' + id).style.display = 'block';
     }
 
     function startLogs() {
         setInterval(() => {
             const l = document.createElement('div');
-            l.innerText = `> SESSION_${Math.floor(Math.random()*9999)}: STABLE`;
+            l.innerText = `> LOG_${Math.random().toString(36).substr(2, 5).toUpperCase()}: OK`;
             document.getElementById('logs').prepend(l);
-            if(document.getElementById('logs').children.length > 8) document.getElementById('logs').lastChild.remove();
+            if(document.getElementById('logs').children.length > 10) document.getElementById('logs').lastChild.remove();
         }, 2000);
     }
 </script>
