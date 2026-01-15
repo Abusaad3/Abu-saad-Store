@@ -2,184 +2,212 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RED OPS | ELITE TERMINAL</title>
+    <title>TERMINAL | RED_PROTOCOL</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;900&display=swap');
-
-        :root { --primary-red: #ff0000; --dark-red: #450000; }
-        * { cursor: crosshair; font-family: 'Orbitron', 'Courier New', monospace; }
-        body { background: #000; color: white; overflow: hidden; margin: 0; }
-
-        /* تأثير التشويش (Glitch) */
-        .glitch { text-shadow: 2px 0 #f00, -2px 0 #0ff; animation: glitch 2s infinite linear alternate-reverse; }
-        @keyframes glitch { 0% { opacity: 1; } 50% { opacity: 0.8; } 100% { opacity: 1; } }
-
-        /* انتقالات الصفحات */
-        .page { 
-            position: absolute; width: 100%; height: 100vh; 
-            transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1); 
-            opacity: 0; transform: scale(1.1); pointer-events: none;
+        @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap');
+        
+        body {
+            background-color: #050000;
+            color: #ff0000;
+            font-family: 'Share Tech Mono', monospace;
+            overflow: hidden;
+            height: 100vh;
         }
-        .page.active { opacity: 1; transform: scale(1); pointer-events: all; }
 
-        /* تصميم الكروت الفخم */
-        .glass-card {
-            background: rgba(10, 0, 0, 0.8);
-            border: 1px solid var(--dark-red);
-            backdrop-filter: blur(10px);
-            box-shadow: 0 0 20px rgba(255, 0, 0, 0.1);
-            transition: 0.4s;
+        /* تأثير النيون الأحمر */
+        .neon-border {
+            border: 1px solid #ff0000;
+            box-shadow: 0 0 15px rgba(255, 0, 0, 0.5), inset 0 0 15px rgba(255, 0, 0, 0.2);
         }
-        .glass-card:hover { border-color: var(--primary-red); box-shadow: 0 0 30px rgba(255, 0, 0, 0.3); }
 
-        /* زر النيون */
-        .neon-btn {
-            background: transparent; border: 1px solid var(--primary-red);
-            color: var(--primary-red); transition: 0.3s;
-            text-shadow: 0 0 5px var(--primary-red);
+        .neon-text {
+            text-shadow: 0 0 10px #ff0000;
         }
-        .neon-btn:hover { background: var(--primary-red); color: black; box-shadow: 0 0 20px var(--primary-red); }
 
-        /* العدادات */
-        .scanline { width: 100%; height: 2px; background: rgba(255, 0, 0, 0.1); position: absolute; z-index: 50; animation: scan 3s infinite; }
-        @keyframes scan { 0% { top: 0; } 100% { top: 100%; } }
+        /* شاشة التحميل */
+        #boot-screen {
+            background: #000;
+            z-index: 10000;
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+        }
+
+        /* الانتقالات */
+        .hidden-section { display: none; }
+        
+        .typewriter {
+            overflow: hidden;
+            white-space: nowrap;
+            border-right: .15em solid red;
+            animation: typing 3.5s steps(40, end), blink-caret .75s step-end infinite;
+        }
+
+        @keyframes typing { from { width: 0 } to { width: 100% } }
+        @keyframes blink-caret { from, to { border-color: transparent } 50% { border-color: red; } }
+
+        .glitch-hover:hover {
+            animation: glitch 0.3s cubic-bezier(.25,.46,.45,.94) both infinite;
+        }
+
+        @keyframes glitch {
+            0% { transform: translate(0) }
+            20% { transform: translate(-2px, 2px) }
+            40% { transform: translate(-2px, -2px) }
+            60% { transform: translate(2px, 2px) }
+            80% { transform: translate(2px, -2px) }
+            100% { transform: translate(0) }
+        }
     </style>
 </head>
 <body>
 
-<div class="scanline"></div>
-<canvas id="matrix" class="fixed inset-0 opacity-20"></canvas>
+<div id="boot-screen" class="fixed inset-0">
+    <div id="boot-logs" class="text-sm space-y-1"></div>
+</div>
 
-<section id="login-page" class="page active flex items-center justify-center">
-    <div class="glass-card p-10 w-96 text-center rounded-lg border-t-4 border-red-600">
-        <h1 class="text-4xl font-black text-red-600 mb-8 glitch">ACCESS KEY</h1>
-        <input type="password" id="key" placeholder="••••••••••••" class="w-full bg-black border border-red-900 p-3 text-center mb-4 focus:border-red-600 outline-none">
-        <button onclick="login()" class="neon-btn w-full py-3 font-bold">INITIALIZE CORE</button>
-        <p id="err" class="text-red-500 text-xs mt-4 opacity-0">ACCESS DENIED - RETRY</p>
+<div id="auth-section" class="hidden-section fixed inset-0 flex items-center justify-center">
+    <div class="neon-border p-8 w-96 bg-black relative">
+        <div class="absolute -top-4 left-4 bg-black px-2 text-xs">SECURITY_CHECK_V3</div>
+        <h1 class="text-3xl font-bold mb-6 text-center neon-text tracking-tighter">ACCESS_DENIED</h1>
+        
+        <div class="space-y-4">
+            <input type="text" id="user" placeholder="USER_ID" class="w-full bg-transparent border-b border-red-900 p-2 outline-none focus:border-red-500 transition-all">
+            <input type="password" id="pass" placeholder="ACCESS_KEY" class="w-full bg-transparent border-b border-red-900 p-2 outline-none focus:border-red-500 transition-all">
+            <button onclick="attemptLogin()" class="w-full neon-border py-3 hover:bg-red-900 hover:text-black font-bold transition-all uppercase">Initialize Session</button>
+        </div>
+        <div class="mt-4 flex justify-between text-[10px] text-red-900">
+            <span>INSTA: 02l_</span>
+            <span>DISCORD: e75t</span>
+        </div>
     </div>
-</section>
+</div>
 
-<section id="main-page" class="page flex flex-col items-center justify-center p-10">
-    <div class="w-full max-w-6xl">
-        <div class="flex justify-between items-end mb-10 border-b border-red-900 pb-5">
-            <div>
-                <h2 class="text-red-600 text-5xl font-black italic">REMEMBER</h2>
-                <p class="text-gray-500 tracking-widest text-sm">OPERATOR: ABUSAAD | STATUS: ADMIN</p>
+<div id="main-site" class="hidden-section h-screen p-6 flex flex-col">
+    <header class="flex justify-between items-center border-b border-red-900 pb-4 mb-6">
+        <div class="text-2xl font-black neon-text">REMEMBER_STORE <span class="text-xs font-normal">[ROOT_ACCESS]</span></div>
+        <div class="flex space-x-6 text-xs items-center">
+            <span class="animate-pulse">● SYSTEM_ACTIVE</span>
+            <span>IP: 127.0.0.1</span>
+            <button onclick="location.reload()" class="text-white hover:text-red-500">[LOGOUT]</button>
+        </div>
+    </header>
+
+    <div class="grid grid-cols-12 gap-6 flex-1 overflow-hidden">
+        <div class="col-span-3 space-y-4">
+            <div class="neon-border p-4 bg-black/50">
+                <h3 class="text-xs mb-3 text-red-800 border-b border-red-900">OPERATOR_INFO</h3>
+                <p class="text-sm">ID: <span id="display-user">abusaad</span></p>
+                <p class="text-sm">RANK: ELITE_HACKER</p>
             </div>
-            <div class="text-right">
-                <p class="text-xs text-red-500">SYSTEM TIME</p>
-                <p id="clock" class="text-xl">00:00:00</p>
-            </div>
+            
+            <nav class="space-y-2">
+                <button class="w-full text-right p-2 border border-transparent hover:border-red-600 transition-all text-sm">» ATTACK_PANEL</button>
+                <button class="w-full text-right p-2 border border-transparent hover:border-red-600 transition-all text-sm">» METHODS_LIST</button>
+                <button class="w-full text-right p-2 border border-transparent hover:border-red-600 transition-all text-sm text-red-400 font-bold">» PURCHASE_PLANS</button>
+            </nav>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
-            <div class="glass-card p-6 flex flex-col justify-between h-96">
-                <div>
-                    <h3 class="text-red-600 font-bold text-xl mb-4 border-b border-red-900">[ BASIC ]</h3>
-                    <ul class="text-xs space-y-3 text-gray-400">
+        <div class="col-span-9 overflow-y-auto pr-2 space-y-6">
+            <div class="grid grid-cols-2 gap-4">
+                <div class="neon-border p-6 bg-black relative group overflow-hidden">
+                    <div class="absolute top-0 right-0 p-1 text-[8px] bg-red-900 text-black">B-01</div>
+                    <h2 class="text-xl font-bold mb-4">[ BASIC_PLAN ]</h2>
+                    <ul class="text-xs space-y-2 text-red-300">
                         <li>- 1 CONCURRENT</li>
                         <li>- 60s BOOT TIME</li>
                         <li>- 45s COOLDOWN</li>
-                        <li>- DEFAULT METHODS</li>
                     </ul>
+                    <div class="mt-6 flex justify-between items-end">
+                        <span class="text-2xl font-black">$14</span>
+                        <a href="https://discord.gg/rmb" class="neon-border px-4 py-1 text-xs hover:bg-red-600 hover:text-black transition-all">ACQUIRE</a>
+                    </div>
                 </div>
-                <div>
-                    <div class="text-2xl font-bold mb-4">$14 <span class="text-xs text-gray-600">/MO</span></div>
-                    <button onclick="buy()" class="neon-btn w-full py-2 text-xs">ACQUIRE</button>
-                </div>
-            </div>
 
-            <div class="glass-card p-6 flex flex-col justify-between h-96 border-red-600 shadow-lg shadow-red-900/20">
-                <div class="bg-red-600 text-black text-[10px] absolute top-0 right-0 px-2 font-bold">VIP</div>
-                <div>
-                    <h3 class="text-red-600 font-bold text-xl mb-4 border-b border-red-900">[ DIAMOND ]</h3>
-                    <ul class="text-xs space-y-3 text-gray-400">
-                        <li>- 3 CONCURRENT</li>
-                        <li>- 60s BOOT TIME</li>
-                        <li>- 15s COOLDOWN</li>
-                        <li>- VIP METHODS</li>
-                    </ul>
-                </div>
-                <div>
-                    <div class="text-2xl font-bold mb-4">$22 <span class="text-xs text-gray-600">/MO</span></div>
-                    <button onclick="buy()" class="neon-btn w-full py-2 text-xs bg-red-600 text-black font-bold">ACQUIRE VIP</button>
-                </div>
-            </div>
-
-            <div class="glass-card p-6 flex flex-col justify-between h-96">
-                <div>
-                    <h3 class="text-red-600 font-bold text-xl mb-4 border-b border-red-900">[ CHAMPION ]</h3>
-                    <ul class="text-xs space-y-3 text-gray-400">
+                <div class="neon-border p-6 bg-red-950/20 relative border-2 shadow-[0_0_25px_rgba(255,0,0,0.3)]">
+                    <div class="absolute top-0 right-0 p-1 text-[8px] bg-red-600 text-black font-bold">GOD_MODE</div>
+                    <h2 class="text-xl font-bold mb-4 text-white">[ CHAMPION_PLAN ]</h2>
+                    <ul class="text-xs space-y-2 text-white">
                         <li>- 4 CONCURRENT</li>
                         <li>- 60s BOOT TIME</li>
-                        <li>- 0s COOLDOWN</li>
-                        <li>- VIP METHODS</li>
+                        <li>- 0s COOLDOWN (INSTANT)</li>
                     </ul>
+                    <div class="mt-6 flex justify-between items-end">
+                        <span class="text-2xl font-black text-white">$45 <span class="text-[10px]">/ LIFE</span></span>
+                        <a href="https://discord.gg/rmb" class="bg-red-600 text-black px-4 py-1 text-xs font-bold hover:bg-white transition-all">ACQUIRE</a>
+                    </div>
                 </div>
-                <div>
-                    <div class="text-2xl font-bold mb-4">$45 <span class="text-xs text-gray-600">/LIFETIME</span></div>
-                    <button onclick="buy()" class="neon-btn w-full py-2 text-xs">ACQUIRE</button>
-                </div>
+            </div>
+
+            <div class="neon-border p-4 bg-black h-48 overflow-hidden text-[10px] opacity-70">
+                <div id="live-logs" class="space-y-1"></div>
             </div>
         </div>
-
-        <footer class="mt-20 flex justify-between text-[10px] text-gray-600">
-            <div>DEVELOPED BY: 02l_ | e75t</div>
-            <div class="space-x-4">
-                <span class="text-red-900 font-bold">ENCRYPTION: AES-256</span>
-                <span class="text-red-900 font-bold">NODE: SA-01</span>
-            </div>
-        </footer>
     </div>
-</section>
+</div>
 
 <script>
-    // نظام الدخول
-    function login() {
-        const key = document.getElementById('key').value;
-        if(key === "abusaad452107216") {
-            document.getElementById('login-page').classList.remove('active');
-            setTimeout(() => {
-                document.getElementById('main-page').classList.add('active');
-            }, 600);
+    // 1. نظام الإقلاع (Boot Sequence)
+    const logs = [
+        "INITIALIZING SYSTEM...",
+        "LOADING ENCRYPTION MODULES...",
+        "BYPASSING FIREWALL...",
+        "ESTABLISHING SECURE TUNNEL...",
+        "ACCESSING REMEMBER_STORE DATABASE...",
+        "READY FOR OPERATOR LOGIN."
+    ];
+
+    const logContainer = document.getElementById('boot-logs');
+    let i = 0;
+
+    function showLogs() {
+        if (i < logs.length) {
+            const p = document.createElement('p');
+            p.className = "typewriter";
+            p.innerHTML = `> ${logs[i]}`;
+            logContainer.appendChild(p);
+            i++;
+            setTimeout(showLogs, 600);
         } else {
-            const err = document.getElementById('err');
-            err.style.opacity = 1;
-            setTimeout(() => err.style.opacity = 0, 2000);
+            setTimeout(() => {
+                document.getElementById('boot-screen').classList.add('hidden-section');
+                document.getElementById('auth-section').classList.remove('hidden-section');
+            }, 1000);
+        }
+    }
+    showLogs();
+
+    // 2. نظام تسجيل دخول الأدمن
+    function attemptLogin() {
+        const user = document.getElementById('user').value;
+        const pass = document.getElementById('pass').value;
+
+        if (user === "Admin" && pass === "abusaad452107216") {
+            document.getElementById('auth-section').classList.add('hidden-section');
+            document.getElementById('main-site').classList.remove('hidden-section');
+            startLiveLogs();
+        } else {
+            document.body.style.animation = "glitch 0.2s 3";
+            alert("ACCESS DENIED: WRONG KEY");
+            setTimeout(() => document.body.style.animation = "", 300);
         }
     }
 
-    function buy() { window.location.href = "https://discord.gg/rmb"; }
-
-    // الساعة
-    setInterval(() => {
-        document.getElementById('clock').innerText = new Date().toLocaleTimeString();
-    }, 1000);
-
-    // تأثير الخلفية
-    const canvas = document.getElementById('matrix');
-    const ctx = canvas.getContext('2d');
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-    const letters = "01010101RED_OPS_";
-    const fontSize = 10;
-    const columns = canvas.width / fontSize;
-    const drops = Array(Math.floor(columns)).fill(1);
-
-    function draw() {
-        ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-        ctx.fillStyle = "#300";
-        for(let i=0; i<drops.length; i++) {
-            const text = letters[Math.floor(Math.random() * letters.length)];
-            ctx.fillText(text, i * fontSize, drops[i] * fontSize);
-            if(drops[i] * fontSize > canvas.height && Math.random() > 0.975) drops[i] = 0;
-            drops[i]++;
-        }
+    // 3. سجل العمليات الوهمي للهيبة
+    function startLiveLogs() {
+        const logDiv = document.getElementById('live-logs');
+        const fakeActions = ["ATTACK_STARTED", "PAYLOAD_SENT", "ENCRYPTING", "TARGET_DOWN", "PING_SUCCESS"];
+        
+        setInterval(() => {
+            const log = document.createElement('p');
+            const action = fakeActions[Math.floor(Math.random()*fakeActions.length)];
+            const ip = `192.168.${Math.floor(Math.random()*255)}.${Math.floor(Math.random()*255)}`;
+            log.innerHTML = `<span class="text-gray-600">[${new Date().toLocaleTimeString()}]</span> <span class="text-red-500">${action}</span> -> ${ip}`;
+            logDiv.prepend(log);
+            if(logDiv.children.length > 10) logDiv.lastChild.remove();
+        }, 2000);
     }
-    setInterval(draw, 33);
 </script>
 </body>
 </html>
