@@ -2,29 +2,20 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>REMEMBER | RED PROTOCOL v4.0</title>
+    <title>REMEMBER | ELITE TERMINAL SYSTEM</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap');
         * { box-sizing: border-box; cursor: crosshair; font-family: 'Share Tech Mono', monospace; }
         body { background-color: #000; color: #ff0000; overflow: hidden; height: 100vh; margin: 0; }
-
-        /* تأثير التوهج النيوني */
-        .neon-box { border: 1px solid #ff0000; box-shadow: 0 0 20px rgba(255, 0, 0, 0.4); background: rgba(10, 0, 0, 0.9); }
+        .neon-box { border: 1px solid #ff0000; box-shadow: 0 0 20px rgba(255, 0, 0, 0.4); background: rgba(10, 0, 0, 0.95); }
         .hidden-screen { display: none !important; }
-        
-        /* شاشة التحميل eDEX Style */
+        .edex-btn { border: 1px solid #ff0000; padding: 10px; transition: 0.3s; text-transform: uppercase; cursor: pointer; text-align: center; }
+        .edex-btn:hover { background: #ff0000; color: #000; box-shadow: 0 0 20px #ff0000; }
+        .info-panel { background: rgba(20, 0, 0, 0.9); border: 1px dashed #f00; padding: 15px; margin-top: 10px; display: none; font-size: 12px; }
         #boot-loader { position: fixed; inset: 0; background: #000; z-index: 10000; padding: 40px; }
         .boot-text { font-size: 14px; margin-bottom: 5px; opacity: 0.8; border-right: 2px solid red; white-space: nowrap; overflow: hidden; width: 0; animation: typing 1s forwards; }
         @keyframes typing { from { width: 0 } to { width: 100% } }
-
-        /* الأزرار */
-        .edex-btn { border: 1px solid #ff0000; padding: 10px; transition: 0.3s; text-transform: uppercase; letter-spacing: 2px; }
-        .edex-btn:hover { background: #ff0000; color: #000; box-shadow: 0 0 20px #ff0000; }
-
-        /* الأنظمة الجانبية Widgets */
-        .widget { border: 1px solid #300; padding: 10px; font-size: 10px; background: rgba(5,0,0,0.5); }
-        .nav-link:hover { text-shadow: 0 0 10px red; color: white; transition: 0.3s; }
     </style>
 </head>
 <body>
@@ -32,169 +23,166 @@
 <div id="boot-loader">
     <div id="boot-console"></div>
     <div id="captcha-area" class="hidden-screen mt-10 p-6 neon-box w-96 mx-auto text-center">
-        <p class="mb-4 text-white">التحقق من الهوية البشرية [HUMAN_CHECK]</p>
+        <p class="mb-4 text-white">التحقق من الهوية البشرية [SEC_CHECK]</p>
         <div class="flex items-center justify-center space-x-4 space-x-reverse mb-4">
-            <span id="captcha-num" class="text-2xl font-bold tracking-widest bg-red-950 px-4 py-2 border border-red-600 italic">4921</span>
-            <input type="text" id="captcha-input" placeholder="أدخل الرمز" class="w-24 bg-black border border-red-900 p-2 text-center text-red-500 outline-none">
+            <span id="captcha-num" class="text-2xl font-bold tracking-widest bg-red-950 px-4 py-2 border border-red-600 italic">8812</span>
+            <input type="text" id="captcha-input" placeholder="الرمز" class="w-24 bg-black border border-red-900 p-2 text-center text-red-500 outline-none">
         </div>
-        <button onclick="verifyHuman()" class="edex-btn w-full">تأكيد الوصول</button>
+        <button onclick="verifyHuman()" class="edex-btn w-full">تأكيد الدخول</button>
     </div>
 </div>
 
 <div id="auth-screen" class="hidden-screen fixed inset-0 flex items-center justify-center bg-black">
     <div class="neon-box p-10 w-96 text-center">
-        <h1 class="text-3xl font-black mb-6 tracking-tighter" style="text-shadow: 0 0 10px red;">REMEMBER_OS</h1>
-        <div class="space-y-4">
-            <input type="text" id="user" placeholder="USERNAME" class="w-full bg-black border border-red-900 p-3 text-red-500 outline-none">
-            <input type="password" id="pass" placeholder="PASSWORD" class="w-full bg-black border border-red-900 p-3 text-red-500 outline-none">
-            <button onclick="login()" class="edex-btn w-full font-bold">دخول / تسجيل</button>
+        <h1 id="auth-title" class="text-2xl font-black mb-6 tracking-tighter">REMEMBER_OS_LOGIN</h1>
+        <div id="auth-form" class="space-y-4">
+            <input type="text" id="username" placeholder="USERNAME" class="w-full bg-black border border-red-900 p-3 text-red-500 outline-none">
+            <input type="password" id="password" placeholder="PASSWORD" class="w-full bg-black border border-red-900 p-3 text-red-500 outline-none">
+            <button id="main-auth-btn" onclick="handleAuth()" class="edex-btn w-full font-bold">تسجيل دخول</button>
+            <p onclick="toggleAuthMode()" id="auth-switch" class="text-[10px] text-gray-500 hover:text-red-500 cursor:pointer mt-2 underline">ليس لديك حساب؟ إنشاء حساب جديد</p>
         </div>
         <p class="mt-4 text-[10px] opacity-40">ADMIN_KEY: abusaad452107216</p>
     </div>
 </div>
 
 <div id="main-site" class="hidden-screen h-screen p-4 flex flex-col">
-    <header class="flex justify-between items-center border border-red-900 p-3 mb-4">
-        <div class="flex items-center space-x-6 space-x-reverse">
-            <span class="text-xl font-bold text-white">REMEMBER</span>
-            <nav class="hidden md:flex space-x-4 space-x-reverse text-xs mr-6">
-                <a href="#" class="nav-link">ما هو DDoS؟</a>
-                <a href="#" class="nav-link">طرق الهجوم (Methods)</a>
-                <a href="#" class="nav-link">حماية السيرفرات</a>
-                <a href="#" class="nav-link">أسعار الباقات</a>
-            </nav>
+    <header class="border border-red-900 p-3 mb-4 bg-black">
+        <div class="flex justify-between items-center mb-2">
+            <span class="text-xl font-bold text-white">REMEMBER_STORE v4.0</span>
+            <div class="flex space-x-4 space-x-reverse">
+                <span class="text-[10px] text-gray-500">USER: <span id="current-user-display" class="text-red-500"></span></span>
+                <button onclick="logout()" class="text-[10px] text-red-800 hover:text-red-500 underline">[LOGOUT]</button>
+            </div>
         </div>
-        <div class="flex items-center space-x-4 space-x-reverse">
-            <span class="text-[10px] text-gray-500">INSTA: 02l_ | DISCORD: e75t</span>
-            <button onclick="location.reload()" class="edex-btn text-[10px] py-1 px-3">تسجيل خروج [EXIT]</button>
-        </div>
+        <nav class="flex space-x-4 space-x-reverse text-[11px]">
+            <div class="relative group">
+                <button onclick="showInfo('ddos')" class="hover:text-white">[ ما هو DDoS؟ ]</button>
+                <div id="info-ddos" class="info-panel absolute top-full right-0 w-64 z-50">هجوم حجب الخدمة هو إغراق الموقع ببيانات ضخمة لتعطيله عن العمل تماماً.</div>
+            </div>
+            <div class="relative group">
+                <button onclick="showInfo('methods')" class="hover:text-white">[ طرق الهجوم ]</button>
+                <div id="info-methods" class="info-panel absolute top-full right-0 w-64 z-50">نستخدم أحدث الأساليب (L4/L7) لتخطي أقوى الحمايات مثل Cloudflare و OVH.</div>
+            </div>
+            <div class="relative group">
+                <button onclick="showInfo('shield')" class="hover:text-white">[ حماية السيرفرات ]</button>
+                <div id="info-shield" class="info-panel absolute top-full right-0 w-64 z-50">نوفر جدران حماية ذكية لتنقية البيانات ومنع الهجمات قبل وصولها للسيرفر.</div>
+            </div>
+            <button onclick="showInfo('plans')" class="hover:text-white">[ أسعار الباقات ]</button>
+        </nav>
     </header>
 
     <div class="grid grid-cols-12 gap-4 flex-1 overflow-hidden">
         <div class="col-span-2 space-y-4">
-            <div class="widget h-1/2 overflow-hidden">
-                <p class="border-b border-red-900 mb-2">NETWORK_LOAD</p>
-                <div class="space-y-1" id="network-logs"></div>
+            <div class="border border-red-900 p-3 bg-black/50 h-1/2 overflow-y-auto text-[10px]">
+                <p class="border-b border-red-900 mb-2">LIVE_SESSIONS</p>
+                <div id="logs"></div>
             </div>
-            <div class="widget h-1/2">
-                <p class="border-b border-red-900 mb-2">SYSTEM_INTEGRITY</p>
-                <div class="text-[8px]">CORE: ACTIVE<br>NODES: 4/4<br>STATUS: ELITE</div>
+            <div class="border border-red-900 p-3 bg-black/50 h-1/2 text-[10px]">
+                <p class="border-b border-red-900 mb-2">SYSTEM_STATS</p>
+                CPU: 24%<br>NODES: 128<br>STATUS: PROTECTED
             </div>
         </div>
 
         <div class="col-span-10 overflow-y-auto pr-2">
-            <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                 <div class="neon-box p-4 relative">
-                    <h2 class="text-sm font-bold border-b border-red-900 mb-4">[ Basic Plan ] Month $14</h2>
+                    <h2 class="text-xs font-bold border-b border-red-900 mb-4">[ Basic Plan ] Month $14</h2>
                     <ul class="text-[10px] space-y-2 opacity-80">
                         <li>1 Concurrents</li>
-                        <li>60 Seconds Boot Time</li>
-                        <li>45 Seconds Cooldown</li>
-                        <li>Access To Default Methods</li>
+                        <li>60s Boot Time</li>
+                        <li>45s Cooldown</li>
+                        <li>Default Methods</li>
                     </ul>
-                    <button class="edex-btn mt-4 w-full text-[10px]">شراء الآن</button>
+                    <button class="edex-btn mt-4 w-full text-[10px]">PURCHASE</button>
                 </div>
-                <div class="neon-box p-4">
-                    <h2 class="text-sm font-bold border-b border-red-900 mb-4">[ Gold Plan ] Month $17</h2>
-                    <ul class="text-[10px] space-y-2 opacity-80">
-                        <li>2 Concurrents</li>
-                        <li>60 Seconds Boot Time</li>
-                        <li>20 Seconds Cooldown</li>
-                        <li>Access To Default Methods</li>
-                    </ul>
-                    <button class="edex-btn mt-4 w-full text-[10px]">شراء الآن</button>
-                </div>
-                <div class="neon-box p-4">
-                    <h2 class="text-sm font-bold border-b border-red-900 mb-4">[ Diamond Plan ] $22</h2>
-                    <ul class="text-[10px] space-y-2 opacity-80">
-                        <li>3 Concurrents</li>
-                        <li>60 Seconds Boot Time</li>
-                        <li>15 Seconds Cooldown</li>
-                        <li>Access To VIP Methods</li>
-                    </ul>
-                    <button class="edex-btn mt-4 w-full text-[10px]">شراء الآن</button>
-                </div>
-                <div class="neon-box p-4 border-white/20">
-                    <h2 class="text-sm font-bold border-b border-red-900 mb-4 text-white">[ Champion ] $45</h2>
+                <div class="neon-box p-4 border-white/40">
+                    <h2 class="text-xs font-bold border-b border-red-900 mb-4 text-white">[ Champion ] $45</h2>
                     <ul class="text-[10px] space-y-2 text-white">
                         <li>4 Concurrents</li>
-                        <li>0 Seconds Cooldown</li>
+                        <li>0s Cooldown</li>
                         <li>LifeTime $150</li>
-                        <li>Access To VIP Methods</li>
+                        <li>VIP Methods</li>
                     </ul>
-                    <button class="edex-btn mt-4 w-full text-[10px] bg-red-600 text-black">شراء الآن</button>
+                    <button class="edex-btn mt-4 w-full text-[10px] bg-red-600 text-black">PURCHASE</button>
                 </div>
-            </div>
-
-            <div class="widget p-4">
-                <p class="text-center font-bold mb-4 border-b border-red-900 pb-2">REMEMBER ADDONS</p>
-                <div class="grid grid-cols-3 gap-4 text-center text-[10px]">
-                    <div>+1 Concurrents: $15</div>
-                    <div>API Access: $20</div>
-                    <div>0 Cooldown: $10</div>
                 </div>
+            
+            <div class="mt-4 p-4 border border-red-900 bg-red-950/10">
+                <p class="text-[10px] text-center mb-2">ADDONS: +1 Concurrent [$15] | API Access [$20] | 0 Cooldown [$10]</p>
+                <p class="text-[10px] text-center opacity-50">Accepting: Crypto, PayPal, Mastercard, Alrajhi Bank</p>
             </div>
         </div>
     </div>
 </div>
 
 <script>
-    // 1. نظام الإقلاع (Boot Sequence)
-    const logs = [
-        "...INITIALIZING SYSTEM <",
-        "...LOADING ENCRYPTION MODULES <",
-        "...BYPASSING FIREWALL <",
-        "...ESTABLISHING SECURE TUNNEL <",
-        "...ACCESSING REMEMBER_STORE DATABASE <",
-        "...READY FOR OPERATOR LOGIN <"
-    ];
-
-    let i = 0;
+    // 1. نظام الإقلاع
+    const logsData = ["INITIALIZING SYSTEM...", "LOADING ENCRYPTION...", "BYPASSING FIREWALL...", "ESTABLISHING TUNNEL...", "READY FOR OPERATOR LOGIN."];
+    let bootIdx = 0;
     function runBoot() {
-        if(i < logs.length) {
-            let div = document.createElement('div');
-            div.className = "boot-text";
-            div.innerText = logs[i];
-            document.getElementById('boot-console').appendChild(div);
-            i++;
-            setTimeout(runBoot, 800);
-        } else {
-            document.getElementById('captcha-area').classList.remove('hidden-screen');
-        }
+        if(bootIdx < logsData.length) {
+            let div = document.createElement('div'); div.className = "boot-text"; div.innerText = `...${logsData[bootIdx]} <`;
+            document.getElementById('boot-console').appendChild(div); bootIdx++; setTimeout(runBoot, 700);
+        } else { document.getElementById('captcha-area').classList.remove('hidden-screen'); }
     }
     runBoot();
 
     // 2. التحقق البشري
     function verifyHuman() {
-        const val = document.getElementById('captcha-input').value;
-        if(val === "4921") {
+        if(document.getElementById('captcha-input').value === "8812") {
             document.getElementById('boot-loader').classList.add('hidden-screen');
             document.getElementById('auth-screen').classList.remove('hidden-screen');
+        } else { alert("رمز التحقق غير صحيح"); }
+    }
+
+    // 3. نظام الحسابات (LocalStorage)
+    let isLoginMode = true;
+    function toggleAuthMode() {
+        isLoginMode = !isLoginMode;
+        document.getElementById('auth-title').innerText = isLoginMode ? "REMEMBER_OS_LOGIN" : "CREATE_NEW_ACCOUNT";
+        document.getElementById('main-auth-btn').innerText = isLoginMode ? "تسجيل دخول" : "إنشاء حساب";
+        document.getElementById('auth-switch').innerText = isLoginMode ? "ليس لديك حساب؟ إنشاء حساب جديد" : "لديك حساب؟ سجل دخولك الآن";
+    }
+
+    function handleAuth() {
+        const u = document.getElementById('username').value;
+        const p = document.getElementById('password').value;
+        if(!u || !p) return alert("يرجى ملء جميع الحقول");
+
+        if(isLoginMode) {
+            // التحقق من حساب الأدمن الخاص أو الحسابات المنشأة
+            const savedPass = localStorage.getItem('user_' + u);
+            if((u === "Admin" && p === "abusaad452107216") || savedPass === p) {
+                document.getElementById('auth-screen').classList.add('hidden-screen');
+                document.getElementById('main-site').classList.remove('hidden-screen');
+                document.getElementById('current-user-display').innerText = u;
+                startLogs();
+            } else { alert("اسم المستخدم أو كلمة المرور غير صحيحة"); }
         } else {
-            alert("فشل التحقق!");
+            // إنشاء حساب جديد
+            localStorage.setItem('user_' + u, p);
+            alert("تم إنشاء الحساب بنجاح! يمكنك الآن تسجيل الدخول.");
+            toggleAuthMode();
         }
     }
 
-    // 3. تسجيل الدخول (Admin abusaad452107216)
-    function login() {
-        const u = document.getElementById('user').value;
-        const p = document.getElementById('pass').value;
-        if(u === "Admin" && p === "abusaad452107216") {
-            document.getElementById('auth-screen').classList.add('hidden-screen');
-            document.getElementById('main-site').classList.remove('hidden-screen');
-            startFakeLogs();
-        } else {
-            alert("خطأ في البيانات!");
-        }
+    function logout() { location.reload(); }
+
+    // 4. إظهار معلومات القائمة
+    function showInfo(id) {
+        const allPanels = document.querySelectorAll('.info-panel');
+        allPanels.forEach(p => p.style.display = 'none');
+        const target = document.getElementById('info-' + id);
+        if(target) target.style.display = 'block';
     }
 
-    function startFakeLogs() {
+    function startLogs() {
         setInterval(() => {
             const l = document.createElement('div');
-            l.innerText = `> RECV_PACKET_${Math.floor(Math.random()*9999)} [OK]`;
-            document.getElementById('network-logs').prepend(l);
-            if(document.getElementById('network-logs').children.length > 10) document.getElementById('network-logs').lastChild.remove();
-        }, 1500);
+            l.innerText = `> SESSION_${Math.floor(Math.random()*9999)}: STABLE`;
+            document.getElementById('logs').prepend(l);
+            if(document.getElementById('logs').children.length > 8) document.getElementById('logs').lastChild.remove();
+        }, 2000);
     }
 </script>
 </body>
